@@ -1,0 +1,70 @@
+.customer_wishlist-icon {
+  color: #d4af37;
+  font-size: 24px;
+  transition: 0.3s;
+}
+
+.customer_wishlist-icon:hover {
+  color: red;
+  transform: scale(1.15);
+}
+
+.customer_card {
+  border: none;
+  border-radius: 15px;
+}
+
+ .customer_card-img {
+  height: 350px;
+  object-fit: cover;
+} 
+
+.customer_btn-dark {
+  background: #d4af37;
+  border: none;
+}
+
+.customer_btn-dark:hover {
+  background: black;
+  color: #d4af37;
+}
+
+
+ /* .card img {
+    height: 93px;
+    object-fit: cover;
+} */
+
+
+
+.customer_wishlist-icon {
+  color: #d4af37;
+  font-size: 24px;
+  transition: 0.3s;
+}
+
+.customer_wishlist-icon:hover {
+  color: red;
+  transform: scale(1.15);
+}
+
+.customer_card {
+  border: none;
+  border-radius: 15px;
+}
+
+/* Ye sirf cart page ki image ke liye hai, baaki pages par asar nahi padega */
+.customer_card-img {
+  height: 93px !important;
+  object-fit: cover;
+} 
+
+.customer_btn-dark {
+  background: #d4af37;
+  border: none;
+}
+
+.customer_btn-dark:hover {
+  background: black;
+  color: #d4af37;
+}

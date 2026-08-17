@@ -1,0 +1,12 @@
+@media (max-width: 768px) {
+  .Customer_birthday-banner {
+    padding: 2rem 1.5rem !important;
+    background-position: center !important;
+  }
+  .Customer_birthday-banner h1 {
+    font-size: 1.6rem !important;
+  }
+  .Customer_birthday-banner p {
+    font-size: 0.85rem !important;
+  }
+}

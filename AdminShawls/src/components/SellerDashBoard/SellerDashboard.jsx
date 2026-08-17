@@ -1,0 +1,405 @@
+// import React from "react";
+// import { useNavigate } from "react-router-dom";
+// import "./SellerDashboard.css";
+// import SellerHeader from "../SellerHeader/SellerHeader";
+// //import logo from "../assets/logooo.png";
+// import logo from "../../assets/logooo.png";
+
+// function SellerDashboard() {
+//   const navigate = useNavigate();
+
+//   return (
+//     <div className="Seller_dashboard-page">
+
+//       {/* Header */}
+//       <SellerHeader />
+
+//       {/* Dashboard Content */}
+//       <div className="container py-5 mt-5">
+        
+//         {/* Dashboard Title */}
+//         <h2 className="text-center fw-bold mb-5 Seller_dashboard-title">
+//           <img
+//             src={logo}
+//             alt="Kavi Shawls Logo"
+//             className="Seller_dashboard-logo"
+//           />
+//           Kavi Shawls Seller Dashboard
+//         </h2>
+
+//         {/* ================= STAT CARDS ================= */}
+//         <div className="row g-4">
+
+//           {/* Total Products */}
+//           <div className="col-lg-4 col-md-6">
+//             <div className="card shadow border-0 text-center p-4 Seller_card">
+//               <h5>Total Products</h5>
+//               <h2 className="text-primary">120</h2>
+//             </div>
+//           </div>
+
+//           {/* Pending Orders */}
+//           <div className="col-lg-4 col-md-6">
+//             <div className="card shadow border-0 text-center p-4 Seller_card">
+//               <h5>Pending Orders</h5>
+//               <h2 className="text-warning">18</h2>
+//             </div>
+//           </div>
+
+//           {/* Delivered Orders */}
+//           <div className="col-lg-4 col-md-6">
+//             <div className="card shadow border-0 text-center p-4 Seller_card">
+//               <h5>Delivered Orders</h5>
+//               <h2 className="text-success">96</h2>
+//             </div>
+//           </div>
+
+//           {/* Today's Sales */}
+//           <div className="col-lg-4 col-md-6">
+//             <div className="card shadow border-0 text-center p-4 Seller_card">
+//               <h5>Today's Sales</h5>
+//               <h2 className="text-danger">₹12,500</h2>
+//             </div>
+//           </div>
+
+//           {/* Monthly Revenue */}
+//           <div className="col-lg-4 col-md-6">
+//             <div className="card shadow border-0 text-center p-4 Seller_card">
+//               <h5>Monthly Revenue</h5>
+//               <h2 className="text-info">₹2,45,000</h2>
+//             </div>
+//           </div>
+
+//           {/* Low Stock */}
+//           <div className="col-lg-4 col-md-6">
+//             <div className="card shadow border-0 text-center p-4 Seller_card">
+//               <h5>Low Stock Products</h5>
+//               <h2 className="text-danger">7</h2>
+//             </div>
+//           </div>
+
+//         </div>
+
+//         {/* ================= ACTION BUTTONS ================= */}
+//         <div className="row g-4 mt-4">
+
+//           {/* Add Product */}
+//           <div className="col-lg-4 col-md-6">
+//             <button
+//               className="Seller_dashboard-menu-btn"
+//               onClick={() => navigate("/add-product")}
+//             >
+//               <span className="Seller_menu-icon">➕</span>
+//               <span>
+//                 <strong>Add Product</strong>
+//                 <small>Add new products to your shop</small>
+//               </span>
+//               <span className="Seller_arrow">→</span>
+//             </button>
+//           </div>
+
+//           {/* Product Categories */}
+//           <div className="col-lg-4 col-md-6">
+//             <button
+//               className="Seller_dashboard-menu-btn"
+//               onClick={() => navigate("/product-categories")}
+//             >
+//               <span className="Seller_menu-icon">📂</span>
+//               <span>
+//                 <strong>Product Categories</strong>
+//                 <small>Manage your product categories</small>
+//               </span>
+//               <span className="Seller_arrow">→</span>
+//             </button>
+//           </div>
+
+          
+
+//           {/* Manage Products */}
+//           <div className="col-lg-4 col-md-6">
+//             <button
+//               className="Seller_dashboard-menu-btn"
+//               onClick={() => navigate("/manage-products")}
+//             >
+//               <span className="Seller_menu-icon">📋</span>
+//               <span>
+//                 <strong>Manage Products</strong>
+//                 <small>View and edit your products</small>
+//               </span>
+//               <span className="Seller_arrow">→</span>
+//             </button>
+//           </div>
+
+//           {/* Shipping */}
+//           <div className="col-lg-4 col-md-6">
+//             <button
+//               className="Seller_dashboard-menu-btn"
+//               onClick={() => navigate("/shipping")}
+//             >
+//               <span className="Seller_menu-icon">🚚</span>
+//               <span>
+//                 <strong>Shipping</strong>
+//                 <small>Manage your shipments</small>
+//               </span>
+//               <span className="Seller_arrow">→</span>
+//             </button>
+//           </div>
+
+//           {/* Payment Gateway */}
+//           <div className="col-lg-4 col-md-6">
+//             <button
+//               className="Seller_dashboard-menu-btn"
+//               onClick={() => navigate("/payment-gateway")}
+//             >
+//               <span className="Seller_menu-icon">💳</span>
+//               <span>
+//                 <strong>Payment Details</strong>
+//                 <small>Manage payment settings</small>
+//               </span>
+//               <span className="Seller_arrow">→</span>
+//             </button>
+//           </div>
+
+//           {/* Analytics */}
+//           <div className="col-lg-4 col-md-6">
+//             <button
+//               className="Seller_dashboard-menu-btn"
+//               onClick={() => navigate("/analytics")}
+//             >
+//               <span className="Seller_menu-icon">📈</span>
+//               <span>
+//                 <strong>Analytics</strong>
+//                 <small>View sales and performance</small>
+//               </span>
+//               <span className="Seller_arrow">→</span>
+//             </button>
+//           </div>
+
+//         </div>
+
+//       </div>
+
+//     </div>
+//   );
+// }
+
+// export default SellerDashboard;
+
+// new
+
+
+
+
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import "./SellerDashboard.css";
+import SellerHeader from "../SellerHeader/SellerHeader";
+import logo from "../../assets/logooo.png";
+
+function SellerDashboard() {
+  const navigate = useNavigate();
+
+  const [stats, setStats] = useState({
+    totalProducts: 120,
+    pendingOrders: 0,
+    deliveredOrders: 0,
+    todaysSales: 0,
+    monthlyRevenue: 0,
+    lowStock: 7,
+  });
+
+  // Backend se original orders uthakar real Revenue aur Counts calculate karna
+  useEffect(() => {
+    const fetchDashboardStats = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/shawls/orders");
+        const ordersData = await response.json();
+
+        if (response.ok && Array.isArray(ordersData)) {
+          // Pending/Processing Orders count
+          const pending = ordersData.filter(
+            (o) => 
+              !o.orderStatus || 
+              o.orderStatus === "Processing" || 
+              o.orderStatus === "Pending"
+          ).length;
+
+          // Delivered Orders count
+          const delivered = ordersData.filter(
+            (o) => o.orderStatus === "Delivered"
+          ).length;
+
+          // Original Revenue Calculation (Saare orders ke totalAmount ka sum)
+          const totalRevenue = ordersData.reduce(
+            (sum, order) => sum + (Number(order.totalAmount) || 0),
+            0
+          );
+
+          setStats({
+            totalProducts: 120,
+            pendingOrders: pending,
+            deliveredOrders: delivered,
+            todaysSales: totalRevenue,
+            monthlyRevenue: totalRevenue,
+            lowStock: 7,
+          });
+        }
+      } catch (err) {
+        console.error("Error fetching real dashboard stats:", err);
+      }
+    };
+
+    fetchDashboardStats();
+  }, []);
+
+  return (
+    <div className="Seller_dashboard-page">
+      <SellerHeader />
+
+      <div className="container py-5 mt-5">
+        <h2 className="text-center fw-bold mb-5 Seller_dashboard-title">
+          <img
+            src={logo}
+            alt="Kavi Shawls Logo"
+            className="Seller_dashboard-logo"
+          />
+          Kavi Shawls Seller Dashboard
+        </h2>
+
+        {/* ================= STAT CARDS ================= */}
+        <div className="row g-4">
+          <div className="col-lg-4 col-md-6">
+            <div className="card shadow border-0 text-center p-4 Seller_card">
+              <h5>Total Products</h5>
+              <h2 className="text-primary">{stats.totalProducts}</h2>
+            </div>
+          </div>
+
+          <div className="col-lg-4 col-md-6">
+            <div className="card shadow border-0 text-center p-4 Seller_card">
+              <h5>Pending Orders</h5>
+              <h2 className="text-warning">{stats.pendingOrders}</h2>
+            </div>
+          </div>
+
+          <div className="col-lg-4 col-md-6">
+            <div className="card shadow border-0 text-center p-4 Seller_card">
+              <h5>Delivered Orders</h5>
+              <h2 className="text-success">{stats.deliveredOrders}</h2>
+            </div>
+          </div>
+
+          <div className="col-lg-4 col-md-6">
+            <div className="card shadow border-0 text-center p-4 Seller_card">
+              <h5>Today's Sales</h5>
+              <h2 className="text-danger">₹{stats.todaysSales.toLocaleString()}</h2>
+            </div>
+          </div>
+
+          <div className="col-lg-4 col-md-6">
+            <div className="card shadow border-0 text-center p-4 Seller_card">
+              <h5>Monthly Revenue</h5>
+              <h2 className="text-info">₹{stats.monthlyRevenue.toLocaleString()}</h2>
+            </div>
+          </div>
+
+          <div className="col-lg-4 col-md-6">
+            <div className="card shadow border-0 text-center p-4 Seller_card">
+              <h5>Low Stock Products</h5>
+              <h2 className="text-danger">{stats.lowStock}</h2>
+            </div>
+          </div>
+        </div>
+
+        {/* ================= ACTION BUTTONS ================= */}
+        <div className="row g-4 mt-4">
+          <div className="col-lg-4 col-md-6">
+            <button
+              className="Seller_dashboard-menu-btn"
+              onClick={() => navigate("/add-product")}
+            >
+              <span className="Seller_menu-icon">➕</span>
+              <span>
+                <strong>Add Product</strong>
+                <small>Add new products to your shop</small>
+              </span>
+              <span className="Seller_arrow">→</span>
+            </button>
+          </div>
+
+          <div className="col-lg-4 col-md-6">
+            <button
+              className="Seller_dashboard-menu-btn"
+              onClick={() => navigate("/product-categories")}
+            >
+              <span className="Seller_menu-icon">📂</span>
+              <span>
+                <strong>Product Categories</strong>
+                <small>Manage your product categories</small>
+              </span>
+              <span className="Seller_arrow">→</span>
+            </button>
+          </div>
+
+          <div className="col-lg-4 col-md-6">
+            <button
+              className="Seller_dashboard-menu-btn"
+              onClick={() => navigate("/manage-products")}
+            >
+              <span className="Seller_menu-icon">📋</span>
+              <span>
+                <strong>Manage Products</strong>
+                <small>View and edit your products</small>
+              </span>
+              <span className="Seller_arrow">→</span>
+            </button>
+          </div>
+
+          <div className="col-lg-4 col-md-6">
+            <button
+              className="Seller_dashboard-menu-btn"
+              onClick={() => navigate("/shipping")}
+            >
+              <span className="Seller_menu-icon">🚚</span>
+              <span>
+                <strong>Shipping</strong>
+                <small>Manage your shipments</small>
+              </span>
+              <span className="Seller_arrow">→</span>
+            </button>
+          </div>
+
+          <div className="col-lg-4 col-md-6">
+            <button
+              className="Seller_dashboard-menu-btn"
+              onClick={() => navigate("/payment-gateway")}
+            >
+              <span className="Seller_menu-icon">💳</span>
+              <span>
+                <strong>Payment Details</strong>
+                <small>Manage payment settings</small>
+              </span>
+              <span className="Seller_arrow">→</span>
+            </button>
+          </div>
+
+          <div className="col-lg-4 col-md-6">
+            <button
+              className="Seller_dashboard-menu-btn"
+              onClick={() => navigate("/analytics")}
+            >
+              <span className="Seller_menu-icon">📈</span>
+              <span>
+                <strong>Analytics</strong>
+                <small>View sales and performance</small>
+              </span>
+              <span className="Seller_arrow">→</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default SellerDashboard;

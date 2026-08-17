@@ -1,0 +1,46 @@
+/* Brown Text & Theme */
+.Seller_text-brown {
+    color: #8b5a2b;
+}
+
+/* Card Styling */
+.Seller_signup-card {
+    background: #fff;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.Seller_signup-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* Logo Sizing */
+.Seller_signup-logo {
+    width: 90px;
+    height: auto;
+}
+
+/* Custom Brown Button */
+.Seller_btn-brown {
+    background: #9a6633;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background 0.3s;
+}
+
+.Seller_btn-brown:hover {
+    background: #7b4f28;
+    color: #fff;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .Seller_signup-logo {
+        width: 70px;
+    }
+}

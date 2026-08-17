@@ -1,0 +1,80 @@
+/* Brown Text */
+.Seller_text-brown {
+    color: #8b5a2b;
+}
+
+/* Card */
+.Seller_signup-card {
+    background: #fff;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+
+/* Form Labels */
+.form-label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 6px;
+}
+
+/* Inputs */
+.Seller_form-control {
+    height: 45px;
+    border: 2px solid #e6d5b8;
+    border-radius: 10px;
+    background: #fff;
+    color: #212529;
+    transition: 0.3s;
+}
+
+.Seller_textarea.Seller_form-control {
+    height: 80px;
+    resize: none;
+}
+
+.Seller_form-control::placeholder {
+    color: #999;
+}
+
+.Seller_form-control:focus {
+    background: #fff;
+    color: #212529;
+    border-color: #9a6633;
+    box-shadow: 0 0 0 0.15rem rgba(154, 102, 51, 0.2);
+    outline: none;
+}
+
+/* File Input */
+.Seller_file-input {
+    height: 45px;
+    padding: 8px;
+}
+
+/* Button */
+.Seller_btn-brown {
+    height: 45px;
+    background: #9a6633;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.Seller_btn-brown:hover {
+    background: #7b4f28;
+    color: #fff;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 25px !important;
+    }
+
+    .Seller_signup-logo {
+        width: 70px;
+    }
+}

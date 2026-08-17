@@ -1,0 +1,55 @@
+body {
+    background: linear-gradient(135deg, #fdf8f3, #f4ece3, #efe2d0);
+    min-height: 100vh;
+}
+
+.add-product-card {
+    background-color: #ffffff;
+    border-radius: 15px;
+}
+
+/* Logo Fix: Strict height and width control */
+.Seller_dashboard-logo1 {
+    width: auto !important;
+    height: 70px !important;    /* Isse image lambi nahi hogi, ekdum compact rahegi */
+    max-width: 100%;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+}
+
+.Seller_dashboard-title {
+    font-style: italic;
+    color: #8b5a2b;      
+    font-family: "Georgia", serif;
+    letter-spacing: 1px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.add-product-input {
+    border-radius: 8px;
+    padding: 10px 15px;
+    border: 1px solid #dcdcdc;
+}
+
+.add-product-input:focus {
+    border-color: #8b5a2b;
+    box-shadow: 0 0 5px rgba(139, 90, 43, 0.3);
+}
+
+.add-product-submit-btn {
+    background-color: #8b5a2b;
+    border: none;
+    font-weight: bold;
+    font-style: italic;
+    letter-spacing: 0.5px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.add-product-submit-btn:hover {
+    background-color: #6e4521;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}

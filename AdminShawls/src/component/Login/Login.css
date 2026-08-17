@@ -1,0 +1,118 @@
+/* Poore screen ko cover karne aur video/content manage karne ke liye */
+.video-bg-container {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Background Video styling */
+.bg-video-element {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  z-index: -1;
+}
+
+/* Login container jo video ke upar aayega */
+.Customer_login-container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  /* Thoda dark tint ya background transparency bhi de sakte hain agar zaroorat ho */
+}
+
+.Customer_login-card {
+  background: rgba(255, 255, 255, 0.95); /* Thoda translucent white taaki video piche se halki dikhe */
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  backdrop-filter: blur(5px);
+}
+
+.Customer_login-title {
+  font-family: "Playfair Display", serif;
+  color: #8a5a2b;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.Customer_login-subtitle {
+  color: #777;
+  font-size: 14px;
+  margin-bottom: 25px;
+}
+
+.Customer_login-card .Customer_form-label {
+  font-weight: 500;
+  text-align: left;
+  display: block;
+  color: #333;
+}
+
+.Customer_login-card .Customer_form-control {
+  width: 100%;
+  display: block;
+  border-radius: 6px;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+}
+
+.Customer_login-card .Customer_form-control:focus {
+  border-color: #c08a3e;
+  box-shadow: 0 0 0 0.2rem rgba(192, 138, 62, 0.2);
+}
+
+.Customer_forgot-link {
+  font-size: 13px;
+  color: #8a5a2b;
+  text-decoration: none;
+}
+
+.Customer_forgot-link:hover {
+  text-decoration: underline;
+}
+
+.Customer_login-btn {
+  background-color: #8a5a2b;
+  color: #fff;
+  font-weight: 650;
+  padding: 10px;
+  border-radius: 6px;
+  border: none;
+  transition: background 0.3s ease;
+}
+
+.Customer_login-btn:hover {
+  background-color: #6f4720;
+  color: #fff;
+}
+
+.Customer_signup-text {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #555;
+}
+
+.Customer_signup-text a {
+  color: #8a5a2b;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.Customer_signup-text a:hover {
+  text-decoration: underline;
+}

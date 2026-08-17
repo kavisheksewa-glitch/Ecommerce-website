@@ -1,0 +1,178 @@
+/* --- Animated Luxury Title --- */
+.Customer_luxury-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  font-style: italic;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  margin: 0;
+  
+  background: linear-gradient(90deg, 
+    #b38728 0%,    
+    #f6dd79 30%,   
+    #b4aa3e 50%,   
+    #e7d693 70%,   
+    #855d08 100%   
+  );
+  background-size: 200% auto;
+  
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  
+  animation: shine 3s linear infinite;
+}
+
+@keyframes shine {
+  to {
+    background-position: -200% center;
+  }
+}
+
+/* --- Card Base & Hover Effects (Home Jaisa Effect) --- */
+.Customer_card {
+  border: none;
+  border-radius: 18px;
+  overflow: hidden;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.Customer_card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 25px rgba(212, 175, 55, 0.3);
+}
+
+/* --- Product Share Button Styling (Screenshot match) --- */
+.Customer_product-image-box {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  border-radius: 12px;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.Customer_product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Hover Par Image Zoom Effect */
+.Customer_card:hover .Customer_product-image {
+  transform: scale(1.1);
+  transform-origin: bottom center;
+}
+
+.Customer_share-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  z-index: 2;
+  color: #333;
+  transition: all 0.3s ease;
+}
+
+.Customer_share-btn:hover {
+  background: #d4af37;
+  color: #ffffff;
+  transform: scale(1.1);
+}
+
+/* --- Share Modal Styling --- */
+.Customer_share-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(3px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.Customer_share-modal {
+  background: #fff;
+  padding: 24px;
+  border-radius: 18px;
+  width: 90%;
+  max-width: 360px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.Customer_share-icons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin: 20px 0;
+}
+
+.Customer_copy-btn {
+  background: #222222;
+  color: #ffffff;
+  border: none;
+  padding: 10px;
+  border-radius: 10px;
+  font-weight: 600;
+  width: 100%;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.Customer_copy-btn:hover {
+  background: #444444;
+}
+
+.Customer_close-btn {
+  background: #d4af37;
+  color: #ffffff;
+  border: none;
+  padding: 10px;
+  border-radius: 10px;
+  font-weight: 600;
+  width: 100%;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.Customer_close-btn:hover {
+  background: #b8962d;
+}
+
+/* --- Mobile Responsive --- */
+@media (max-width: 768px) {
+  .Customer_luxury-title {
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+  }
+}
+
+.card img {
+    height: 350px;
+    object-fit: cover;
+}
+.Customer_hero1-image {
+  width: 350px;
+  height: 500px;
+  object-fit: cover;
+}

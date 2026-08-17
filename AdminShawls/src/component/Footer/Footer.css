@@ -1,0 +1,158 @@
+.customer_luxury-footer {
+  background-color: #111111;
+  color: #ffffff;
+  padding: 60px 20px 20px 20px;
+  font-family: 'Playfair Display', 'Georgia', serif;
+}
+
+.customer_footer-container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.customer_footer-col {
+  flex: 1;
+  margin: 10px 20px;
+  min-width: 220px;
+}
+
+.customer_brand-title {
+  color: #D4AF37;
+  font-size: 24px;
+  letter-spacing: 2px;
+  margin-bottom: 15px;
+  margin-left: -50px;
+  font-family: 'Caveat', cursive, sans-serif;
+}
+
+.customer_brand-desc {
+  color: #aaaaaa;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-left: -50px;
+}
+
+.customer_footer-col h4 {
+  color: #D4AF37;
+  font-size: 18px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #222222;
+  padding-bottom: 5px;
+}
+
+.customer_footer-col ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.customer_footer-col ul li {
+  margin-bottom: 12px;
+}
+
+.customer_footer-col ul li a {
+  color: #cccccc;
+  text-decoration: none;
+  font-size: 15px;
+  transition: color 0.3s ease;
+}
+
+.customer_footer-col ul li a:hover {
+  color: #D4AF37;
+}
+
+.customer_newsletter-text {
+  color: #aaaaaa;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+.customer_newsletter-form {
+  display: flex;
+}
+
+.newsletter-form input {
+  background: #222222;
+  border: 1px solid #333333;
+  padding: 10px;
+  color: #f9f7f4;
+  flex: 1;
+  font-size: 14px;
+  outline: none;
+}
+
+.newsletter-form button {
+  background: #D4AF37;
+  border: none;
+  color: #111;
+  padding: 10px 15px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.customer_newsletter-form button:hover {
+  background: #b8932e;
+}
+
+.customer_footer-bottom {
+  text-align: center;
+  border-top: 1px solid #222222;
+  margin-top: 50px;
+  padding-top: 20px;
+  font-size: 13px;
+  color: #666666;
+  letter-spacing: 1px;
+}
+
+
+
+
+
+
+
+
+
+.customer_logo11 {
+  font-family: 'Caveat', cursive, sans-serif;
+  font-weight: 700;
+  font-style: normal;
+  text-transform: none;
+  letter-spacing: 1px;
+  font-size: 2.2rem;
+  margin: 0;
+
+  background: linear-gradient(90deg, 
+    #443005 0%,    
+    #443602 30%,   
+    #b4aa3e 50%,   
+    #211a00 70%,   
+    #402d04 100%   
+  );
+  background-size: 200% auto;
+
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+
+  animation: customer_shine 3s linear infinite;
+}
+
+@keyframes customer_shine {
+  to {
+    background-position: -200% center;
+  }
+}
+
+@media (max-width: 768px) {
+  .customer_logo11 {
+    font-size: 2.0rem;
+    letter-spacing: 0.5px;
+  }
+}

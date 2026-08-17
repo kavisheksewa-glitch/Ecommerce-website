@@ -1,0 +1,14 @@
+.Seller_text-brown {
+    font-style: italic;
+    color: #8b5a2b;      /* Brown */
+    font-family: "Georgia", serif;
+    letter-spacing: 1px;
+}
+
+.Seller_header-space {
+    padding-top: 90px;
+}
+
+.Seller_seller-navbar {
+    background: linear-gradient(90deg, #eae6e1, #d4a373);
+}

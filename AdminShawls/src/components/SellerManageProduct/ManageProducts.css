@@ -1,0 +1,116 @@
+body {
+    background: linear-gradient(135deg, #fdf8f3, #f4ece3, #efe2d0);
+    min-height: 100vh;
+}
+
+.Seller_card {
+    border-radius: 15px;
+    transition: 0.3s;
+    
+}
+
+.Seller_card:hover {
+    transform: translateY(-5px);
+}
+
+.Seller_card h5 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #555;
+}
+
+.Seller_card h2 {
+    margin-top: 10px;
+    font-size: 35px;
+    font-weight: bold;
+}
+
+.Seller_dashboard-logo {
+    width: 100px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+.Seller_dashboard-title {
+    font-style: italic;
+    color: #8b5a2b;      /* Brown */
+    font-family: "Georgia", serif;
+    letter-spacing: 1px;
+}
+
+.Seller_tr {
+    font-weight: bold;
+    font-style: italic;
+}
+
+.Seller_btn-hover-zoom { 
+    transition: all 0.3s ease; 
+}
+
+.Seller_btn-hover-zoom:hover { 
+    transform: scale(1.05); 
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2); 
+}
+
+.Seller_dashboard-menu-btn {
+    background-color: rgb(215, 214, 212);
+    width: 100%;
+    border: none;
+    border-radius: 12px;
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-weight: bold;
+    font-style: italic;
+    text-align: left;
+    color: rgb(12, 10, 10);
+    transition: all 0.3s ease;
+}
+
+.Seller_dashboard-menu-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.Seller_dashboard-menu-btn span:nth-child(2) {
+    flex: 1;
+}
+
+.Seller_menu-icon {
+    font-size: 30px;
+}
+
+.Seller_dashboard-menu-btn strong {
+    display: block;
+    font-size: 17px;
+}
+
+.Seller_dashboard-menu-btn small {
+    display: block;
+    margin-top: 4px;
+    opacity: 0.85;
+    font-size: 12px;
+}
+
+.Seller_arrow {
+    font-size: 24px;
+}
+
+ .ing 
+ 
+ {
+    width: 100% !important;
+    height: 400px !important;
+    object-fit: cover !important;
+    border-radius: 10px !important;
+    display: block;
+    margin: 0 auto;
+}
+.Seller_card {
+  background-color: #fae9b16b !important; /* Yahan aap apna pasandeeda background color daal sakte hain (jaise #f8f9fa, #222 etc.) */
+  border: 1px solid #e0e0e0 !important;   /* Card ka border color change karne ke liye */
+  border-radius: 12px;                  /* Rounded corners ke liye */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}

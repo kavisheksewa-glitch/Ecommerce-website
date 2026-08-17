@@ -1,0 +1,46 @@
+/* Perfect Logo Alignment & Scaling */
+.seller-logo-img {
+    max-width: 110px !important; /* Perfect width jaise dashboard header mein hai */
+    width: auto !important;
+    height: auto !important;
+    max-height: 95px !important; /* Vertically stretch hone se rokne ke liye */
+    object-fit: contain;
+    display: block;
+    margin: 0 auto 10px auto;
+}
+
+/* Existing Styles */
+.Seller_text-brown {
+    color: #8b5a2b;
+}
+
+.Seller_btn-brown {
+    background-color: #9a6633;
+    color: #fff;
+    border: none;
+}
+
+.Seller_btn-brown:hover {
+    background-color: #7b4f28;
+    color: #fff;
+}
+
+/* Input Field */
+.Seller_form-control {
+    background-color: #fff !important;
+    color: #212529 !important;
+    border: 2px solid #e6d5b8;
+    border-radius: 12px;
+}
+
+.Seller_form-control::placeholder {
+    color: #999;
+}
+
+.Seller_form-control:focus {
+    background-color: #fff !important;
+    color: #212529 !important;
+    border-color: #9a6633;
+    box-shadow: 0 0 0 0.2rem rgba(154, 102, 51, 0.2);
+    outline: none;
+}

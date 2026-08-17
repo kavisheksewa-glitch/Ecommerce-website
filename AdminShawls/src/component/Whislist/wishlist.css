@@ -1,0 +1,38 @@
+.wishlist-icon {
+  color: #d4af37;
+  font-size: 24px;
+  transition: 0.3s;
+}
+
+.wishlist-icon:hover {
+  color: red;
+  transform: scale(1.15);
+}
+
+.card {
+  border: none;
+  border-radius: 15px;
+}
+
+.card .img {
+  height: 350px;
+  object-fit: cover;
+}
+
+
+.btn-dark {
+  background: #d4af37;
+  border: none;
+}
+
+.btn-dark:hover {
+  background: black;
+  color: #d4af37;
+}
+
+
+
+
+
+
+

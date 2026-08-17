@@ -1,0 +1,36 @@
+/* Poore screen ko cover karne aur video/content manage karne ke liye */
+.video-bg-container {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 0;
+}
+
+/* Background Video styling */
+.bg-video-element {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  z-index: -1;
+}
+
+/* Form container jo video ke upar translucent layer ke sath aayega */
+.Customer_register-wrapper {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+
+/* Form card styling */
+.Customer_register-card {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
+}
