@@ -544,7 +544,7 @@ const login = async (req, res) => {
     res.json({
       message: "Login Successful",
       token,
-      seller: sellerData,
+      
     });
 
   } catch (error) {
