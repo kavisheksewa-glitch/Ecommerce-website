@@ -40,7 +40,7 @@ function CustomerRegister() {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/shawls/auth/register", {
+      const response = await fetch("http://localhost:5000/api/customer/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

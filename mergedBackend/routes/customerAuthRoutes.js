@@ -247,79 +247,3468 @@
 
 
 
+// const express = require("express");
+// const router = express.Router();
+// const {
+//   registerCustomer,
+//   loginCustomer,
+//   getAllCustomers,
+// } = require("../controllers/customerController");
+
+// /**
+//  * @swagger
+//  * tags:
+//  *   name: customer login and register
+//  *   description: customer login and register management APIs
+//  */
+
+// /**
+//  * @swagger
+//  * components:
+//  *   securitySchemes:
+//  *     BearerAuth:
+//  *       type: http
+//  *       scheme: bearer
+//  *       bearerFormat: JWT
+//  *       description: Enter your JWT token in the format (e.g. Bearer <token>)
+//  *   schemas:
+//  *     Customer:
+//  *       type: object
+//  *       properties:
+//  *         _id:
+//  *           type: string
+//  *           example: "60d0fe4f5311236168a109ca"
+//  *         fullName:
+//  *           type: string
+//  *           example: "Rahul Sharma"
+//  *         email:
+//  *           type: string
+//  *           example: "rahul@gmail.com"
+//  *         mobile:
+//  *           type: string
+//  *           example: "9876543210"
+//  *         dob:
+//  *           type: string
+//  *           example: "15-08-1995"
+//  *         houseNo:
+//  *           type: string
+//  *           example: "Flat 402"
+//  *         street:
+//  *           type: string
+//  *           example: "Main Market Road"
+//  *         city:
+//  *           type: string
+//  *           example: "Amritsar"
+//  *         state:
+//  *           type: string
+//  *           example: "Punjab"
+//  *         pincode:
+//  *           type: string
+//  *           example: "143001"
+//  *         country:
+//  *           type: string
+//  *           example: "India"
+//  *         createdAt:
+//  *           type: string
+//  *           format: date-time
+//  */
+
+// /**
+//  * @swagger
+//  * /api/shawls/auth/register:
+//  *   post:
+//  *     summary: Register a new customer
+//  *     description: Registers a new customer account, hashes the password, sends a welcome notification, and returns a JWT token.
+//  *     tags: [customer login and register]
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             required:
+//  *               - fullName
+//  *               - email
+//  *               - mobile
+//  *               - dob
+//  *               - password
+//  *               - houseNo
+//  *               - street
+//  *               - city
+//  *               - state
+//  *               - pincode
+//  *             properties:
+//  *               fullName:
+//  *                 type: string
+//  *                 example: "Rahul Sharma"
+//  *               email:
+//  *                 type: string
+//  *                 example: "rahul@gmail.com"
+//  *               mobile:
+//  *                 type: string
+//  *                 example: "9876543210"
+//  *               dob:
+//  *                 type: string
+//  *                 example: "15-08-1995"
+//  *               password:
+//  *                 type: string
+//  *                 example: "password123"
+//  *               houseNo:
+//  *                 type: string
+//  *                 example: "Flat 402"
+//  *               street:
+//  *                 type: string
+//  *                 example: "Main Market Road"
+//  *               city:
+//  *                 type: string
+//  *                 example: "Amritsar"
+//  *               state:
+//  *                 type: string
+//  *                 example: "Punjab"
+//  *               pincode:
+//  *                 type: string
+//  *                 example: "143001"
+//  *     responses:
+//  *       '201':
+//  *         description: Registration successful with JWT Token
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               type: object
+//  *               properties:
+//  *                 message:
+//  *                   type: string
+//  *                   example: "Registration successful!"
+//  *                 token:
+//  *                   type: string
+//  *                   example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+//  *       '400':
+//  *         description: Email is already registered
+//  *       '500':
+//  *         description: Server error
+//  */
+// router.post("/register", registerCustomer);
+
+// /**
+//  * @swagger
+//  * /api/shawls/auth/login:
+//  *   post:
+//  *     summary: Login customer
+//  *     description: Authenticates customer credentials, creates a login notification, and returns a JWT token.
+//  *     tags: [customer login and register]
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             required:
+//  *               - email
+//  *               - password
+//  *             properties:
+//  *               email:
+//  *                 type: string
+//  *                 example: "rahul@gmail.com"
+//  *               password:
+//  *                 type: string
+//  *                 example: "password123"
+//  *     responses:
+//  *       '200':
+//  *         description: Login successful with JWT Token
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               type: object
+//  *               properties:
+//  *                 message:
+//  *                   type: string
+//  *                   example: "Login Successfully"
+//  *                 token:
+//  *                   type: string
+//  *                   example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+//  *                 user:
+//  *                   $ref: '#/components/schemas/Customer'
+//  *       '400':
+//  *         description: Invalid email or password
+//  *       '500':
+//  *         description: Server error during login
+//  */
+// router.post("/login", loginCustomer);
+
+// /**
+//  * @swagger
+//  * /api/shawls/auth/admin/users:
+//  *   get:
+//  *     summary: Get all registered customers (Admin)
+//  *     description: Retrieves a list of all customers excluding their passwords, sorted by latest first.
+//  *     tags: [customer login and register]
+//  *     responses:
+//  *       '200':
+//  *         description: List of users fetched successfully
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               type: object
+//  *               properties:
+//  *                 success:
+//  *                   type: boolean
+//  *                   example: true
+//  *                 users:
+//  *                   type: array
+//  *                   items:
+//  *                     $ref: '#/components/schemas/Customer'
+//  *       '500':
+//  *         description: Server error while fetching users
+//  */
+// router.get("/admin/users", getAllCustomers);
+
+// module.exports = router;
+
+
+
+
+// new sahi
+
+
+
+
+// const express = require("express");
+// const router = express.Router();
+// const Customer = require("../models/Customer");
+// const Notification = require("../models/Notification");
+// const bcrypt = require("bcryptjs");
+// const jwt = require("jsonwebtoken");
+
+// const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_key_here";
+
+// // @desc    Register a new customer
+// const registerCustomer = async (req, res) => {
+//   try {
+//     const { email, password } = req.body;
+
+//     const existingUser = await Customer.findOne({ email });
+//     if (existingUser) {
+//       return res.status(400).json({ message: "Email is already registered!" });
+//     }
+
+//     const saltRounds = 10;
+//     const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+//     const newCustomer = new Customer({
+//       ...req.body,
+//       password: hashedPassword,
+//     });
+
+//     const savedCustomer = await newCustomer.save();
+
+//     await Notification.create({
+//       userId: savedCustomer._id,
+//       title: "Welcome to Kavi Shawls! 🎉",
+//       message: "Thank you for registering with us. Enjoy exploring our luxury collection.",
+//       type: "offer"
+//     });
+
+//     const token = jwt.sign(
+//       { id: savedCustomer._id, email: savedCustomer.email },
+//       JWT_SECRET,
+//       { expiresIn: "1d" }
+//     );
+
+//     const customerResponse = savedCustomer.toObject();
+//     delete customerResponse.password;
+
+//     // Set Token in Cookie
+//     res.cookie("token", token, {
+//       httpOnly: true,
+//       secure: false,
+//       sameSite: "strict",
+//       maxAge: 24 * 60 * 60 * 1000,
+//     });
+
+//     res.status(201).json({ 
+//       message: "Registration successful!", 
+//       user: customerResponse 
+//     });
+//   } catch (error) {
+//     console.error("Error during registration:", error);
+//     res.status(500).json({ message: "Server error, please try again." });
+//   }
+// };
+
+// // @desc    Login customer
+// const loginCustomer = async (req, res) => {
+//   try {
+//     const { email: userEmail, password: userPassword } = req.body;
+
+//     const user = await Customer.findOne({ email: userEmail });
+//     if (!user) {
+//       return res.status(400).json({ message: "Invalid email or password!" });
+//     }
+
+//     const isMatch = await bcrypt.compare(userPassword, user.password);
+//     if (!isMatch) {
+//       return res.status(400).json({ message: "Invalid email or password!" });
+//     }
+
+//     await Notification.create({
+//       userId: user._id,
+//       title: "Login Successful! 🔓",
+//       message: `Welcome back, ${user.fullName || "Customer"}! You successfully logged into your account.`,
+//       type: "order"
+//     });
+
+//     const token = jwt.sign(
+//       { id: user._id, email: user.email },
+//       JWT_SECRET,
+//       { expiresIn: "1d" }
+//     );
+
+//     const userObj = user.toObject();
+//     delete userObj.password;
+
+//     // Set Token in Cookie
+//     res.cookie("token", token, {
+//       httpOnly: true,
+//       secure: false,
+//       sameSite: "strict",
+//       maxAge: 24 * 60 * 60 * 1000,
+//     });
+
+//     res.status(200).json({ 
+//       message: "Login Successfully", 
+//       user: userObj 
+//     });
+//   } catch (error) {
+//     console.error("Error during login:", error);
+//     res.status(500).json({ message: "Server error during login" });
+//   }
+// };
+
+// // @desc    Logout customer
+// const logoutCustomer = async (req, res) => {
+//   try {
+//     res.clearCookie("token", {
+//       httpOnly: true,
+//       sameSite: "strict",
+//     });
+//     res.status(200).json({ message: "Logged out successfully" });
+//   } catch (error) {
+//     console.error("Error during logout:", error);
+//     res.status(500).json({ message: "Server error during logout" });
+//   }
+// };
+
+// // @desc    Get all registered customers (Admin)
+// const getAllCustomers = async (req, res) => {
+//   try {
+//     const users = await Customer.find().select("-password").sort({ createdAt: -1 });
+//     res.status(200).json({ success: true, users });
+//   } catch (error) {
+//     console.error("Error fetching users:", error);
+//     res.status(500).json({ message: "Server error while fetching users." });
+//   }
+// };
+
+// // 👇 Routes define kiye gaye hain taaki server par endpoints chal sakein
+// router.post("/register", registerCustomer);
+// router.post("/login", loginCustomer);
+// router.post("/logout", logoutCustomer);
+// router.get("/all", getAllCustomers);
+
+// // 👇 Yahan router export kiya gaya hai jo server.js mein require ho raha hai
+// module.exports = router;
+
+
+
+
+////neew saha wala
+
+
+
+// const express = require("express");
+// const router = express.Router();
+// const Customer = require("../models/Customer");
+// const Notification = require("../models/Notification");
+// const Wishlist = require("../models/Wishlist");
+// const Cart = require("../models/Cart");
+// const Order = require("../models/Order");
+// const bcrypt = require("bcryptjs");
+// const jwt = require("jsonwebtoken");
+// const { protectCustomer } = require("../middleware/customerMiddleware");
+
+// const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_key_here";
+
+// /**
+//  * @swagger
+//  * tags:
+//  *   name: Customer Authentication & Management
+//  *   description: Customer APIs for Auth, Cart, Wishlist, and Orders
+//  */
+
+// /**
+//  * @swagger
+//  * components:
+//  *   securitySchemes:
+//  *     BearerAuth:
+//  *       type: http
+//  *       scheme: bearer
+//  *       bearerFormat: JWT
+//  *       description: Enter your JWT token in the format (e.g. Bearer <token>)
+//  */
+
+// // ==================== AUTH CONTROLLERS ====================
+
+// /**
+//  * @swagger
+//  * /api/customer/register:
+//  *   post:
+//  *     summary: Register a new customer
+//  *     tags: [Customer Authentication & Management]
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             required:
+//  *               - email
+//  *               - password
+//  *               - fullName
+//  *               - mobile
+//  *             properties:
+//  *               email:
+//  *                 type: string
+//  *                 example: "customer@gmail.com"
+//  *               password:
+//  *                 type: string
+//  *                 example: "password123"
+//  *               fullName:
+//  *                 type: string
+//  *                 example: "Rahul Sharma"
+//  *               mobile:
+//  *                 type: string
+//  *                 example: "9876543210"
+//  *     responses:
+//  *       201:
+//  *         description: Registration successful
+//  *       400:
+//  *         description: Email is already registered
+//  */
+// const registerCustomer = async (req, res) => {
+//   try {
+//     const { 
+//       fullName, 
+//       email, 
+//       mobile, 
+//       dob, 
+//       password, 
+//       houseNo, 
+//       street, 
+//       city, 
+//       state, 
+//       pincode, 
+//       country 
+//     } = req.body;
+
+//     const existingUser = await Customer.findOne({ email });
+//     if (existingUser) {
+//       return res.status(400).json({ message: "Email is already registered!" });
+//     }
+
+//     const saltRounds = 10;
+//     const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+//     const newCustomer = new Customer({
+//       fullName,
+//       email,
+//       mobile,
+//       dob,
+//       password: hashedPassword,
+//       houseNo,
+//       street,
+//       city,
+//       state,
+//       pincode,
+//       country: country || "India"
+//     });
+
+//     const savedCustomer = await newCustomer.save();
+
+//     await Notification.create({
+//       userId: savedCustomer._id,
+//       title: "Welcome to Kavi Shawls! 🎉",
+//       message: "Thank you for registering with us. Enjoy exploring our luxury collection.",
+//       type: "offer"
+//     });
+
+//     const token = jwt.sign(
+//       { id: savedCustomer._id, email: savedCustomer.email },
+//       JWT_SECRET,
+//       { expiresIn: "1d" }
+//     );
+
+//     const customerResponse = savedCustomer.toObject();
+//     delete customerResponse.password;
+
+//     res.cookie("token", token, {
+//       httpOnly: true,
+//       secure: false,
+//       sameSite: "strict",
+//       maxAge: 24 * 60 * 60 * 1000,
+//     });
+
+//     res.status(201).json({ 
+//       message: "Registration successful!", 
+//       token,
+//       user: customerResponse 
+//     });
+//   } catch (error) {
+//     console.error("Error during registration:", error);
+//     res.status(500).json({ message: error.message || "Server error, please try again." });
+//   }
+// };
+// /**
+//  * @swagger
+//  * /api/customer/login:
+//  *   post:
+//  *     summary: Customer Login
+//  *     tags: [Customer Authentication & Management]
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             required:
+//  *               - email
+//  *               - password
+//  *             properties:
+//  *               email:
+//  *                 type: string
+//  *                 example: "customer@gmail.com"
+//  *               password:
+//  *                 type: string
+//  *                 example: "password123"
+//  *     responses:
+//  *       200:
+//  *         description: Login Successfully with JWT Token
+//  *       400:
+//  *         description: Invalid email or password
+//  */
+// const loginCustomer = async (req, res) => {
+//   try {
+//     const { email: userEmail, password: userPassword } = req.body;
+
+//     const user = await Customer.findOne({ email: userEmail });
+//     if (!user) {
+//       return res.status(400).json({ message: "Invalid email or password!" });
+//     }
+
+//     const isMatch = await bcrypt.compare(userPassword, user.password);
+//     if (!isMatch) {
+//       return res.status(400).json({ message: "Invalid email or password!" });
+//     }
+
+//     await Notification.create({
+//       userId: user._id,
+//       title: "Login Successful! 🔓",
+//       message: `Welcome back, ${user.fullName || "Customer"}! You successfully logged into your account.`,
+//       type: "order"
+//     });
+
+//     const token = jwt.sign(
+//       { id: user._id, email: user.email },
+//       JWT_SECRET,
+//       { expiresIn: "1d" }
+//     );
+
+//     const userObj = user.toObject();
+//     delete userObj.password;
+
+//     res.cookie("token", token, {
+//       httpOnly: true,
+//       secure: false,
+//       sameSite: "strict",
+//       maxAge: 24 * 60 * 60 * 1000,
+//     });
+
+//     res.status(200).json({ 
+//       message: "Login Successfully", 
+//       token,
+//       user: userObj 
+//     });
+//   } catch (error) {
+//     console.error("Error during login:", error);
+//     res.status(500).json({ message: "Server error during login" });
+//   }
+// };
+
+// /**
+//  * @swagger
+//  * /api/customer/logout:
+//  *   post:
+//  *     summary: Customer Logout
+//  *     tags: [Customer Authentication & Management]
+//  *     responses:
+//  *       200:
+//  *         description: Logged out successfully
+//  */
+// const logoutCustomer = async (req, res) => {
+//   try {
+//     res.clearCookie("token", {
+//       httpOnly: true,
+//       sameSite: "strict",
+//     });
+//     res.status(200).json({ message: "Logged out successfully" });
+//   } catch (error) {
+//     console.error("Error during logout:", error);
+//     res.status(500).json({ message: "Server error during logout" });
+//   }
+// };
+
+// // ==================== WISHLIST CONTROLLERS ====================
+
+// /**
+//  * @swagger
+//  * /api/customer/wishlist/add:
+//  *   post:
+//  *     summary: Add product to wishlist
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - BearerAuth: []
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             required:
+//  *               - productId
+//  *               - title
+//  *               - price
+//  *               - image
+//  *             properties:
+//  *               productId:
+//  *                 type: string
+//  *               title:
+//  *                 type: string
+//  *               description:
+//  *                 type: string
+//  *               price:
+//  *                 type: string
+//  *               originalPrice:
+//  *                 type: string
+//  *               discount:
+//  *                 type: string
+//  *               image:
+//  *                 type: string
+//  *     responses:
+//  *       201:
+//  *         description: Added to wishlist successfully
+//  *       401:
+//  *         description: Not authorized
+//  */
+// const addToWishlist = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const { productId, title, description, price, originalPrice, discount, image } = req.body;
+
+//     const existingWishlist = await Wishlist.findOne({ userId, productId });
+//     if (existingWishlist) {
+//       return res.status(400).json({ success: false, message: "Product already in wishlist" });
+//     }
+
+//     const wishlistItem = new Wishlist({
+//       userId,
+//       productId,
+//       title,
+//       description,
+//       price,
+//       originalPrice,
+//       discount,
+//       image,
+//     });
+
+//     await wishlistItem.save();
+//     res.status(201).json({ success: true, message: "Added to wishlist successfully", wishlistItem });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// /**
+//  * @swagger
+//  * /api/customer/wishlist/remove/{id}:
+//  *   delete:
+//  *     summary: Remove item from wishlist
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - BearerAuth: []
+//  *     parameters:
+//  *       - in: path
+//  *         name: id
+//  *         required: true
+//  *         schema:
+//  *           type: string
+//  *         description: Wishlist item ID
+//  *     responses:
+//  *       200:
+//  *         description: Removed from wishlist successfully
+//  *       404:
+//  *         description: Item not found
+//  */
+// const removeFromWishlist = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const { id } = req.params;
+
+//     const deletedItem = await Wishlist.findOneAndDelete({ _id: id, userId });
+//     if (!deletedItem) {
+//       return res.status(404).json({ success: false, message: "Item not found in wishlist" });
+//     }
+
+//     res.status(200).json({ success: true, message: "Removed from wishlist successfully" });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// /**
+//  * @swagger
+//  * /api/customer/wishlist:
+//  *   get:
+//  *     summary: Get customer wishlist items
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - BearerAuth: []
+//  *     responses:
+//  *       200:
+//  *         description: Wishlist fetched successfully
+//  */
+// const getWishlist = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const wishlist = await Wishlist.find({ userId });
+//     res.status(200).json({ success: true, count: wishlist.length, wishlist });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// // ==================== CART CONTROLLERS ====================
+
+// /**
+//  * @swagger
+//  * /api/customer/cart/add:
+//  *   post:
+//  *     summary: Add product to cart
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - BearerAuth: []
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             required:
+//  *               - productId
+//  *               - title
+//  *               - price
+//  *             properties:
+//  *               productId:
+//  *                 type: string
+//  *               title:
+//  *                 type: string
+//  *               description:
+//  *                 type: string
+//  *               price:
+//  *                 type: string
+//  *               image:
+//  *                 type: string
+//  *               quantity:
+//  *                 type: number
+//  *     responses:
+//  *       201:
+//  *         description: Added to cart successfully
+//  */
+// const addToCart = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const { productId, title, description, price, image, quantity } = req.body;
+
+//     let cartItem = await Cart.findOne({ userId, productId });
+//     if (cartItem) {
+//       cartItem.quantity += quantity || 1;
+//       await cartItem.save();
+//       return res.status(200).json({ success: true, message: "Cart quantity updated", cartItem });
+//     }
+
+//     cartItem = new Cart({
+//       userId,
+//       productId,
+//       title,
+//       description,
+//       price,
+//       image,
+//       quantity: quantity || 1,
+//     });
+
+//     await cartItem.save();
+//     res.status(201).json({ success: true, message: "Added to cart successfully", cartItem });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// /**
+//  * @swagger
+//  * /api/customer/cart/remove/{id}:
+//  *   delete:
+//  *     summary: Remove item from cart
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - BearerAuth: []
+//  *     parameters:
+//  *       - in: path
+//  *         name: id
+//  *         required: true
+//  *         schema:
+//  *           type: string
+//  *         description: Cart item ID
+//  *     responses:
+//  *       200:
+//  *         description: Removed from cart successfully
+//  */
+// const removeFromCart = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const { id } = req.params;
+
+//     const deletedItem = await Cart.findOneAndDelete({ _id: id, userId });
+//     if (!deletedItem) {
+//       return res.status(404).json({ success: false, message: "Item not found in cart" });
+//     }
+
+//     res.status(200).json({ success: true, message: "Removed from cart successfully" });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// /**
+//  * @swagger
+//  * /api/customer/cart:
+//  *   get:
+//  *     summary: Get customer cart items
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - BearerAuth: []
+//  *     responses:
+//  *       200:
+//  *         description: Cart items fetched successfully
+//  */
+// const getCart = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const cart = await Cart.find({ userId });
+//     res.status(200).json({ success: true, count: cart.length, cart });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// // ==================== ORDER CONTROLLERS ====================
+
+// /**
+//  * @swagger
+//  * /api/customer/order/create:
+//  *   post:
+//  *     summary: Create a new order
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - BearerAuth: []
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             required:
+//  *               - productId
+//  *               - productTitle
+//  *               - price
+//  *               - quantity
+//  *               - totalAmount
+//  *               - fullName
+//  *               - phone
+//  *               - address
+//  *               - paymentMethod
+//  *               - sellerId
+//  *             properties:
+//  *               productId:
+//  *                 type: string
+//  *               productTitle:
+//  *                 type: string
+//  *               productImage:
+//  *                 type: string
+//  *               price:
+//  *                 type: number
+//  *               quantity:
+//  *                 type: number
+//  *               totalAmount:
+//  *                 type: number
+//  *               fullName:
+//  *                 type: string
+//  *               phone:
+//  *                 type: string
+//  *               address:
+//  *                 type: string
+//  *               paymentMethod:
+//  *                 type: string
+//  *                 enum: ["Cash on Delivery", "Online Payment (Razorpay)"]
+//  *               paymentStatus:
+//  *                 type: string
+//  *               razorpayPaymentId:
+//  *                 type: string
+//  *               sellerId:
+//  *                 type: string
+//  *     responses:
+//  *       201:
+//  *         description: Order created successfully
+//  */
+// const createOrder = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const {
+//       productId,
+//       productTitle,
+//       productImage,
+//       price,
+//       quantity,
+//       totalAmount,
+//       fullName,
+//       phone,
+//       address,
+//       paymentMethod,
+//       paymentStatus,
+//       razorpayPaymentId,
+//       sellerId
+//     } = req.body;
+
+//     const newOrder = new Order({
+//       userId,
+//       productId,
+//       productTitle,
+//       productImage,
+//       price,
+//       quantity,
+//       totalAmount,
+//       fullName,
+//       phone,
+//       address,
+//       paymentMethod,
+//       paymentStatus: paymentStatus || "Pending",
+//       razorpayPaymentId: razorpayPaymentId || "",
+//       sellerId,
+//     });
+
+//     const savedOrder = await newOrder.save();
+
+//     await Notification.create({
+//       userId,
+//       title: "Order Placed Successfully! 📦",
+//       message: `Your order for ${productTitle} has been placed successfully.`,
+//       type: "order"
+//     });
+
+//     res.status(201).json({ success: true, message: "Order created successfully", order: savedOrder });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// /**
+//  * @swagger
+//  * /api/customer/orders:
+//  *   get:
+//  *     summary: Get all orders of logged-in customer
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - BearerAuth: []
+//  *     responses:
+//  *       200:
+//  *         description: Orders fetched successfully
+//  */
+// const getCustomerOrders = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const orders = await Order.find({ userId }).sort({ createdAt: -1 });
+//     res.status(200).json({ success: true, count: orders.length, orders });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// // ==================== ROUTES CONFIGURATION ====================
+// // Public Routes
+// router.post("/register", registerCustomer);
+// router.post("/login", loginCustomer);
+// router.post("/logout", logoutCustomer);
+
+// // Protected Routes (Uses protectCustomer middleware)
+// router.post("/wishlist/add", protectCustomer, addToWishlist);
+// router.delete("/wishlist/remove/:id", protectCustomer, removeFromWishlist);
+// router.get("/wishlist", protectCustomer, getWishlist);
+
+// router.post("/cart/add", protectCustomer, addToCart);
+// router.delete("/cart/remove/:id", protectCustomer, removeFromCart);
+// router.get("/cart", protectCustomer, getCart);
+
+// router.post("/order/create", protectCustomer, createOrder);
+// router.get("/orders", protectCustomer, getCustomerOrders);
+
+// module.exports = router;
+
+
+
+
+
+
+
+
+//morning
+
+
+
+
+// const express = require("express");
+// const router = express.Router();
+// const Customer = require("../models/Customer");
+// const SellerProduct = require("../models/SellerProduct");
+// const Notification = require("../models/Notification");
+// const Wishlist = require("../models/Wishlist");
+// const Cart = require("../models/Cart");
+// const Order = require("../models/Order");
+// const bcrypt = require("bcryptjs");
+// const jwt = require("jsonwebtoken");
+// const { protectCustomer } = require("../middleware/customerMiddleware");
+
+// const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_key_here";
+
+// /**
+//  * @swagger
+//  * tags:
+//  *   name: Customer Authentication & Management
+//  *   description: Customer APIs for Auth, Cart, Wishlist, Orders, and Notifications
+//  */
+
+// /**
+//  * @swagger
+//  * components:
+//  *   securitySchemes:
+//  *     BearerAuth:
+//  *       type: http
+//  *       scheme: bearer
+//  *       bearerFormat: JWT
+//  *       description: Enter your JWT token in the format (e.g. Bearer <token>)
+//  */
+
+// // ==================== AUTH CONTROLLERS ====================
+
+// /**
+//  * @swagger
+//  * /api/customer/register:
+//  *   post:
+//  *     summary: Register a new customer
+//  *     tags: [Customer Authentication & Management]
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             required:
+//  *               - email
+//  *               - password
+//  *               - fullName
+//  *               - mobile
+//  *             properties:
+//  *               email:
+//  *                 type: string
+//  *                 example: "customer1@gmail.com"
+//  *               password:
+//  *                 type: string
+//  *                 example: "password1123"
+//  *               fullName:
+//  *                 type: string
+//  *                 example: "Rahull Sharma"
+//  *               mobile:
+//  *                 type: string
+//  *                 example: "9876533210"
+//  *     responses:
+//  *       201:
+//  *         description: Registration successful
+//  *       400:
+//  *         description: Email is already registered
+//  */
+// const registerCustomer = async (req, res) => {
+//   try {
+//     const { 
+//       fullName, 
+//       email, 
+//       mobile, 
+//       dob, 
+//       password, 
+//       houseNo, 
+//       street, 
+//       city, 
+//       state, 
+//       pincode, 
+//       country 
+//     } = req.body;
+
+//     const existingUser = await Customer.findOne({ email });
+//     if (existingUser) {
+//       return res.status(400).json({ message: "Email is already registered!" });
+//     }
+
+//     const saltRounds = 10;
+//     const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+//     const newCustomer = new Customer({
+//       fullName,
+//       email,
+//       mobile,
+//       dob,
+//       password: hashedPassword,
+//       houseNo,
+//       street,
+//       city,
+//       state,
+//       pincode,
+//       country: country || "India"
+//     });
+
+//     const savedCustomer = await newCustomer.save();
+
+//     await Notification.create({
+//       userId: savedCustomer._id,
+//       title: "Welcome to Kavi Shawls! 🎉",
+//       message: "Thank you for registering with us. Enjoy exploring our luxury collection.",
+//       type: "offer"
+//     });
+
+//     const token = jwt.sign(
+//       { id: savedCustomer._id, email: savedCustomer.email },
+//       JWT_SECRET,
+//       { expiresIn: "1d" }
+//     );
+
+//     const customerResponse = savedCustomer.toObject();
+//     delete customerResponse.password;
+
+//     res.cookie("token", token, {
+//       httpOnly: true,
+//       secure: false,
+//       sameSite: "strict",
+//       maxAge: 24 * 60 * 60 * 1000,
+//     });
+
+//     res.status(201).json({ 
+//       message: "Registration successful!", 
+//       token,
+//       user: customerResponse 
+//     });
+//   } catch (error) {
+//     console.error("Error during registration:", error);
+//     res.status(500).json({ message: error.message || "Server error, please try again." });
+//   }
+// };
+
+// /**
+//  * @swagger
+//  * /api/customer/login:
+//  *   post:
+//  *     summary: Customer Login
+//  *     tags: [Customer Authentication & Management]
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             required:
+//  *               - email
+//  *               - password
+//  *             properties:
+//  *               email:
+//  *                 type: string
+//  *                 example: "customer1@gmail.com"
+//  *               password:
+//  *                 type: string
+//  *                 example: "password1123"
+//  *     responses:
+//  *       200:
+//  *         description: Login Successfully with JWT Token
+//  *       400:
+//  *         description: Invalid email or password
+//  */
+// const loginCustomer = async (req, res) => {
+//   try {
+//     const { email: userEmail, password: userPassword } = req.body;
+
+//     const user = await Customer.findOne({ email: userEmail });
+//     if (!user) {
+//       return res.status(400).json({ message: "Invalid email or password!" });
+//     }
+
+//     const isMatch = await bcrypt.compare(userPassword, user.password);
+//     if (!isMatch) {
+//       return res.status(400).json({ message: "Invalid email or password!" });
+//     }
+
+//     await Notification.create({
+//       userId: user._id,
+//       title: "Login Successful! 🔓",
+//       message: `Welcome back, ${user.fullName || "Customer"}! You successfully logged into your account.`,
+//       type: "order"
+//     });
+
+//     const token = jwt.sign(
+//       { id: user._id, email: user.email },
+//       JWT_SECRET,
+//       { expiresIn: "1d" }
+//     );
+
+//     const userObj = user.toObject();
+//     delete userObj.password;
+
+//     res.cookie("token", token, {
+//       httpOnly: true,
+//       secure: false,
+//       sameSite: "strict",
+//       maxAge: 24 * 60 * 60 * 1000,
+//     });
+
+//     res.status(200).json({ 
+//       message: "Login Successfully", 
+//       token,
+//       user: userObj 
+//     });
+//   } catch (error) {
+//     console.error("Error during login:", error);
+//     res.status(500).json({ message: "Server error during login" });
+//   }
+// };
+
+// /**
+//  * @swagger
+//  * /api/customer/logout:
+//  *   post:
+//  *     summary: Customer Logout
+//  *     tags: [Customer Authentication & Management]
+//  *     responses:
+//  *       200:
+//  *         description: Logged out successfully
+//  */
+// const logoutCustomer = async (req, res) => {
+//   try {
+//     res.clearCookie("token", {
+//       httpOnly: true,
+//       sameSite: "strict",
+//     });
+//     res.status(200).json({ message: "Logged out successfully" });
+//   } catch (error) {
+//     console.error("Error during logout:", error);
+//     res.status(500).json({ message: "Server error during logout" });
+//   }
+// };
+
+// // ==================== PRODUCT CONTROLLERS ====================
+
+// /**
+//  * @swagger
+//  * /api/customer/products:
+//  *   get:
+//  *     summary: Get all products for customers
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - BearerAuth: []
+//  *     responses:
+//  *       200:
+//  *         description: Products fetched successfully
+//  *       401:
+//  *         description: Unauthorized / Token missing or invalid
+//  */
+// const getAllProductsForCustomer = async (req, res) => {
+//   try {
+//     const products = await SellerProduct.find({});
+//     res.status(200).json({ success: true, count: products.length, products });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// // ==================== WISHLIST CONTROLLERS ====================
+
+// /**
+//  * @swagger
+//  * /api/customer/wishlist/add:
+//  *   post:
+//  *     summary: Add product to wishlist
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - BearerAuth: []
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             required:
+//  *               - productId
+//  *               - title
+//  *               - price
+//  *               - image
+//  *             properties:
+//  *               productId:
+//  *                 type: string
+//  *               title:
+//  *                 type: string
+//  *               description:
+//  *                 type: string
+//  *               price:
+//  *                 type: string
+//  *               discount:
+//  *                 type: string
+//  *               image:
+//  *                 type: string
+//  *     responses:
+//  *       201:
+//  *         description: Added to wishlist successfully
+//  *       401:
+//  *         description: Not authorized
+//  */
+// const addToWishlist = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const { productId, title, description, price, originalPrice, discount, image } = req.body;
+
+//     const existingWishlist = await Wishlist.findOne({ userId, productId });
+//     if (existingWishlist) {
+//       return res.status(400).json({ success: false, message: "Product already in wishlist" });
+//     }
+
+//     const wishlistItem = new Wishlist({
+//       userId,
+//       productId,
+//       title,
+//       description,
+//       price,
+//       originalPrice,
+//       discount,
+//       image,
+//     });
+
+//     await wishlistItem.save();
+
+//     await Notification.create({
+//       userId,
+//       productId,
+//       title: "Added to Wishlist ❤️",
+//       message: `"${title || 'Product'}" has been added to your wishlist.`,
+//       type: "offer"
+//     });
+
+//     res.status(201).json({ success: true, message: "Added to wishlist successfully", wishlistItem });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// /**
+//  * @swagger
+//  * /api/customer/wishlist/remove/{id}:
+//  *   delete:
+//  *     summary: Remove item from wishlist
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - BearerAuth: []
+//  *     parameters:
+//  *       - in: path
+//  *         name: id
+//  *         required: true
+//  *         schema:
+//  *           type: string
+//  *         description: Wishlist item ID
+//  *     responses:
+//  *       200:
+//  *         description: Removed from wishlist successfully
+//  *       404:
+//  *         description: Item not found
+//  */
+// const removeFromWishlist = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const { id } = req.params;
+
+//     const deletedItem = await Wishlist.findOneAndDelete({ _id: id, userId });
+//     if (!deletedItem) {
+//       return res.status(404).json({ success: false, message: "Item not found in wishlist" });
+//     }
+
+//     await Notification.create({
+//       userId,
+//       productId: deletedItem.productId,
+//       title: "Removed from Wishlist ❌",
+//       message: `"${deletedItem.title || 'Product'}" was removed from your wishlist.`,
+//       type: "offer"
+//     });
+
+//     res.status(200).json({ success: true, message: "Removed from wishlist successfully" });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// /**
+//  * @swagger
+//  * /api/customer/wishlist:
+//  *   get:
+//  *     summary: Get customer wishlist items
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - BearerAuth: []
+//  *     responses:
+//  *       200:
+//  *         description: Wishlist fetched successfully
+//  */
+// const getWishlist = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const wishlist = await Wishlist.find({ userId });
+//     res.status(200).json({ success: true, count: wishlist.length, wishlist });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// // ==================== CART CONTROLLERS ====================
+
+// /**
+//  * @swagger
+//  * /api/customer/cart/add:
+//  *   post:
+//  *     summary: Add product to cart
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - BearerAuth: []
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             required:
+//  *               - productId
+//  *               - title
+//  *               - price
+//  *             properties:
+//  *               productId:
+//  *                 type: string
+//  *               title:
+//  *                 type: string
+//  *               description:
+//  *                 type: string
+//  *               price:
+//  *                 type: string
+//  *               image:
+//  *                 type: string
+//  *               quantity:
+//  *                 type: number
+//  *               sellerId:
+//  *                 type: string
+//  *     responses:
+//  *       201:
+//  *         description: Added to cart successfully
+//  */
+// const addToCart = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     // 👇 Yahan req.body se sellerId bhi extract kar li hai
+//     const { productId, title, description, price, image, quantity, sellerId } = req.body;
+
+//     let cartItem = await Cart.findOne({ userId, productId });
+//     if (cartItem) {
+//       cartItem.quantity += quantity || 1;
+//       // Agar update karte waqt bhi sellerId update karni ho
+//       if (sellerId) cartItem.sellerId = sellerId;
+//       await cartItem.save();
+
+//       await Notification.create({
+//         userId,
+//         productId,
+//         title: "Cart Updated 🛒",
+//         message: `Quantity for "${title || 'Product'}" was updated in your cart.`,
+//         type: "order"
+//       });
+
+//       return res.status(200).json({ success: true, message: "Cart quantity updated", cartItem });
+//     }
+
+//     cartItem = new Cart({
+//       userId,
+//       productId,
+//       title,
+//       description,
+//       price,
+//       image,
+//       quantity: quantity || 1,
+//       sellerId, // 👈 Yahan sellerId database me save ho rahi hai
+//     });
+
+//     await cartItem.save();
+
+//     await Notification.create({
+//       userId,
+//       productId,
+//       title: "Added to Cart 🛍️",
+//       message: `"${title || 'Product'}" has been successfully added to your shopping cart.`,
+//       type: "order"
+//     });
+
+//     res.status(201).json({ success: true, message: "Added to cart successfully", cartItem });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+// /**
+//  * @swagger
+//  * /api/customer/cart/remove/{id}:
+//  *   delete:
+//  *     summary: Remove item from cart
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - BearerAuth: []
+//  *     parameters:
+//  *       - in: path
+//  *         name: id
+//  *         required: true
+//  *         schema:
+//  *           type: string
+//  *         description: Cart item ID
+//  *     responses:
+//  *       200:
+//  *         description: Removed from cart successfully
+//  */
+// const removeFromCart = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const { id } = req.params;
+
+//     const deletedItem = await Cart.findOneAndDelete({ _id: id, userId });
+//     if (!deletedItem) {
+//       return res.status(404).json({ success: false, message: "Item not found in cart" });
+//     }
+
+//     await Notification.create({
+//       userId,
+//       productId: deletedItem.productId,
+//       title: "Removed from Cart 🗑️",
+//       message: `"${deletedItem.title || 'Product'}" has been removed from your cart.`,
+//       type: "order"
+//     });
+
+//     res.status(200).json({ success: true, message: "Removed from cart successfully" });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// /**
+//  * @swagger
+//  * /api/customer/cart:
+//  *   get:
+//  *     summary: Get customer cart items
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - BearerAuth: []
+//  *     responses:
+//  *       200:
+//  *         description: Cart items fetched successfully
+//  */
+// const getCart = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const cart = await Cart.find({ userId });
+//     res.status(200).json({ success: true, count: cart.length, cart });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// // ==================== ORDER CONTROLLERS ====================
+
+// /**
+//  * @swagger
+//  * /api/customer/order/create:
+//  *   post:
+//  *     summary: Create a new order
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - BearerAuth: []
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             required:
+//  *               - productId
+//  *               - productTitle
+//  *               - price
+//  *               - quantity
+//  *               - totalAmount
+//  *               - fullName
+//  *               - phone
+//  *               - address
+//  *               - paymentMethod
+//  *               - sellerId
+//  *             properties:
+//  *               productId:
+//  *                 type: string
+//  *               productTitle:
+//  *                 type: string
+//  *               productImage:
+//  *                 type: string
+//  *               price:
+//  *                 type: number
+//  *               quantity:
+//  *                 type: number
+//  *               totalAmount:
+//  *                 type: number
+//  *               fullName:
+//  *                 type: string
+//  *               phone:
+//  *                 type: string
+//  *               address:
+//  *                 type: string
+//  *               paymentMethod:
+//  *                 type: string
+//  *                 enum: ["Cash on Delivery", "Online Payment (Razorpay)"]
+//  *               paymentStatus:
+//  *                 type: string
+//  *               razorpayPaymentId:
+//  *                 type: string
+//  *               sellerId:
+//  *                 type: string
+//  *     responses:
+//  *       201:
+//  *         description: Order created successfully
+//  */
+// const createOrder = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const {
+//       productId,
+//       productTitle,
+//       productImage,
+//       price,
+//       quantity,
+//       totalAmount,
+//       fullName,
+//       phone,
+//       address,
+//       paymentMethod,
+//       paymentStatus,
+//       razorpayPaymentId,
+//       sellerId
+//     } = req.body;
+
+//     const newOrder = new Order({
+//       userId,
+//       productId,
+//       productTitle,
+//       productImage,
+//       price,
+//       quantity,
+//       totalAmount,
+//       fullName,
+//       phone,
+//       address,
+//       paymentMethod,
+//       paymentStatus: paymentStatus || "Pending",
+//       razorpayPaymentId: razorpayPaymentId || "",
+//       sellerId,
+//     });
+
+//     const savedOrder = await newOrder.save();
+
+//     await Notification.create({
+//       userId,
+//       productId,
+//       title: "Order Placed Successfully! 📦",
+//       message: `Your order for ${productTitle} has been placed successfully.`,
+//       type: "order"
+//     });
+
+//     res.status(201).json({ success: true, message: "Order created successfully", order: savedOrder });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// /**
+//  * @swagger
+//  * /api/customer/orders:
+//  *   get:
+//  *     summary: Get all orders of logged-in customer
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - BearerAuth: []
+//  *     responses:
+//  *       200:
+//  *         description: Orders fetched successfully
+//  */
+// const getCustomerOrders = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const orders = await Order.find({ userId }).sort({ createdAt: -1 });
+//     res.status(200).json({ success: true, count: orders.length, orders });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// // ==================== NOTIFICATION CONTROLLERS ====================
+
+// /**
+//  * @swagger
+//  * /api/customer/notifications:
+//  *   get:
+//  *     summary: Get all notifications for logged-in customer
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - BearerAuth: []
+//  *     responses:
+//  *       200:
+//  *         description: Notifications fetched successfully
+//  */
+// const getCustomerNotifications = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const notifications = await Notification.find({ userId }).sort({ createdAt: -1 });
+//     res.status(200).json({ success: true, count: notifications.length, notifications });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// /**
+//  * @swagger
+//  * /api/customer/notifications/read:
+//  *   put:
+//  *     summary: Mark all notifications as read
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - BearerAuth: []
+//  *     responses:
+//  *       200:
+//  *         description: Notifications marked as read
+//  */
+// const markNotificationsAsRead = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     await Notification.updateMany({ userId, read: false }, { $set: { read: true } });
+//     res.status(200).json({ success: true, message: "Notifications marked as read" });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// // ==================== ROUTES CONFIGURATION ====================
+// // Public Routes
+// router.post("/register", registerCustomer);
+// router.post("/login", loginCustomer);
+// router.post("/logout", logoutCustomer);
+
+// // Protected Routes (Secured with Bearer Token & protectCustomer middleware)
+// router.get("/products", protectCustomer, getAllProductsForCustomer);
+
+// router.post("/wishlist/add", protectCustomer, addToWishlist);
+// router.delete("/wishlist/remove/:id", protectCustomer, removeFromWishlist);
+// router.get("/wishlist", protectCustomer, getWishlist);
+
+// router.post("/cart/add", protectCustomer, addToCart);
+// router.delete("/cart/remove/:id", protectCustomer, removeFromCart);
+// router.get("/cart", protectCustomer, getCart);
+
+// router.post("/order/create", protectCustomer, createOrder);
+// router.get("/orders", protectCustomer, getCustomerOrders);
+
+// router.get("/notifications", protectCustomer, getCustomerNotifications);
+// router.put("/notifications/read", protectCustomer, markNotificationsAsRead);
+
+// module.exports = router;
+
+
+
+//claude corrected office
+
+
+
+// const express = require("express");
+// const router = express.Router();
+// const Customer = require("../models/Customer");
+// const SellerProduct = require("../models/SellerProduct");
+// const Notification = require("../models/Notification");
+// const Wishlist = require("../models/Wishlist");
+// const Cart = require("../models/Cart");
+// const Order = require("../models/Order");
+// const bcrypt = require("bcryptjs");
+// const jwt = require("jsonwebtoken");
+// const { protectCustomer } = require("../middleware/customerMiddleware");
+
+// const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_key_here";
+
+// /**
+//  * @swagger
+//  * tags:
+//  *   name: Customer Authentication & Management
+//  *   description: Customer APIs for Auth, Cart, Wishlist, Orders, and Notifications
+//  */
+
+// /**
+//  * @swagger
+//  * components:
+//  *   securitySchemes:
+//  *     CustomerBearerAuth:
+//  *       type: http
+//  *       scheme: bearer
+//  *       bearerFormat: JWT
+//  *       description: Enter your JWT token in the format (e.g. Bearer <token>)
+//  */
+
+// // ==================== AUTH CONTROLLERS ====================
+
+// /**
+//  * @swagger
+//  * /api/customer/register:
+//  *   post:
+//  *     summary: Register a new customer
+//  *     tags: [Customer Authentication & Management]
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             required:
+//  *               - email
+//  *               - password
+//  *               - fullName
+//  *               - mobile
+//  *             properties:
+//  *               email:
+//  *                 type: string
+//  *                 example: "customer1@gmail.com"
+//  *               password:
+//  *                 type: string
+//  *                 example: "password1123"
+//  *               fullName:
+//  *                 type: string
+//  *                 example: "Rahull Sharma"
+//  *               mobile:
+//  *                 type: string
+//  *                 example: "9876533210"
+//  *     responses:
+//  *       201:
+//  *         description: Registration successful
+//  *       400:
+//  *         description: Email is already registered
+//  */
+// const registerCustomer = async (req, res) => {
+//   try {
+//     const {
+//       fullName,
+//       email,
+//       mobile,
+//       dob,
+//       password,
+//       houseNo,
+//       street,
+//       city,
+//       state,
+//       pincode,
+//       country,
+//     } = req.body;
+
+//     const existingUser = await Customer.findOne({ email });
+//     if (existingUser) {
+//       return res.status(400).json({ message: "Email is already registered!" });
+//     }
+
+//     const saltRounds = 10;
+//     const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+//     const newCustomer = new Customer({
+//       fullName,
+//       email,
+//       mobile,
+//       dob,
+//       password: hashedPassword,
+//       houseNo,
+//       street,
+//       city,
+//       state,
+//       pincode,
+//       country: country || "India",
+//     });
+
+//     const savedCustomer = await newCustomer.save();
+
+//     await Notification.create({
+//       userId: savedCustomer._id,
+//       title: "Welcome to Kavi Shawls! 🎉",
+//       message: "Thank you for registering with us. Enjoy exploring our luxury collection.",
+//       type: "regist",
+//     });
+
+//     // ✅ role add kiya
+//     const token = jwt.sign(
+//       { id: savedCustomer._id, email: savedCustomer.email, role: "customer" },
+//       JWT_SECRET,
+//       { expiresIn: "1d" }
+//     );
+
+//     const customerResponse = savedCustomer.toObject();
+//     delete customerResponse.password;
+
+//     res.cookie("token", token, {
+//       httpOnly: true,
+//       secure: false,
+//       sameSite: "strict",
+//       maxAge: 24 * 60 * 60 * 1000,
+//     });
+
+//     res.status(201).json({
+//       message: "Registration successful!",
+//       token,
+//       user: customerResponse,
+//     });
+//   } catch (error) {
+//     console.error("Error during registration:", error);
+//     res.status(500).json({ message: error.message || "Server error, please try again." });
+//   }
+// };
+
+// /**
+//  * @swagger
+//  * /api/customer/login:
+//  *   post:
+//  *     summary: Customer Login
+//  *     tags: [Customer Authentication & Management]
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             required:
+//  *               - email
+//  *               - password
+//  *             properties:
+//  *               email:
+//  *                 type: string
+//  *                 example: "customer1@gmail.com"
+//  *               password:
+//  *                 type: string
+//  *                 example: "password1123"
+//  *     responses:
+//  *       200:
+//  *         description: Login Successfully with JWT Token
+//  *       400:
+//  *         description: Invalid email or password
+//  */
+// const loginCustomer = async (req, res) => {
+//   try {
+//     const { email: userEmail, password: userPassword } = req.body;
+
+//     const user = await Customer.findOne({ email: userEmail });
+//     if (!user) {
+//       return res.status(400).json({ message: "Invalid email or password!" });
+//     }
+
+//     const isMatch = await bcrypt.compare(userPassword, user.password);
+//     if (!isMatch) {
+//       return res.status(400).json({ message: "Invalid email or password!" });
+//     }
+
+//     await Notification.create({
+//       userId: user._id,
+//       title: "Login Successful! 🔓",
+//       message: `Welcome back, ${user.fullName || "Customer"}! You successfully logged into your account.`,
+//       type: "order",
+//     });
+
+//     // ✅ role add kiya
+//     const token = jwt.sign(
+//       { id: user._id, email: user.email, role: "customer" },
+//       JWT_SECRET,
+//       { expiresIn: "1d" }
+//     );
+
+//     const userObj = user.toObject();
+//     delete userObj.password;
+
+//     res.cookie("token", token, {
+//       httpOnly: true,
+//       secure: false,
+//       sameSite: "strict",
+//       maxAge: 24 * 60 * 60 * 1000,
+//     });
+
+//     res.status(200).json({
+//       message: "Login Successfully",
+//       token,
+//       user: userObj,
+//     });
+//   } catch (error) {
+//     console.error("Error during login:", error);
+//     res.status(500).json({ message: "Server error during login" });
+//   }
+// };
+
+// /**
+//  * @swagger
+//  * /api/customer/logout:
+//  *   post:
+//  *     summary: Customer Logout
+//  *     tags: [Customer Authentication & Management]
+//  *     responses:
+//  *       200:
+//  *         description: Logged out successfully
+//  */
+// const logoutCustomer = async (req, res) => {
+//   try {
+//     res.clearCookie("token", {
+//       httpOnly: true,
+//       sameSite: "strict",
+//     });
+//     res.status(200).json({ message: "Logged out successfully" });
+//   } catch (error) {
+//     console.error("Error during logout:", error);
+//     res.status(500).json({ message: "Server error during logout" });
+//   }
+// };
+
+// // ==================== PRODUCT CONTROLLERS ====================
+
+// /**
+//  * @swagger
+//  * /api/customer/products:
+//  *   get:
+//  *     summary: Get all products for customers
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - CustomerBearerAuth: []
+//  *     responses:
+//  *       200:
+//  *         description: Products fetched successfully
+//  *       401:
+//  *         description: Unauthorized / Token missing or invalid
+//  */
+// const getAllProductsForCustomer = async (req, res) => {
+//   try {
+//     const products = await SellerProduct.find({});
+//     res.status(200).json({ success: true, count: products.length, products });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// // ==================== WISHLIST CONTROLLERS ====================
+
+// /**
+//  * @swagger
+//  * /api/customer/wishlist/add:
+//  *   post:
+//  *     summary: Add product to wishlist
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - CustomerBearerAuth: []
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             required:
+//  *               - productId
+//  *               - title
+//  *               - price
+//  *               - image
+//  *             properties:
+//  *               productId:
+//  *                 type: string
+//  *               title:
+//  *                 type: string
+//  *               description:
+//  *                 type: string
+//  *               price:
+//  *                 type: string
+//  *               discount:
+//  *                 type: string
+//  *               image:
+//  *                 type: string
+//  *     responses:
+//  *       201:
+//  *         description: Added to wishlist successfully
+//  *       401:
+//  *         description: Not authorized
+//  */
+// const addToWishlist = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const { productId, title, description, price, originalPrice, discount, image } = req.body;
+
+//     const existingWishlist = await Wishlist.findOne({ userId, productId });
+//     if (existingWishlist) {
+//       return res.status(400).json({ success: false, message: "Product already in wishlist" });
+//     }
+
+//     const wishlistItem = new Wishlist({
+//       userId,
+//       productId,
+//       title,
+//       description,
+//       price,
+//       originalPrice,
+//       discount,
+//       image,
+//     });
+
+//     await wishlistItem.save();
+
+//     await Notification.create({
+//       userId,
+//       productId,
+//       title: "Added to Wishlist ❤️",
+//       message: `"${title || "Product"}" has been added to your wishlist.`,
+//       type: "offer",
+//     });
+
+//     res.status(201).json({ success: true, message: "Added to wishlist successfully", wishlistItem });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// /**
+//  * @swagger
+//  * /api/customer/wishlist/remove/{id}:
+//  *   delete:
+//  *     summary: Remove item from wishlist
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - CustomerBearerAuth: []
+//  *     parameters:
+//  *       - in: path
+//  *         name: id
+//  *         required: true
+//  *         schema:
+//  *           type: string
+//  *         description: Wishlist item ID
+//  *     responses:
+//  *       200:
+//  *         description: Removed from wishlist successfully
+//  *       404:
+//  *         description: Item not found
+//  */
+// const removeFromWishlist = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const { id } = req.params;
+
+//     const deletedItem = await Wishlist.findOneAndDelete({ _id: id, userId });
+//     if (!deletedItem) {
+//       return res.status(404).json({ success: false, message: "Item not found in wishlist" });
+//     }
+
+//     await Notification.create({
+//       userId,
+//       productId: deletedItem.productId,
+//       title: "Removed from Wishlist ❌",
+//       message: `"${deletedItem.title || "Product"}" was removed from your wishlist.`,
+//       type: "offer",
+//     });
+
+//     res.status(200).json({ success: true, message: "Removed from wishlist successfully" });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// /**
+//  * @swagger
+//  * /api/customer/wishlist:
+//  *   get:
+//  *     summary: Get customer wishlist items
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - CustomerBearerAuth: []
+//  *     responses:
+//  *       200:
+//  *         description: Wishlist fetched successfully
+//  */
+// const getWishlist = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const wishlist = await Wishlist.find({ userId });
+//     res.status(200).json({ success: true, count: wishlist.length, wishlist });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// // ==================== CART CONTROLLERS ====================
+
+// /**
+//  * @swagger
+//  * /api/customer/cart/add:
+//  *   post:
+//  *     summary: Add product to cart
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - CustomerBearerAuth: []
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             required:
+//  *               - productId
+//  *               - title
+//  *               - price
+//  *             properties:
+//  *               productId:
+//  *                 type: string
+//  *               title:
+//  *                 type: string
+//  *               description:
+//  *                 type: string
+//  *               price:
+//  *                 type: string
+//  *               image:
+//  *                 type: string
+//  *               quantity:
+//  *                 type: number
+//  *               sellerId:
+//  *                 type: string
+//  *     responses:
+//  *       201:
+//  *         description: Added to cart successfully
+//  */
+// const addToCart = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const { productId, title, description, price, image, quantity, sellerId } = req.body;
+
+//     let cartItem = await Cart.findOne({ userId, productId });
+//     if (cartItem) {
+//       cartItem.quantity += quantity || 1;
+//       if (sellerId) cartItem.sellerId = sellerId;
+//       await cartItem.save();
+
+//       await Notification.create({
+//         userId,
+//         productId,
+//         title: "Cart Updated 🛒",
+//         message: `Quantity for "${title || "Product"}" was updated in your cart.`,
+//         type: "order",
+//       });
+
+//       return res.status(200).json({ success: true, message: "Cart quantity updated", cartItem });
+//     }
+
+//     cartItem = new Cart({
+//       userId,
+//       productId,
+//       title,
+//       description,
+//       price,
+//       image,
+//       quantity: quantity || 1,
+//       sellerId,
+//     });
+
+//     await cartItem.save();
+
+//     await Notification.create({
+//       userId,
+//       productId,
+//       title: "Added to Cart 🛍️",
+//       message: `"${title || "Product"}" has been successfully added to your shopping cart.`,
+//       type: "order",
+//     });
+
+//     res.status(201).json({ success: true, message: "Added to cart successfully", cartItem });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// /**
+//  * @swagger
+//  * /api/customer/cart/remove/{id}:
+//  *   delete:
+//  *     summary: Remove item from cart
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - CustomerBearerAuth: []
+//  *     parameters:
+//  *       - in: path
+//  *         name: id
+//  *         required: true
+//  *         schema:
+//  *           type: string
+//  *         description: Cart item ID
+//  *     responses:
+//  *       200:
+//  *         description: Removed from cart successfully
+//  */
+// const removeFromCart = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const { id } = req.params;
+
+//     const deletedItem = await Cart.findOneAndDelete({ _id: id, userId });
+//     if (!deletedItem) {
+//       return res.status(404).json({ success: false, message: "Item not found in cart" });
+//     }
+
+//     await Notification.create({
+//       userId,
+//       productId: deletedItem.productId,
+//       title: "Removed from Cart 🗑️",
+//       message: `"${deletedItem.title || "Product"}" has been removed from your cart.`,
+//       type: "order",
+//     });
+
+//     res.status(200).json({ success: true, message: "Removed from cart successfully" });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// /**
+//  * @swagger
+//  * /api/customer/cart:
+//  *   get:
+//  *     summary: Get customer cart items
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - CustomerBearerAuth: []
+//  *     responses:
+//  *       200:
+//  *         description: Cart items fetched successfully
+//  */
+// const getCart = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const cart = await Cart.find({ userId });
+//     res.status(200).json({ success: true, count: cart.length, cart });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// // ==================== ORDER CONTROLLERS ====================
+
+// /**
+//  * @swagger
+//  * /api/customer/order/create:
+//  *   post:
+//  *     summary: Create a new order
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - CustomerBearerAuth: []
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             required:
+//  *               - productId
+//  *               - productTitle
+//  *               - price
+//  *               - quantity
+//  *               - totalAmount
+//  *               - fullName
+//  *               - phone
+//  *               - address
+//  *               - paymentMethod
+//  *               - sellerId
+//  *             properties:
+//  *               productId:
+//  *                 type: string
+//  *               productTitle:
+//  *                 type: string
+//  *               productImage:
+//  *                 type: string
+//  *               price:
+//  *                 type: number
+//  *               quantity:
+//  *                 type: number
+//  *               totalAmount:
+//  *                 type: number
+//  *               fullName:
+//  *                 type: string
+//  *               phone:
+//  *                 type: string
+//  *               address:
+//  *                 type: string
+//  *               paymentMethod:
+//  *                 type: string
+//  *                 enum: ["Cash on Delivery", "Online Payment (Razorpay)"]
+//  *               paymentStatus:
+//  *                 type: string
+//  *               razorpayPaymentId:
+//  *                 type: string
+//  *               sellerId:
+//  *                 type: string
+//  *     responses:
+//  *       201:
+//  *         description: Order created successfully
+//  */
+// const createOrder = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const {
+//       productId,
+//       productTitle,
+//       productImage,
+//       price,
+//       quantity,
+//       totalAmount,
+//       fullName,
+//       phone,
+//       address,
+//       paymentMethod,
+//       paymentStatus,
+//       razorpayPaymentId,
+//       sellerId,
+//     } = req.body;
+
+//     const newOrder = new Order({
+//       userId,
+//       productId,
+//       productTitle,
+//       productImage,
+//       price,
+//       quantity,
+//       totalAmount,
+//       fullName,
+//       phone,
+//       address,
+//       paymentMethod,
+//       paymentStatus: paymentStatus || "Pending",
+//       razorpayPaymentId: razorpayPaymentId || "",
+//       sellerId,
+//     });
+
+//     const savedOrder = await newOrder.save();
+
+//     await Notification.create({
+//       userId,
+//       productId,
+//       title: "Order Placed Successfully! 📦",
+//       message: `Your order for ${productTitle} has been placed successfully.`,
+//       type: "order",
+//     });
+
+//     res.status(201).json({ success: true, message: "Order created successfully", order: savedOrder });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// /**
+//  * @swagger
+//  * /api/customer/orders:
+//  *   get:
+//  *     summary: Get all orders of logged-in customer
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - CustomerBearerAuth: []
+//  *     responses:
+//  *       200:
+//  *         description: Orders fetched successfully
+//  */
+// const getCustomerOrders = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const orders = await Order.find({ userId }).sort({ createdAt: -1 });
+//     res.status(200).json({ success: true, count: orders.length, orders });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// // ==================== NOTIFICATION CONTROLLERS ====================
+
+// /**
+//  * @swagger
+//  * /api/customer/notifications:
+//  *   get:
+//  *     summary: Get all notifications for logged-in customer
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - CustomerBearerAuth: []
+//  *     responses:
+//  *       200:
+//  *         description: Notifications fetched successfully
+//  */
+// const getCustomerNotifications = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const notifications = await Notification.find({ userId }).sort({ createdAt: -1 });
+//     res.status(200).json({ success: true, count: notifications.length, notifications });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// /**
+//  * @swagger
+//  * /api/customer/notifications/read:
+//  *   put:
+//  *     summary: Mark all notifications as read
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - CustomerBearerAuth: []
+//  *     responses:
+//  *       200:
+//  *         description: Notifications marked as read
+//  */
+// const markNotificationsAsRead = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     await Notification.updateMany({ userId, read: false }, { $set: { read: true } });
+//     res.status(200).json({ success: true, message: "Notifications marked as read" });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// // ==================== ROUTES CONFIGURATION ====================
+// // Public Routes
+// router.post("/register", registerCustomer);
+// router.post("/login", loginCustomer);
+// router.post("/logout", logoutCustomer);
+
+// // Protected Routes (Secured with Bearer Token & protectCustomer middleware)
+// router.get("/products", protectCustomer, getAllProductsForCustomer);
+
+// router.post("/wishlist/add", protectCustomer, addToWishlist);
+// router.delete("/wishlist/remove/:id", protectCustomer, removeFromWishlist);
+// router.get("/wishlist", protectCustomer, getWishlist);
+
+// router.post("/cart/add", protectCustomer, addToCart);
+// router.delete("/cart/remove/:id", protectCustomer, removeFromCart);
+// router.get("/cart", protectCustomer, getCart);
+
+// router.post("/order/create", protectCustomer, createOrder);
+// router.get("/orders", protectCustomer, getCustomerOrders);
+
+// router.get("/notifications", protectCustomer, getCustomerNotifications);
+// router.put("/notifications/read", protectCustomer, markNotificationsAsRead);
+
+// module.exports = router;
+
+
+
+//claude corrected corrected coffice
+
+
+
+// const express = require("express");
+// const router = express.Router();
+// const Customer = require("../models/Customer");
+// const SellerProduct = require("../models/SellerProduct");
+// const Notification = require("../models/Notification");
+// const Wishlist = require("../models/Wishlist");
+// const Cart = require("../models/Cart");
+// const Order = require("../models/Order");
+// const bcrypt = require("bcryptjs");
+// const jwt = require("jsonwebtoken");
+// const { protectCustomer } = require("../middleware/customerMiddleware");
+
+// const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_key_here";
+
+// /**
+//  * @swagger
+//  * tags:
+//  *   name: Customer Authentication & Management
+//  *   description: Customer APIs for Auth, Cart, Wishlist, Orders, and Notifications
+//  */
+
+// /**
+//  * @swagger
+//  * components:
+//  *   securitySchemes:
+//  *     CustomerBearerAuth:
+//  *       type: http
+//  *       scheme: bearer
+//  *       bearerFormat: JWT
+//  *       description: Enter your JWT token in the format (e.g. Bearer <token>)
+//  */
+
+// // ==================== AUTH CONTROLLERS ====================
+
+// /**
+//  * @swagger
+//  * /api/customer/register:
+//  *   post:
+//  *     summary: Register a new customer
+//  *     tags: [Customer Authentication & Management]
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             required:
+//  *               - email
+//  *               - password
+//  *               - fullName
+//  *               - mobile
+//  *             properties:
+//  *               email:
+//  *                 type: string
+//  *                 example: "customer1@gmail.com"
+//  *               password:
+//  *                 type: string
+//  *                 example: "password1123"
+//  *               fullName:
+//  *                 type: string
+//  *                 example: "Rahull Sharma"
+//  *               mobile:
+//  *                 type: string
+//  *                 example: "9876533210"
+//  *     responses:
+//  *       201:
+//  *         description: Registration successful
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               type: object
+//  *               properties:
+//  *                 message:
+//  *                   type: string
+//  *                   example: "Registration successful!"
+//  *                 token:
+//  *                   type: string
+//  *                   example: "eyJhbGciOiJIUzI1Ni..."
+//  *       400:
+//  *         description: Email is already registered
+//  */
+// const registerCustomer = async (req, res) => {
+//   try {
+//     const {
+//       fullName,
+//       email,
+//       mobile,
+//       dob,
+//       password,
+//       houseNo,
+//       street,
+//       city,
+//       state,
+//       pincode,
+//       country,
+//     } = req.body;
+
+//     const existingUser = await Customer.findOne({ email });
+//     if (existingUser) {
+//       return res.status(400).json({ message: "Email is already registered!" });
+//     }
+
+//     const saltRounds = 10;
+//     const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+//     const newCustomer = new Customer({
+//       fullName,
+//       email,
+//       mobile,
+//       dob,
+//       password: hashedPassword,
+//       houseNo,
+//       street,
+//       city,
+//       state,
+//       pincode,
+//       country: country || "India",
+//     });
+
+//     const savedCustomer = await newCustomer.save();
+
+//     // ⚠️ Notification banane me agar koi error aaye (e.g. schema me koi
+//     // required field missing ho) to poora registration fail NAHI hona
+//     // chahiye — isliye alag try/catch me isolate kiya.
+//     try {
+//       await Notification.create({
+//         userId: savedCustomer._id,
+//         title: "Welcome to Kavi Shawls! 🎉",
+//         message: "Thank you for registering with us. Enjoy exploring our luxury collection.",
+//         type: "offer",
+//       });
+//     } catch (notifyError) {
+//       console.error("Notification creation failed (register):", notifyError.message);
+//     }
+
+//     // ✅ role add kiya
+//     const token = jwt.sign(
+//       { id: savedCustomer._id, email: savedCustomer.email, role: "customer" },
+//       JWT_SECRET,
+//       { expiresIn: "1d" }
+//     );
+
+//     res.cookie("token", token, {
+//       httpOnly: true,
+//       secure: false,
+//       sameSite: "strict",
+//       maxAge: 24 * 60 * 60 * 1000,
+//     });
+
+//     // 🔒 Response me ab sirf message + token — poora customer object nahi bheja
+//     res.status(201).json({
+//       message: "Registration successful!",
+//       token,
+//     });
+//   } catch (error) {
+//     console.error("Error during registration:", error);
+//     res.status(500).json({ message: error.message || "Server error, please try again." });
+//   }
+// };
+
+// /**
+//  * @swagger
+//  * /api/customer/login:
+//  *   post:
+//  *     summary: Customer Login
+//  *     tags: [Customer Authentication & Management]
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             required:
+//  *               - email
+//  *               - password
+//  *             properties:
+//  *               email:
+//  *                 type: string
+//  *                 example: "customer1@gmail.com"
+//  *               password:
+//  *                 type: string
+//  *                 example: "password1123"
+//  *     responses:
+//  *       200:
+//  *         description: Login Successfully with JWT Token
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               type: object
+//  *               properties:
+//  *                 message:
+//  *                   type: string
+//  *                   example: "Login Successfully"
+//  *                 token:
+//  *                   type: string
+//  *                   example: "eyJhbGciOiJIUzI1Ni..."
+//  *       400:
+//  *         description: Invalid email or password
+//  */
+// const loginCustomer = async (req, res) => {
+//   try {
+//     const { email: userEmail, password: userPassword } = req.body;
+
+//     const user = await Customer.findOne({ email: userEmail });
+//     if (!user) {
+//       return res.status(400).json({ message: "Invalid email or password!" });
+//     }
+
+//     const isMatch = await bcrypt.compare(userPassword, user.password);
+//     if (!isMatch) {
+//       return res.status(400).json({ message: "Invalid email or password!" });
+//     }
+
+//     // ⚠️ Isolate kiya taaki Notification schema me koi validation error
+//     // aane par pura login crash na ho (500 error ki sabse common wajah).
+//     try {
+//       await Notification.create({
+//         userId: user._id,
+//         title: "Login Successful! 🔓",
+//         message: `Welcome back, ${user.fullName || "Customer"}! You successfully logged into your account.`,
+//         type: "order",
+//       });
+//     } catch (notifyError) {
+//       console.error("Notification creation failed (login):", notifyError.message);
+//     }
+
+//     // ✅ role add kiya
+//     const token = jwt.sign(
+//       { id: user._id, email: user.email, role: "customer" },
+//       JWT_SECRET,
+//       { expiresIn: "1d" }
+//     );
+
+//     res.cookie("token", token, {
+//       httpOnly: true,
+//       secure: false,
+//       sameSite: "strict",
+//       maxAge: 24 * 60 * 60 * 1000,
+//     });
+
+//     // 🔒 Response me ab sirf message + token — poora customer object nahi bheja
+//     res.status(200).json({
+//       message: "Login Successfully",
+//       token,
+//     });
+//   } catch (error) {
+//     console.error("Error during login:", error);
+//     res.status(500).json({ message: error.message || "Server error during login" });
+//   }
+// };
+
+// /**
+//  * @swagger
+//  * /api/customer/logout:
+//  *   post:
+//  *     summary: Customer Logout
+//  *     tags: [Customer Authentication & Management]
+//  *     responses:
+//  *       200:
+//  *         description: Logged out successfully
+//  */
+// const logoutCustomer = async (req, res) => {
+//   try {
+//     res.clearCookie("token", {
+//       httpOnly: true,
+//       sameSite: "strict",
+//     });
+//     res.status(200).json({ message: "Logged out successfully" });
+//   } catch (error) {
+//     console.error("Error during logout:", error);
+//     res.status(500).json({ message: "Server error during logout" });
+//   }
+// };
+
+// // ==================== PRODUCT CONTROLLERS ====================
+
+// /**
+//  * @swagger
+//  * /api/customer/products:
+//  *   get:
+//  *     summary: Get all products for customers
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - CustomerBearerAuth: []
+//  *     responses:
+//  *       200:
+//  *         description: Products fetched successfully
+//  *       401:
+//  *         description: Unauthorized / Token missing or invalid
+//  */
+// const getAllProductsForCustomer = async (req, res) => {
+//   try {
+//     const products = await SellerProduct.find({});
+//     res.status(200).json({ success: true, count: products.length, products });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// // ==================== WISHLIST CONTROLLERS ====================
+
+// /**
+//  * @swagger
+//  * /api/customer/wishlist/add:
+//  *   post:
+//  *     summary: Add product to wishlist
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - CustomerBearerAuth: []
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             required:
+//  *               - productId
+//  *               - title
+//  *               - price
+//  *               - image
+//  *             properties:
+//  *               productId:
+//  *                 type: string
+//  *               title:
+//  *                 type: string
+//  *               description:
+//  *                 type: string
+//  *               price:
+//  *                 type: string
+//  *               discount:
+//  *                 type: string
+//  *               image:
+//  *                 type: string
+//  *     responses:
+//  *       201:
+//  *         description: Added to wishlist successfully
+//  *       401:
+//  *         description: Not authorized
+//  */
+// const addToWishlist = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const { productId, title, description, price, originalPrice, discount, image } = req.body;
+
+//     const existingWishlist = await Wishlist.findOne({ userId, productId });
+//     if (existingWishlist) {
+//       return res.status(400).json({ success: false, message: "Product already in wishlist" });
+//     }
+
+//     const wishlistItem = new Wishlist({
+//       userId,
+//       productId,
+//       title,
+//       description,
+//       price,
+//       originalPrice,
+//       discount,
+//       image,
+//     });
+
+//     await wishlistItem.save();
+
+//     try {
+//       await Notification.create({
+//         userId,
+//         productId,
+//         title: "Added to Wishlist ❤️",
+//         message: `"${title || "Product"}" has been added to your wishlist.`,
+//         type: "offer",
+//       });
+//     } catch (notifyError) {
+//       console.error("Notification creation failed (wishlist add):", notifyError.message);
+//     }
+
+//     res.status(201).json({ success: true, message: "Added to wishlist successfully", wishlistItem });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// /**
+//  * @swagger
+//  * /api/customer/wishlist/remove/{id}:
+//  *   delete:
+//  *     summary: Remove item from wishlist
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - CustomerBearerAuth: []
+//  *     parameters:
+//  *       - in: path
+//  *         name: id
+//  *         required: true
+//  *         schema:
+//  *           type: string
+//  *         description: Wishlist item ID
+//  *     responses:
+//  *       200:
+//  *         description: Removed from wishlist successfully
+//  *       404:
+//  *         description: Item not found
+//  */
+// const removeFromWishlist = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const { id } = req.params;
+
+//     const deletedItem = await Wishlist.findOneAndDelete({ _id: id, userId });
+//     if (!deletedItem) {
+//       return res.status(404).json({ success: false, message: "Item not found in wishlist" });
+//     }
+
+//     try {
+//       await Notification.create({
+//         userId,
+//         productId: deletedItem.productId,
+//         title: "Removed from Wishlist ❌",
+//         message: `"${deletedItem.title || "Product"}" was removed from your wishlist.`,
+//         type: "offer",
+//       });
+//     } catch (notifyError) {
+//       console.error("Notification creation failed (wishlist remove):", notifyError.message);
+//     }
+
+//     res.status(200).json({ success: true, message: "Removed from wishlist successfully" });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// /**
+//  * @swagger
+//  * /api/customer/wishlist:
+//  *   get:
+//  *     summary: Get customer wishlist items
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - CustomerBearerAuth: []
+//  *     responses:
+//  *       200:
+//  *         description: Wishlist fetched successfully
+//  */
+// const getWishlist = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const wishlist = await Wishlist.find({ userId });
+//     res.status(200).json({ success: true, count: wishlist.length, wishlist });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// // ==================== CART CONTROLLERS ====================
+
+// /**
+//  * @swagger
+//  * /api/customer/cart/add:
+//  *   post:
+//  *     summary: Add product to cart
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - CustomerBearerAuth: []
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             required:
+//  *               - productId
+//  *               - title
+//  *               - price
+//  *             properties:
+//  *               productId:
+//  *                 type: string
+//  *               title:
+//  *                 type: string
+//  *               description:
+//  *                 type: string
+//  *               price:
+//  *                 type: string
+//  *               image:
+//  *                 type: string
+//  *               quantity:
+//  *                 type: number
+//  *               sellerId:
+//  *                 type: string
+//  *     responses:
+//  *       201:
+//  *         description: Added to cart successfully
+//  */
+// const addToCart = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const { productId, title, description, price, image, quantity, sellerId } = req.body;
+
+//     let cartItem = await Cart.findOne({ userId, productId });
+//     if (cartItem) {
+//       cartItem.quantity += quantity || 1;
+//       if (sellerId) cartItem.sellerId = sellerId;
+//       await cartItem.save();
+
+//       try {
+//         await Notification.create({
+//           userId,
+//           productId,
+//           title: "Cart Updated 🛒",
+//           message: `Quantity for "${title || "Product"}" was updated in your cart.`,
+//           type: "order",
+//         });
+//       } catch (notifyError) {
+//         console.error("Notification creation failed (cart update):", notifyError.message);
+//       }
+
+//       return res.status(200).json({ success: true, message: "Cart quantity updated", cartItem });
+//     }
+
+//     cartItem = new Cart({
+//       userId,
+//       productId,
+//       title,
+//       description,
+//       price,
+//       image,
+//       quantity: quantity || 1,
+//       sellerId,
+//     });
+
+//     await cartItem.save();
+
+//     try {
+//       await Notification.create({
+//         userId,
+//         productId,
+//         title: "Added to Cart 🛍️",
+//         message: `"${title || "Product"}" has been successfully added to your shopping cart.`,
+//         type: "order",
+//       });
+//     } catch (notifyError) {
+//       console.error("Notification creation failed (cart add):", notifyError.message);
+//     }
+
+//     res.status(201).json({ success: true, message: "Added to cart successfully", cartItem });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// /**
+//  * @swagger
+//  * /api/customer/cart/remove/{id}:
+//  *   delete:
+//  *     summary: Remove item from cart
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - CustomerBearerAuth: []
+//  *     parameters:
+//  *       - in: path
+//  *         name: id
+//  *         required: true
+//  *         schema:
+//  *           type: string
+//  *         description: Cart item ID
+//  *     responses:
+//  *       200:
+//  *         description: Removed from cart successfully
+//  */
+// const removeFromCart = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const { id } = req.params;
+
+//     const deletedItem = await Cart.findOneAndDelete({ _id: id, userId });
+//     if (!deletedItem) {
+//       return res.status(404).json({ success: false, message: "Item not found in cart" });
+//     }
+
+//     try {
+//       await Notification.create({
+//         userId,
+//         productId: deletedItem.productId,
+//         title: "Removed from Cart 🗑️",
+//         message: `"${deletedItem.title || "Product"}" has been removed from your cart.`,
+//         type: "order",
+//       });
+//     } catch (notifyError) {
+//       console.error("Notification creation failed (cart remove):", notifyError.message);
+//     }
+
+//     res.status(200).json({ success: true, message: "Removed from cart successfully" });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// /**
+//  * @swagger
+//  * /api/customer/cart:
+//  *   get:
+//  *     summary: Get customer cart items
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - CustomerBearerAuth: []
+//  *     responses:
+//  *       200:
+//  *         description: Cart items fetched successfully
+//  */
+// const getCart = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const cart = await Cart.find({ userId });
+//     res.status(200).json({ success: true, count: cart.length, cart });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// // ==================== ORDER CONTROLLERS ====================
+
+// /**
+//  * @swagger
+//  * /api/customer/order/create:
+//  *   post:
+//  *     summary: Create a new order
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - CustomerBearerAuth: []
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             required:
+//  *               - productId
+//  *               - productTitle
+//  *               - price
+//  *               - quantity
+//  *               - totalAmount
+//  *               - fullName
+//  *               - phone
+//  *               - address
+//  *               - paymentMethod
+//  *               - sellerId
+//  *             properties:
+//  *               productId:
+//  *                 type: string
+//  *               productTitle:
+//  *                 type: string
+//  *               productImage:
+//  *                 type: string
+//  *               price:
+//  *                 type: number
+//  *               quantity:
+//  *                 type: number
+//  *               totalAmount:
+//  *                 type: number
+//  *               fullName:
+//  *                 type: string
+//  *               phone:
+//  *                 type: string
+//  *               address:
+//  *                 type: string
+//  *               paymentMethod:
+//  *                 type: string
+//  *                 enum: ["Cash on Delivery", "Online Payment (Razorpay)"]
+//  *               paymentStatus:
+//  *                 type: string
+//  *               razorpayPaymentId:
+//  *                 type: string
+//  *               sellerId:
+//  *                 type: string
+//  *     responses:
+//  *       201:
+//  *         description: Order created successfully
+//  */
+// const createOrder = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const {
+//       productId,
+//       productTitle,
+//       productImage,
+//       price,
+//       quantity,
+//       totalAmount,
+//       fullName,
+//       phone,
+//       address,
+//       paymentMethod,
+//       paymentStatus,
+//       razorpayPaymentId,
+//       sellerId,
+//     } = req.body;
+
+//     const newOrder = new Order({
+//       userId,
+//       productId,
+//       productTitle,
+//       productImage,
+//       price,
+//       quantity,
+//       totalAmount,
+//       fullName,
+//       phone,
+//       address,
+//       paymentMethod,
+//       paymentStatus: paymentStatus || "Pending",
+//       razorpayPaymentId: razorpayPaymentId || "",
+//       sellerId,
+//     });
+
+//     const savedOrder = await newOrder.save();
+
+//     try {
+//       await Notification.create({
+//         userId,
+//         productId,
+//         title: "Order Placed Successfully! 📦",
+//         message: `Your order for ${productTitle} has been placed successfully.`,
+//         type: "order",
+//       });
+//     } catch (notifyError) {
+//       console.error("Notification creation failed (order create):", notifyError.message);
+//     }
+
+//     res.status(201).json({ success: true, message: "Order created successfully", order: savedOrder });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// /**
+//  * @swagger
+//  * /api/customer/orders:
+//  *   get:
+//  *     summary: Get all orders of logged-in customer
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - CustomerBearerAuth: []
+//  *     responses:
+//  *       200:
+//  *         description: Orders fetched successfully
+//  */
+// const getCustomerOrders = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const orders = await Order.find({ userId }).sort({ createdAt: -1 });
+//     res.status(200).json({ success: true, count: orders.length, orders });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// // ==================== NOTIFICATION CONTROLLERS ====================
+
+// /**
+//  * @swagger
+//  * /api/customer/notifications:
+//  *   get:
+//  *     summary: Get all notifications for logged-in customer
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - CustomerBearerAuth: []
+//  *     responses:
+//  *       200:
+//  *         description: Notifications fetched successfully
+//  */
+// const getCustomerNotifications = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const notifications = await Notification.find({ userId }).sort({ createdAt: -1 });
+//     res.status(200).json({ success: true, count: notifications.length, notifications });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// /**
+//  * @swagger
+//  * /api/customer/notifications/read:
+//  *   put:
+//  *     summary: Mark all notifications as read
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - CustomerBearerAuth: []
+//  *     responses:
+//  *       200:
+//  *         description: Notifications marked as read
+//  */
+// const markNotificationsAsRead = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     await Notification.updateMany({ userId, read: false }, { $set: { read: true } });
+//     res.status(200).json({ success: true, message: "Notifications marked as read" });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// // ==================== ROUTES CONFIGURATION ====================
+// // Public Routes
+// router.post("/register", registerCustomer);
+// router.post("/login", loginCustomer);
+// router.post("/logout", logoutCustomer);
+
+// // Protected Routes (Secured with Bearer Token & protectCustomer middleware)
+// router.get("/products", protectCustomer, getAllProductsForCustomer);
+
+// router.post("/wishlist/add", protectCustomer, addToWishlist);
+// router.delete("/wishlist/remove/:id", protectCustomer, removeFromWishlist);
+// router.get("/wishlist", protectCustomer, getWishlist);
+
+// router.post("/cart/add", protectCustomer, addToCart);
+// router.delete("/cart/remove/:id", protectCustomer, removeFromCart);
+// router.get("/cart", protectCustomer, getCart);
+
+// router.post("/order/create", protectCustomer, createOrder);
+// router.get("/orders", protectCustomer, getCustomerOrders);
+
+// router.get("/notifications", protectCustomer, getCustomerNotifications);
+// router.put("/notifications/read", protectCustomer, markNotificationsAsRead);
+
+// module.exports = router;
+
+
+
+
+//kavish claude
+
+
+
+
+
 const express = require("express");
 const router = express.Router();
-const {
-  registerCustomer,
-  loginCustomer,
-  getAllCustomers,
-} = require("../controllers/customerController");
+const Customer = require("../models/Customer");
+const SellerProduct = require("../models/SellerProduct");
+const Notification = require("../models/Notification");
+const Wishlist = require("../models/Wishlist");
+const Cart = require("../models/Cart");
+const Order = require("../models/Order");
+const SellerNotification = require("../models/SellerNotification"); // ✅ seller ko order notify karne ke liye
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const { protectCustomer } = require("../middleware/customerMiddleware");
+
+const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_key_here";
 
 /**
  * @swagger
  * tags:
- *   name: customer login and register
- *   description: customer login and register management APIs
+ *   name: Customer Authentication & Management
+ *   description: Customer APIs for Auth, Cart, Wishlist, Orders, and Notifications
  */
 
 /**
  * @swagger
  * components:
  *   securitySchemes:
- *     BearerAuth:
+ *     CustomerBearerAuth:
  *       type: http
  *       scheme: bearer
  *       bearerFormat: JWT
  *       description: Enter your JWT token in the format (e.g. Bearer <token>)
- *   schemas:
- *     Customer:
- *       type: object
- *       properties:
- *         _id:
- *           type: string
- *           example: "60d0fe4f5311236168a109ca"
- *         fullName:
- *           type: string
- *           example: "Rahul Sharma"
- *         email:
- *           type: string
- *           example: "rahul@gmail.com"
- *         mobile:
- *           type: string
- *           example: "9876543210"
- *         dob:
- *           type: string
- *           example: "15-08-1995"
- *         houseNo:
- *           type: string
- *           example: "Flat 402"
- *         street:
- *           type: string
- *           example: "Main Market Road"
- *         city:
- *           type: string
- *           example: "Amritsar"
- *         state:
- *           type: string
- *           example: "Punjab"
- *         pincode:
- *           type: string
- *           example: "143001"
- *         country:
- *           type: string
- *           example: "India"
- *         createdAt:
- *           type: string
- *           format: date-time
  */
+
+// ==================== AUTH CONTROLLERS ====================
 
 /**
  * @swagger
- * /api/shawls/auth/register:
+ * /api/customer/register:
  *   post:
  *     summary: Register a new customer
- *     description: Registers a new customer account, hashes the password, sends a welcome notification, and returns a JWT token.
- *     tags: [customer login and register]
+ *     tags: [Customer Authentication & Management]
  *     requestBody:
  *       required: true
  *       content:
@@ -327,50 +3716,26 @@ const {
  *           schema:
  *             type: object
  *             required:
- *               - fullName
  *               - email
- *               - mobile
- *               - dob
  *               - password
- *               - houseNo
- *               - street
- *               - city
- *               - state
- *               - pincode
+ *               - fullName
+ *               - mobile
  *             properties:
- *               fullName:
- *                 type: string
- *                 example: "Rahul Sharma"
  *               email:
  *                 type: string
- *                 example: "rahul@gmail.com"
- *               mobile:
- *                 type: string
- *                 example: "9876543210"
- *               dob:
- *                 type: string
- *                 example: "15-08-1995"
+ *                 example: "customer1@gmail.com"
  *               password:
  *                 type: string
- *                 example: "password123"
- *               houseNo:
+ *                 example: "password1123"
+ *               fullName:
  *                 type: string
- *                 example: "Flat 402"
- *               street:
+ *                 example: "Rahull Sharma"
+ *               mobile:
  *                 type: string
- *                 example: "Main Market Road"
- *               city:
- *                 type: string
- *                 example: "Amritsar"
- *               state:
- *                 type: string
- *                 example: "Punjab"
- *               pincode:
- *                 type: string
- *                 example: "143001"
+ *                 example: "9876533210"
  *     responses:
- *       '201':
- *         description: Registration successful with JWT Token
+ *       201:
+ *         description: Registration successful
  *         content:
  *           application/json:
  *             schema:
@@ -381,21 +3746,95 @@ const {
  *                   example: "Registration successful!"
  *                 token:
  *                   type: string
- *                   example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
- *       '400':
+ *                   example: "eyJhbGciOiJIUzI1Ni..."
+ *       400:
  *         description: Email is already registered
- *       '500':
- *         description: Server error
  */
-router.post("/register", registerCustomer);
+const registerCustomer = async (req, res) => {
+  try {
+    const {
+      fullName,
+      email,
+      mobile,
+      dob,
+      password,
+      houseNo,
+      street,
+      city,
+      state,
+      pincode,
+      country,
+    } = req.body;
+
+    const existingUser = await Customer.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "Email is already registered!" });
+    }
+
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    const newCustomer = new Customer({
+      fullName,
+      email,
+      mobile,
+      dob,
+      password: hashedPassword,
+      houseNo,
+      street,
+      city,
+      state,
+      pincode,
+      country: country || "India",
+    });
+
+    const savedCustomer = await newCustomer.save();
+
+    // ⚠️ Notification banane me agar koi error aaye (e.g. schema me koi
+    // required field missing ho) to poora registration fail NAHI hona
+    // chahiye — isliye alag try/catch me isolate kiya.
+    try {
+      await Notification.create({
+        userId: savedCustomer._id,
+        title: "Welcome to Kavi Shawls! 🎉",
+        message: "Thank you for registering with us. Enjoy exploring our luxury collection.",
+        type: "offer",
+      });
+    } catch (notifyError) {
+      console.error("Notification creation failed (register):", notifyError.message);
+    }
+
+    // ✅ role add kiya
+    const token = jwt.sign(
+      { id: savedCustomer._id, email: savedCustomer.email, role: "customer" },
+      JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "strict",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
+    // 🔒 Response me ab sirf message + token — poora customer object nahi bheja
+    res.status(201).json({
+      message: "Registration successful!",
+      token,
+    });
+  } catch (error) {
+    console.error("Error during registration:", error);
+    res.status(500).json({ message: error.message || "Server error, please try again." });
+  }
+};
 
 /**
  * @swagger
- * /api/shawls/auth/login:
+ * /api/customer/login:
  *   post:
- *     summary: Login customer
- *     description: Authenticates customer credentials, creates a login notification, and returns a JWT token.
- *     tags: [customer login and register]
+ *     summary: Customer Login
+ *     tags: [Customer Authentication & Management]
  *     requestBody:
  *       required: true
  *       content:
@@ -408,13 +3847,13 @@ router.post("/register", registerCustomer);
  *             properties:
  *               email:
  *                 type: string
- *                 example: "rahul@gmail.com"
+ *                 example: "customer1@gmail.com"
  *               password:
  *                 type: string
- *                 example: "password123"
+ *                 example: "password1123"
  *     responses:
- *       '200':
- *         description: Login successful with JWT Token
+ *       200:
+ *         description: Login Successfully with JWT Token
  *         content:
  *           application/json:
  *             schema:
@@ -425,41 +3864,714 @@ router.post("/register", registerCustomer);
  *                   example: "Login Successfully"
  *                 token:
  *                   type: string
- *                   example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
- *                 user:
- *                   $ref: '#/components/schemas/Customer'
- *       '400':
+ *                   example: "eyJhbGciOiJIUzI1Ni..."
+ *       400:
  *         description: Invalid email or password
- *       '500':
- *         description: Server error during login
  */
-router.post("/login", loginCustomer);
+const loginCustomer = async (req, res) => {
+  try {
+    const { email: userEmail, password: userPassword } = req.body;
+
+    const user = await Customer.findOne({ email: userEmail });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid email or password!" });
+    }
+
+    const isMatch = await bcrypt.compare(userPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid email or password!" });
+    }
+
+    // ⚠️ Isolate kiya taaki Notification schema me koi validation error
+    // aane par pura login crash na ho (500 error ki sabse common wajah).
+    try {
+      await Notification.create({
+        userId: user._id,
+        title: "Login Successful! 🔓",
+        message: `Welcome back, ${user.fullName || "Customer"}! You successfully logged into your account.`,
+        type: "order",
+      });
+    } catch (notifyError) {
+      console.error("Notification creation failed (login):", notifyError.message);
+    }
+
+    // ✅ role add kiya
+    const token = jwt.sign(
+      { id: user._id, email: user.email, role: "customer" },
+      JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "strict",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
+    // 🔒 Response me ab sirf message + token — poora customer object nahi bheja
+    res.status(200).json({
+      message: "Login Successfully",
+      token,
+    });
+  } catch (error) {
+    console.error("Error during login:", error);
+    res.status(500).json({ message: error.message || "Server error during login" });
+  }
+};
 
 /**
  * @swagger
- * /api/shawls/auth/admin/users:
- *   get:
- *     summary: Get all registered customers (Admin)
- *     description: Retrieves a list of all customers excluding their passwords, sorted by latest first.
- *     tags: [customer login and register]
+ * /api/customer/logout:
+ *   post:
+ *     summary: Customer Logout
+ *     tags: [Customer Authentication & Management]
  *     responses:
- *       '200':
- *         description: List of users fetched successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 users:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/Customer'
- *       '500':
- *         description: Server error while fetching users
+ *       200:
+ *         description: Logged out successfully
  */
-router.get("/admin/users", getAllCustomers);
+const logoutCustomer = async (req, res) => {
+  try {
+    res.clearCookie("token", {
+      httpOnly: true,
+      sameSite: "strict",
+    });
+    res.status(200).json({ message: "Logged out successfully" });
+  } catch (error) {
+    console.error("Error during logout:", error);
+    res.status(500).json({ message: "Server error during logout" });
+  }
+};
+
+// ==================== PRODUCT CONTROLLERS ====================
+
+/**
+ * @swagger
+ * /api/customer/products:
+ *   get:
+ *     summary: Get all products for customers
+ *     tags: [Customer Authentication & Management]
+ *     security:
+ *       - CustomerBearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Products fetched successfully
+ *       401:
+ *         description: Unauthorized / Token missing or invalid
+ */
+const getAllProductsForCustomer = async (req, res) => {
+  try {
+    const products = await SellerProduct.find({});
+    res.status(200).json({ success: true, count: products.length, products });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// ==================== WISHLIST CONTROLLERS ====================
+
+/**
+ * @swagger
+ * /api/customer/wishlist/add:
+ *   post:
+ *     summary: Add product to wishlist
+ *     tags: [Customer Authentication & Management]
+ *     security:
+ *       - CustomerBearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - productId
+ *               - title
+ *               - price
+ *               - image
+ *             properties:
+ *               productId:
+ *                 type: string
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               price:
+ *                 type: string
+ *               discount:
+ *                 type: string
+ *               image:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Added to wishlist successfully
+ *       401:
+ *         description: Not authorized
+ */
+const addToWishlist = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { productId, title, description, price, originalPrice, discount, image } = req.body;
+
+    const existingWishlist = await Wishlist.findOne({ userId, productId });
+    if (existingWishlist) {
+      return res.status(400).json({ success: false, message: "Product already in wishlist" });
+    }
+
+    const wishlistItem = new Wishlist({
+      userId,
+      productId,
+      title,
+      description,
+      price,
+      originalPrice,
+      discount,
+      image,
+    });
+
+    await wishlistItem.save();
+
+    try {
+      await Notification.create({
+        userId,
+        productId,
+        title: "Added to Wishlist ❤️",
+        message: `"${title || "Product"}" has been added to your wishlist.`,
+        type: "offer",
+      });
+    } catch (notifyError) {
+      console.error("Notification creation failed (wishlist add):", notifyError.message);
+    }
+
+    res.status(201).json({ success: true, message: "Added to wishlist successfully", wishlistItem });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+/**
+ * @swagger
+ * /api/customer/wishlist/remove/{id}:
+ *   delete:
+ *     summary: Remove item from wishlist
+ *     tags: [Customer Authentication & Management]
+ *     security:
+ *       - CustomerBearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Wishlist item ID
+ *     responses:
+ *       200:
+ *         description: Removed from wishlist successfully
+ *       404:
+ *         description: Item not found
+ */
+const removeFromWishlist = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { id } = req.params;
+
+    const deletedItem = await Wishlist.findOneAndDelete({ _id: id, userId });
+    if (!deletedItem) {
+      return res.status(404).json({ success: false, message: "Item not found in wishlist" });
+    }
+
+    try {
+      await Notification.create({
+        userId,
+        productId: deletedItem.productId,
+        title: "Removed from Wishlist ❌",
+        message: `"${deletedItem.title || "Product"}" was removed from your wishlist.`,
+        type: "offer",
+      });
+    } catch (notifyError) {
+      console.error("Notification creation failed (wishlist remove):", notifyError.message);
+    }
+
+    res.status(200).json({ success: true, message: "Removed from wishlist successfully" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+/**
+ * @swagger
+ * /api/customer/wishlist:
+ *   get:
+ *     summary: Get customer wishlist items
+ *     tags: [Customer Authentication & Management]
+ *     security:
+ *       - CustomerBearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Wishlist fetched successfully
+ */
+const getWishlist = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const wishlist = await Wishlist.find({ userId });
+    res.status(200).json({ success: true, count: wishlist.length, wishlist });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// ==================== CART CONTROLLERS ====================
+
+/**
+ * @swagger
+ * /api/customer/cart/add:
+ *   post:
+ *     summary: Add product to cart
+ *     tags: [Customer Authentication & Management]
+ *     security:
+ *       - CustomerBearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - productId
+ *               - title
+ *               - price
+ *             properties:
+ *               productId:
+ *                 type: string
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               price:
+ *                 type: string
+ *               image:
+ *                 type: string
+ *               quantity:
+ *                 type: number
+ *               sellerId:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Added to cart successfully
+ */
+const addToCart = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { productId, title, description, price, image, quantity, sellerId } = req.body;
+
+    let cartItem = await Cart.findOne({ userId, productId });
+    if (cartItem) {
+      cartItem.quantity += quantity || 1;
+      if (sellerId) cartItem.sellerId = sellerId;
+      await cartItem.save();
+
+      try {
+        await Notification.create({
+          userId,
+          productId,
+          title: "Cart Updated 🛒",
+          message: `Quantity for "${title || "Product"}" was updated in your cart.`,
+          type: "order",
+        });
+      } catch (notifyError) {
+        console.error("Notification creation failed (cart update):", notifyError.message);
+      }
+
+      return res.status(200).json({ success: true, message: "Cart quantity updated", cartItem });
+    }
+
+    cartItem = new Cart({
+      userId,
+      productId,
+      title,
+      description,
+      price,
+      image,
+      quantity: quantity || 1,
+      sellerId,
+    });
+
+    await cartItem.save();
+
+    try {
+      await Notification.create({
+        userId,
+        productId,
+        title: "Added to Cart 🛍️",
+        message: `"${title || "Product"}" has been successfully added to your shopping cart.`,
+        type: "order",
+      });
+    } catch (notifyError) {
+      console.error("Notification creation failed (cart add):", notifyError.message);
+    }
+
+    res.status(201).json({ success: true, message: "Added to cart successfully", cartItem });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+/**
+ * @swagger
+ * /api/customer/cart/remove/{id}:
+ *   delete:
+ *     summary: Remove item from cart
+ *     tags: [Customer Authentication & Management]
+ *     security:
+ *       - CustomerBearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Cart item ID
+ *     responses:
+ *       200:
+ *         description: Removed from cart successfully
+ */
+const removeFromCart = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { id } = req.params;
+
+    const deletedItem = await Cart.findOneAndDelete({ _id: id, userId });
+    if (!deletedItem) {
+      return res.status(404).json({ success: false, message: "Item not found in cart" });
+    }
+
+    try {
+      await Notification.create({
+        userId,
+        productId: deletedItem.productId,
+        title: "Removed from Cart 🗑️",
+        message: `"${deletedItem.title || "Product"}" has been removed from your cart.`,
+        type: "order",
+      });
+    } catch (notifyError) {
+      console.error("Notification creation failed (cart remove):", notifyError.message);
+    }
+
+    res.status(200).json({ success: true, message: "Removed from cart successfully" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+/**
+ * @swagger
+ * /api/customer/cart:
+ *   get:
+ *     summary: Get customer cart items
+ *     tags: [Customer Authentication & Management]
+ *     security:
+ *       - CustomerBearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Cart items fetched successfully
+ */
+const getCart = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const cart = await Cart.find({ userId });
+    res.status(200).json({ success: true, count: cart.length, cart });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// ==================== ORDER CONTROLLERS ====================
+
+/**
+ * @swagger
+ * /api/customer/order/create:
+ *   post:
+ *     summary: Create a new order
+ *     tags: [Customer Authentication & Management]
+ *     security:
+ *       - CustomerBearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - productId
+ *               - productTitle
+ *               - price
+ *               - quantity
+ *               - totalAmount
+ *               - fullName
+ *               - phone
+ *               - address
+ *               - paymentMethod
+ *               - sellerId
+ *             properties:
+ *               productId:
+ *                 type: string
+ *               productTitle:
+ *                 type: string
+ *               productImage:
+ *                 type: string
+ *               price:
+ *                 type: number
+ *               quantity:
+ *                 type: number
+ *               totalAmount:
+ *                 type: number
+ *               fullName:
+ *                 type: string
+ *               phone:
+ *                 type: string
+ *               address:
+ *                 type: string
+ *               paymentMethod:
+ *                 type: string
+ *                 enum: ["Cash on Delivery", "Online Payment (Razorpay)"]
+ *               paymentStatus:
+ *                 type: string
+ *               razorpayPaymentId:
+ *                 type: string
+ *               sellerId:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Order created successfully
+ */
+const createOrder = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const {
+      productId,
+      productTitle,
+      productImage,
+      price,
+      quantity,
+      totalAmount,
+      fullName,
+      phone,
+      address,
+      paymentMethod,
+      paymentStatus,
+      razorpayPaymentId,
+      sellerId,
+    } = req.body;
+
+    const newOrder = new Order({
+      userId,
+      productId,
+      productTitle,
+      productImage,
+      price,
+      quantity,
+      totalAmount,
+      fullName,
+      phone,
+      address,
+      paymentMethod,
+      paymentStatus: paymentStatus || "Pending",
+      razorpayPaymentId: razorpayPaymentId || "",
+      sellerId,
+    });
+
+    const savedOrder = await newOrder.save();
+
+    // 🔔 Customer ko notification
+    try {
+      await Notification.create({
+        userId,
+        productId,
+        title: "Order Placed Successfully! 📦",
+        message: `Your order for ${productTitle} has been placed successfully.`,
+        type: "order",
+      });
+    } catch (notifyError) {
+      console.error("Notification creation failed (order create - customer):", notifyError.message);
+    }
+
+    // 🔔 Seller ko bhi notification — pehle yahan sirf customer ko ja raha tha
+    if (sellerId) {
+      try {
+        await SellerNotification.create({
+          sellerId,
+          title: "New Order Received! 🛒",
+          message: `${fullName || "A customer"} ne "${productTitle}" ka order place kiya hai. Quantity: ${quantity || 1}.`,
+          type: "success",
+        });
+      } catch (notifyError) {
+        console.error("Notification creation failed (order create - seller):", notifyError.message);
+      }
+    } else {
+      console.warn("Order create: sellerId missing, seller notification skip ho gayi.");
+    }
+
+    res.status(201).json({ success: true, message: "Order created successfully", order: savedOrder });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+/**
+ * @swagger
+ * /api/customer/orders:
+ *   get:
+ *     summary: Get all orders of logged-in customer
+ *     tags: [Customer Authentication & Management]
+ *     security:
+ *       - CustomerBearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Orders fetched successfully
+ */
+const getCustomerOrders = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const orders = await Order.find({ userId }).sort({ createdAt: -1 });
+    res.status(200).json({ success: true, count: orders.length, orders });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// ==================== NOTIFICATION CONTROLLERS ====================
+
+/**
+ * @swagger
+ * /api/customer/notifications:
+ *   get:
+ *     summary: Get all notifications for logged-in customer
+ *     tags: [Customer Authentication & Management]
+ *     security:
+ *       - CustomerBearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Notifications fetched successfully
+ */
+const getCustomerNotifications = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const notifications = await Notification.find({ userId }).sort({ createdAt: -1 });
+    res.status(200).json({ success: true, count: notifications.length, notifications });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+/**
+ * @swagger
+ * /api/customer/notifications/read:
+ *   put:
+ *     summary: Mark all notifications as read
+ *     tags: [Customer Authentication & Management]
+ *     security:
+ *       - CustomerBearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Notifications marked as read
+ */
+const markNotificationsAsRead = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    await Notification.updateMany({ userId, read: false }, { $set: { read: true } });
+    res.status(200).json({ success: true, message: "Notifications marked as read" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+/**
+ * @swagger
+ * /api/customer/notifications/read/{id}:
+ *   put:
+ *     summary: Mark a single notification as read
+ *     tags: [Customer Authentication & Management]
+ *     security:
+ *       - CustomerBearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Notification ID
+ *     responses:
+ *       200:
+ *         description: Notification marked as read
+ *       404:
+ *         description: Notification not found
+ */
+const markSingleNotificationAsRead = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { id } = req.params;
+
+    const updated = await Notification.findOneAndUpdate(
+      { _id: id, userId },
+      { $set: { read: true } },
+      { new: true }
+    );
+
+    if (!updated) {
+      return res.status(404).json({ success: false, message: "Notification not found" });
+    }
+
+    res.status(200).json({ success: true, message: "Notification marked as read", notification: updated });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+/**
+ * @swagger
+ * /api/customer/notifications/clear:
+ *   delete:
+ *     summary: Clear (delete) all notifications for the logged-in customer
+ *     tags: [Customer Authentication & Management]
+ *     security:
+ *       - CustomerBearerAuth: []
+ *     responses:
+ *       200:
+ *         description: All notifications cleared
+ */
+const clearAllNotifications = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    await Notification.deleteMany({ userId });
+    res.status(200).json({ success: true, message: "All notifications cleared" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// ==================== ROUTES CONFIGURATION ====================
+// Public Routes
+router.post("/register", registerCustomer);
+router.post("/login", loginCustomer);
+router.post("/logout", logoutCustomer);
+
+// Protected Routes (Secured with Bearer Token & protectCustomer middleware)
+router.get("/products", protectCustomer, getAllProductsForCustomer);
+
+router.post("/wishlist/add", protectCustomer, addToWishlist);
+router.delete("/wishlist/remove/:id", protectCustomer, removeFromWishlist);
+router.get("/wishlist", protectCustomer, getWishlist);
+
+router.post("/cart/add", protectCustomer, addToCart);
+router.delete("/cart/remove/:id", protectCustomer, removeFromCart);
+router.get("/cart", protectCustomer, getCart);
+
+router.post("/order/create", protectCustomer, createOrder);
+router.get("/orders", protectCustomer, getCustomerOrders);
+
+router.get("/notifications", protectCustomer, getCustomerNotifications);
+router.put("/notifications/read", protectCustomer, markNotificationsAsRead);
+router.put("/notifications/read/:id", protectCustomer, markSingleNotificationAsRead); // ✅ naya
+router.delete("/notifications/clear", protectCustomer, clearAllNotifications); // ✅ naya
 
 module.exports = router;

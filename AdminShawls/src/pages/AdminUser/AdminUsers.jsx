@@ -165,13 +165,23 @@ function AdminUsers() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/shawls/auth/admin/users"); // Apne backend ka users API endpoint yahan likhein
+        // LocalStorage se admin ka token nikalein (jis naam se aapne login ke waqt save kiya ho)
+        const token = localStorage.getItem("adminToken"); // ya "token" jo bhi aap use kar rahe hain
+
+        const response = await fetch("http://localhost:5000/api/admin/users", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}` // 👈 Yeh token bhejna zaroori hai
+          }
+        }); 
+
         const data = await response.json();
 
         if (response.ok) {
-          setUsers(data.users || data); // Depend karta hai ki backend response ka format kya hai
+          setUsers(data.users || data); 
         } else {
-          console.error("Failed to fetch users");
+          console.error("Failed to fetch users:", data.message);
         }
       } catch (error) {
         console.error("Error connecting to server:", error);
@@ -182,7 +192,7 @@ function AdminUsers() {
 
     fetchUsers();
   }, []);
-
+  
   return (
     <div className="container-fluid p-0" style={{ backgroundColor: "#f0fdf4", minHeight: "100vh", fontFamily: "'Inter', sans-serif" }}>
       <div className="row g-0">

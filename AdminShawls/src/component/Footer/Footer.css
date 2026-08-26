@@ -24,7 +24,7 @@
   font-size: 24px;
   letter-spacing: 2px;
   margin-bottom: 15px;
-  margin-left: -50px;
+  /* margin-left: -50px; */
   font-family: 'Caveat', cursive, sans-serif;
 }
 
@@ -32,7 +32,7 @@
   color: #aaaaaa;
   font-size: 14px;
   line-height: 1.6;
-  margin-left: -50px;
+  /* margin-left: -50px; */
 }
 
 .customer_footer-col h4 {
