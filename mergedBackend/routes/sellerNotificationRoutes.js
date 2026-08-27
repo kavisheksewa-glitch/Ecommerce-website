@@ -677,6 +677,8 @@ const express = require("express");
 const router = express.Router();
 const SellerNotification = require("../models/SellerNotification");
 const { protect } = require("../middleware/authMiddleware");
+//const Product = require("../models/Product");
+const SellerProduct = require("../models/SellerProduct");
 
 /**
  * @swagger
@@ -726,7 +728,31 @@ router.get("/", protect, async (req, res) => {
       is_read: { $ne: true }
     }).sort({ createdAt: -1 });
 
-    res.status(200).json(notifications);
+//seller apna low stock product check karta <10
+    const lowStockProducts = await SellerProduct.find({
+      sellerId:sellerId,
+      $or:[
+        {stockQuantity:{$lt:5}},
+        {stock:{$lt:5}}
+      ]
+    });
+
+    // 3. Low stock products ko notification format mein convert karein
+    const lowStockNotifications = lowStockProducts.map((p) => ({
+      _id: `lowstock-${p._id}`, // Unique virtual ID taaki frontend error na de
+      sellerId: sellerId,
+      title: "⚠️ Low Stock Alert!",
+      message: `Aapka product "${p.productName || $p.name || p.title}" low stock mein hai. Bacha hua stock: ${p.stockQuantity ?? p.stock ?? 0}`,
+      type: "danger", // Bootstrap alert-danger ke liye red look
+      is_read: false,
+      createdAt: p.updatedAt || new Date()
+    }));
+
+    // 4. Dono notifications ko combine karke frontend ko bhej dein
+    const allNotifications = [...notifications, ...lowStockNotifications];
+
+
+    res.status(200).json(allNotifications);
   } catch (err) {
     console.error("Error fetching seller notifications:", err);
     res.status(500).json({ error: "Failed to fetch notifications" });
@@ -768,6 +794,11 @@ router.put("/:id/read", protect, async (req, res) => {
     }
 
     const notificationId = req.params.id;
+
+    if (notificationId.startsWith("lowstock-")) {
+      // Low stock ko sirf frontend view se hatane ke liye success response bhej sakte hain
+      return res.status(200).json({ message: "Low stock alert dismissed for session" });
+    }
 
     const updatedNotification = await SellerNotification.findOneAndUpdate(
       { _id: notificationId, sellerId: sellerId },

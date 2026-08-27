@@ -33,8 +33,16 @@ const jwt = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_key_here";
 
 const protect = (req, res, next) => {
+  let token;
   // Token header ya cookies se nikal sakte hain
-  const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
+  //const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
+
+  if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+    token = req.headers.authorization.split(" ")[1];
+  } else if (req.cookies && req.cookies.token) {
+    token = req.cookies.token;
+  }
+
 
   if (!token) {
     return res.status(401).json({ message: "Access denied. No token provided." });
