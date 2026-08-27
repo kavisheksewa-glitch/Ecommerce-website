@@ -2747,90 +2747,90 @@ const { protect } = require("../middleware/authMiddleware"); // ✅ Seller JWT v
  *           format: date-time
  */
 
-/**
- * @swagger
- * /api/shawls/orders/add:
- *   post:
- *     summary: Create a new order
- *     description: Saves a new customer order, handles seller identification, triggers seller notification, and customer notification with productId.
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - userId
- *               - productId
- *               - productTitle
- *               - price
- *               - quantity
- *               - totalAmount
- *               - fullName
- *               - phone
- *               - address
- *               - paymentMethod
- *             properties:
- *               userId:
- *                 type: string
- *                 example: "60d0fe4f5311236168a109ca"
- *               productId:
- *                 type: string
- *                 example: "60d0fe4f5311236168a109cb"
- *               productTitle:
- *                 type: string
- *                 example: "Kashmiri Pashmina Shawl"
- *               productImage:
- *                 type: string
- *                 example: "https://example.com/shawl.jpg"
- *               price:
- *                 type: number
- *                 example: 1500
- *               quantity:
- *                 type: integer
- *                 example: 1
- *               totalAmount:
- *                 type: number
- *                 example: 1500
- *               fullName:
- *                 type: string
- *                 example: "Rahul Sharma"
- *               phone:
- *                 type: string
- *                 example: "9876543210"
- *               address:
- *                 type: string
- *                 example: "123, Main Street, Delhi"
- *               paymentMethod:
- *                 type: string
- *                 example: "Online"
- *               paymentStatus:
- *                 type: string
- *                 example: "Pending"
- *               razorpayPaymentId:
- *                 type: string
- *                 example: "pay_123456789"
- *               sellerId:
- *                 type: string
- *                 example: "60d0fe4f5311236168a109cc"
- *     responses:
- *       '201':
- *         description: Order saved successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Order safaltapoorvak save ho gaya!"
- *                 order:
- *                   $ref: '#/components/schemas/Order'
- *       '400':
- *         description: Missing required fields
- *       '500':
- *         description: Server error
- */
+// /**
+//  * @swagger
+//  * /api/shawls/orders/add:
+//  *   post:
+//  *     summary: Create a new order
+//  *     description: Saves a new customer order, handles seller identification, triggers seller notification, and customer notification with productId.
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             required:
+//  *               - userId
+//  *               - productId
+//  *               - productTitle
+//  *               - price
+//  *               - quantity
+//  *               - totalAmount
+//  *               - fullName
+//  *               - phone
+//  *               - address
+//  *               - paymentMethod
+//  *             properties:
+//  *               userId:
+//  *                 type: string
+//  *                 example: "60d0fe4f5311236168a109ca"
+//  *               productId:
+//  *                 type: string
+//  *                 example: "60d0fe4f5311236168a109cb"
+//  *               productTitle:
+//  *                 type: string
+//  *                 example: "Kashmiri Pashmina Shawl"
+//  *               productImage:
+//  *                 type: string
+//  *                 example: "https://example.com/shawl.jpg"
+//  *               price:
+//  *                 type: number
+//  *                 example: 1500
+//  *               quantity:
+//  *                 type: integer
+//  *                 example: 1
+//  *               totalAmount:
+//  *                 type: number
+//  *                 example: 1500
+//  *               fullName:
+//  *                 type: string
+//  *                 example: "Rahul Sharma"
+//  *               phone:
+//  *                 type: string
+//  *                 example: "9876543210"
+//  *               address:
+//  *                 type: string
+//  *                 example: "123, Main Street, Delhi"
+//  *               paymentMethod:
+//  *                 type: string
+//  *                 example: "Online"
+//  *               paymentStatus:
+//  *                 type: string
+//  *                 example: "Pending"
+//  *               razorpayPaymentId:
+//  *                 type: string
+//  *                 example: "pay_123456789"
+//  *               sellerId:
+//  *                 type: string
+//  *                 example: "60d0fe4f5311236168a109cc"
+//  *     responses:
+//  *       '201':
+//  *         description: Order saved successfully
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               type: object
+//  *               properties:
+//  *                 message:
+//  *                   type: string
+//  *                   example: "Order safaltapoorvak save ho gaya!"
+//  *                 order:
+//  *                   $ref: '#/components/schemas/Order'
+//  *       '400':
+//  *         description: Missing required fields
+//  *       '500':
+//  *         description: Server error
+//  */
 router.post("/add", async (req, res) => {
   try {
     const {
@@ -2972,15 +2972,11 @@ router.post("/add", async (req, res) => {
  *       '500':
  *         description: Server error
  */
-router.get("/seller/my-orders", protect, async (req, res) => {
+router.get("/seller/my-orders",protect,async (req, res) => {
   try {
-    const sellerId = req.seller?.id || req.seller?._id;
 
-    if (!sellerId) {
-      return res.status(401).json({ success: false, message: "Unauthorized: seller id missing from token" });
-    }
 
-    const orders = await Order.find({ sellerId }).sort({ createdAt: -1 });
+    const orders = await Order.find({  }).sort({ createdAt: -1 });
     return res.status(200).json({ success: true, count: orders.length, orders });
   } catch (error) {
     console.error("Seller orders fetch karte waqt error:", error);
@@ -2988,32 +2984,32 @@ router.get("/seller/my-orders", protect, async (req, res) => {
   }
 });
 
-/**
- * @swagger
- * /api/shawls/orders/user/{userId}:
- *   get:
- *     summary: Get all orders for a specific user
- *     description: Retrieves all orders placed by a given customer ID, sorted by latest first.
- *     parameters:
- *       - in: path
- *         name: userId
- *         required: true
- *         schema:
- *           type: string
- *         description: The user ID
- *         example: "60d0fe4f5311236168a109ca"
- *     responses:
- *       '200':
- *         description: List of orders fetched successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Order'
- *       '500':
- *         description: Server error
- */
+// /**
+//  * @swagger
+//  * /api/shawls/orders/user/{userId}:
+//  *   get:
+//  *     summary: Get all orders for a specific user
+//  *     description: Retrieves all orders placed by a given customer ID, sorted by latest first.
+//  *     parameters:
+//  *       - in: path
+//  *         name: userId
+//  *         required: true
+//  *         schema:
+//  *           type: string
+//  *         description: The user ID
+//  *         example: "60d0fe4f5311236168a109ca"
+//  *     responses:
+//  *       '200':
+//  *         description: List of orders fetched successfully
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               type: array
+//  *               items:
+//  *                 $ref: '#/components/schemas/Order'
+//  *       '500':
+//  *         description: Server error
+//  */
 router.get("/user/:userId", async (req, res) => {
   try {
     const orders = await Order.find({ userId: req.params.userId }).sort({ createdAt: -1 });
@@ -3024,28 +3020,28 @@ router.get("/user/:userId", async (req, res) => {
   }
 });
 
-/**
- * @swagger
- * /api/shawls/orders:
- *   get:
- *     summary: Get all orders (Admin only)
- *     description: >
- *       Retrieves all orders across all sellers/users, sorted by latest first.
- *       ⚠️ This route is currently NOT authenticated — intended for the Admin
- *       panel. Sellers should use GET /seller/my-orders instead, which is
- *       secure and scoped to their own orders only.
- *     responses:
- *       '200':
- *         description: All orders list fetched successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Order'
- *       '500':
- *         description: Server error
- */
+// /**
+//  * @swagger
+//  * /api/shawls/orders:
+//  *   get:
+//  *     summary: Get all orders (Admin only)
+//  *     description: >
+//  *       Retrieves all orders across all sellers/users, sorted by latest first.
+//  *       ⚠️ This route is currently NOT authenticated — intended for the Admin
+//  *       panel. Sellers should use GET /seller/my-orders instead, which is
+//  *       secure and scoped to their own orders only.
+//  *     responses:
+//  *       '200':
+//  *         description: All orders list fetched successfully
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               type: array
+//  *               items:
+//  *                 $ref: '#/components/schemas/Order'
+//  *       '500':
+//  *         description: Server error
+//  */
 router.get("/", async (req, res) => {
   try {
     const orders = await Order.find().sort({ createdAt: -1 });
@@ -3056,32 +3052,32 @@ router.get("/", async (req, res) => {
   }
 });
 
-/**
- * @swagger
- * /api/shawls/orders/{id}:
- *   get:
- *     summary: Get a single order by ID
- *     description: Retrieves details of a specific order by its unique document ID (used for tracking).
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: The unique order document ID
- *         example: "60d0fe4f5311236168a109bb"
- *     responses:
- *       '200':
- *         description: Order details fetched successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Order'
- *       '404':
- *         description: Order not found
- *       '500':
- *         description: Server error
- */
+// /**
+//  * @swagger
+//  * /api/shawls/orders/{id}:
+//  *   get:
+//  *     summary: Get a single order by ID
+//  *     description: Retrieves details of a specific order by its unique document ID (used for tracking).
+//  *     parameters:
+//  *       - in: path
+//  *         name: id
+//  *         required: true
+//  *         schema:
+//  *           type: string
+//  *         description: The unique order document ID
+//  *         example: "60d0fe4f5311236168a109bb"
+//  *     responses:
+//  *       '200':
+//  *         description: Order details fetched successfully
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               $ref: '#/components/schemas/Order'
+//  *       '404':
+//  *         description: Order not found
+//  *       '500':
+//  *         description: Server error
+//  */
 router.get("/:id", async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
@@ -3093,46 +3089,46 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-/**
- * @swagger
- * /api/shawls/orders/{id}/status:
- *   patch:
- *     summary: Update order status (Admin/Seller)
- *     description: Updates the status of a specific order (e.g., Processing, Shipped, Delivered).
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: The unique order document ID
- *         example: "60d0fe4f5311236168a109bb"
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - orderStatus
- *             properties:
- *               orderStatus:
- *                 type: string
- *                 example: "Shipped"
- *     responses:
- *       '200':
- *         description: Order status updated successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Order'
- *       '400':
- *         description: Order status missing
- *       '404':
- *         description: Order not found
- *       '500':
- *         description: Server error
- */
+// /**
+//  * @swagger
+//  * /api/shawls/orders/{id}/status:
+//  *   patch:
+//  *     summary: Update order status (Admin/Seller)
+//  *     description: Updates the status of a specific order (e.g., Processing, Shipped, Delivered).
+//  *     parameters:
+//  *       - in: path
+//  *         name: id
+//  *         required: true
+//  *         schema:
+//  *           type: string
+//  *         description: The unique order document ID
+//  *         example: "60d0fe4f5311236168a109bb"
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             required:
+//  *               - orderStatus
+//  *             properties:
+//  *               orderStatus:
+//  *                 type: string
+//  *                 example: "Shipped"
+//  *     responses:
+//  *       '200':
+//  *         description: Order status updated successfully
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               $ref: '#/components/schemas/Order'
+//  *       '400':
+//  *         description: Order status missing
+//  *       '404':
+//  *         description: Order not found
+//  *       '500':
+//  *         description: Server error
+//  */
 router.patch("/:id/status", async (req, res) => {
   try {
     const { orderStatus } = req.body;
@@ -3172,41 +3168,41 @@ router.patch("/:id/status", async (req, res) => {
   }
 });
 
-/**
- * @swagger
- * /api/shawls/orders/{id}/track:
- *   put:
- *     summary: Update tracking ID for an order (Seller)
- *     description: Updates the tracking ID and changes order status to Shipped.
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: The unique order document ID
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - trackingId
- *             properties:
- *               trackingId:
- *                 type: string
- *                 example: "TRK987654321"
- *     responses:
- *       '200':
- *         description: Tracking ID updated successfully
- *       '400':
- *         description: Tracking ID is required
- *       '404':
- *         description: Order not found
- *       '500':
- *         description: Server error
- */
+// /**
+//  * @swagger
+//  * /api/shawls/orders/{id}/track:
+//  *   put:
+//  *     summary: Update tracking ID for an order (Seller)
+//  *     description: Updates the tracking ID and changes order status to Shipped.
+//  *     parameters:
+//  *       - in: path
+//  *         name: id
+//  *         required: true
+//  *         schema:
+//  *           type: string
+//  *         description: The unique order document ID
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             required:
+//  *               - trackingId
+//  *             properties:
+//  *               trackingId:
+//  *                 type: string
+//  *                 example: "TRK987654321"
+//  *     responses:
+//  *       '200':
+//  *         description: Tracking ID updated successfully
+//  *       '400':
+//  *         description: Tracking ID is required
+//  *       '404':
+//  *         description: Order not found
+//  *       '500':
+//  *         description: Server error
+//  */
 router.put("/:id/track", async (req, res) => {
   try {
     const { trackingId } = req.body;

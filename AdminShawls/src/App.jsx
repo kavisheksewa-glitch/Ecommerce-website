@@ -288,6 +288,7 @@ import Settings from "./components/SellerSettings/Settings";
 import SellerDetails from "./components/SellerDetails/SellerDetails";
 import SellerForgetPassword from "./components/SellerForgetPassword/SellerForgetPassword";
 import FrontPage from './FrontPage';
+import VerifyEmail from "./component/Verifyemail";
 // Customer Layout (Includes Header and Footer)
 const CustomerLayout = () => (
   <div>
@@ -460,6 +461,7 @@ function AppContent() {
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
           <Route
             path="/product/:id"
             element={

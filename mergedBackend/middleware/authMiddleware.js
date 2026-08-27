@@ -42,7 +42,7 @@ const protect = (req, res, next) => {
 
   try {
     const verified = jwt.verify(token, JWT_SECRET);
-
+// console.log(verified)
     // ✅ Sirf seller role wale token yahan chalein
     if (verified.role !== "seller") {
       return res.status(403).json({ message: "Access denied. This token is not authorized for seller routes." });
