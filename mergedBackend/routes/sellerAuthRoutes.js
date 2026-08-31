@@ -1223,7 +1223,9 @@ const {
 } = require("../controllers/sellerAuthController");
 const { protect } = require("../middleware/authMiddleware"); // ✅ JWT verify karta hai, req.seller set karta hai
 const { protectAdmin } = require("../middleware/adminMiddleware");
-
+//change
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
 /**
  * @swagger
  * tags:
@@ -1362,7 +1364,7 @@ router.get("/", protectAdmin, getAllSellers); // 👈 Root route ko upar rakha g
  *       '500':
  *         description: Server Error
  */
-router.post("/register", register);
+router.post("/register", upload.single("profilePicture"), register);
 
 /**
  * @swagger

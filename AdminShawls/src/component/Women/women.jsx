@@ -66,6 +66,64 @@ function Women() {
       .catch((err) => console.error("Error fetching wishlist items:", err));
   };
 
+  // useEffect(() => {
+  //   axios
+  //     .get("http://localhost:5000/api/seller/products/public")
+  //     .then((res) => {
+  //       if (Array.isArray(res.data)) {
+  //         const dbProducts = res.data
+  //           .filter((p) => p.category === "Women's Shawls")
+  //           .map((p, index) => ({
+  //             id: p._id,
+  //             title: p.productName,
+  //             description: p.description,
+  //             price: `₹${p.price}`,
+  //             rawPrice: Number(p.price) || 0,
+  //             originalPrice: p.discount ? `₹${Math.round(p.price * (1 + p.discount / 100))}` : "",
+  //             discount: p.discount ? `${p.discount}% OFF` : null,
+  //            // image: `http://localhost:5000/${p.productImage}`,
+  //            image: p.productImage?.startsWith("http") ? p.productImage : `http://localhost:5000/${p.productImage}`, // ✅ SAHI CODE
+  //             stock: `Stock: ${p.stockQuantity}`,
+  //             fabric: p.fabric || "N/A",
+  //             color: p.color || "N/A",
+  //             size: p.size || "N/A",
+  //             careInstructions: p.washCare || "N/A",
+  //             createdAt: p.createdAt ? new Date(p.createdAt).getTime() : index,
+  //             sellerId: p.sellerId || "", // ✅ FIX: was missing, cart/wishlist need this
+  //           }));
+
+  //         const formattedStatic = womenShawls.map((item, index) => ({
+  //           ...item,
+  //           rawPrice: Number(item.price.replace(/[^0-9]/g, "")) || 0,
+  //           createdAt: index,
+  //           sellerId: item.sellerId || "", // ✅ keep consistent for static items too
+  //         }));
+
+  //         setAllProducts([...formattedStatic, ...dbProducts]);
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.error("Error fetching live products:", err);
+  //       const formattedStatic = womenShawls.map((item, index) => ({
+  //         ...item,
+  //         rawPrice: Number(item.price.replace(/[^0-9]/g, "")) || 0,
+  //         createdAt: index,
+  //         sellerId: item.sellerId || "",
+  //       }));
+  //       setAllProducts(formattedStatic);
+  //     });
+
+  //   fetchCartAndWishlist();
+  //   window.addEventListener("cartUpdated", fetchCartAndWishlist);
+  //   window.addEventListener("wishlistUpdated", fetchCartAndWishlist);
+  //   return () => {
+  //     window.removeEventListener("cartUpdated", fetchCartAndWishlist);
+  //     window.removeEventListener("wishlistUpdated", fetchCartAndWishlist);
+  //   };
+  // }, []);
+
+
+
   useEffect(() => {
     axios
       .get("http://localhost:5000/api/seller/products/public")
@@ -81,21 +139,25 @@ function Women() {
               rawPrice: Number(p.price) || 0,
               originalPrice: p.discount ? `₹${Math.round(p.price * (1 + p.discount / 100))}` : "",
               discount: p.discount ? `${p.discount}% OFF` : null,
-              image: `http://localhost:5000/${p.productImage}`,
+              image: p.productImage?.startsWith("http") ? p.productImage : `http://localhost:5000/${p.productImage}`,
+              
+              // ✅ FIX: Yeh line missing thi, ab brand logo backend se map ho jayega
+              brandLogo: p.brandLogo ? (p.brandLogo.startsWith("http") ? p.brandLogo : `http://localhost:5000/${p.brandLogo}`) : "",
+              
               stock: `Stock: ${p.stockQuantity}`,
               fabric: p.fabric || "N/A",
               color: p.color || "N/A",
               size: p.size || "N/A",
               careInstructions: p.washCare || "N/A",
               createdAt: p.createdAt ? new Date(p.createdAt).getTime() : index,
-              sellerId: p.sellerId || "", // ✅ FIX: was missing, cart/wishlist need this
+              sellerId: p.sellerId || "",
             }));
 
           const formattedStatic = womenShawls.map((item, index) => ({
             ...item,
             rawPrice: Number(item.price.replace(/[^0-9]/g, "")) || 0,
             createdAt: index,
-            sellerId: item.sellerId || "", // ✅ keep consistent for static items too
+            sellerId: item.sellerId || "",
           }));
 
           setAllProducts([...formattedStatic, ...dbProducts]);
@@ -515,7 +577,7 @@ function Women() {
                     className="card h-100 border-0 shadow-sm d-flex flex-column justify-content-between p-2 position-relative"
                     style={{ backgroundColor: "#e4c893", borderRadius: "16px" }}
                   >
-                    <div className="Customer_product-image-box card overflow-hidden position-relative">
+                    {/* <div className="Customer_product-image-box card overflow-hidden position-relative">
                       {item.discount && (
                         <span
                           className="badge bg-danger position-absolute top-0 start-0 m-2 px-2 py-1 shadow-sm fw-bold"
@@ -568,7 +630,94 @@ function Women() {
                       >
                         <FaHeart />
                       </button>
-                    </div>
+                    </div> */}
+
+                          <div className="Customer_product-image-box card overflow-hidden position-relative">
+  
+  {/* ✅ Brand Logo Display */}
+  {item.brandLogo && (
+    <div 
+      className="position-absolute shadow-sm rounded-circle overflow-hidden bg-white d-flex align-items-center justify-content-center"
+      style={{
+        top: "10px",
+        left: "10px",
+        width: "50px",
+        height: "50px",
+        zIndex: 3,
+        border: "1.5px solid #fff"
+      }}
+      title="Brand Logo"
+    >
+      <img
+        src={
+          item.brandLogo.startsWith("http") 
+            ? item.brandLogo 
+            : `http://localhost:5000/${item.brandLogo}`
+        }
+        alt="Brand Logo"
+        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+      />
+    </div>
+  )}
+
+  {/* Discount Badge */}
+  {item.discount && (
+    <span
+      className="badge bg-danger position-absolute start-0 m-2 px-2 py-1 shadow-sm fw-bold"
+      style={{
+        top: item.brandLogo ? "54px" : "0px", // Agar brand logo hoga toh badge thoda niche shift ho jayega
+        zIndex: 2,
+        fontSize: "0.75rem",
+        borderRadius: "6px",
+      }}
+    >
+      {item.discount}
+    </span>
+  )}
+
+  <img
+    src={item.image}
+    className="card-img-top rounded Customer_product-image"
+    alt={item.title}
+  />
+
+  <button
+    className="Customer_share-btn"
+    onClick={() => handleShare(item)}
+    title="Share Product"
+  >
+    <FaShareAlt />
+  </button>
+
+  <button
+    className="Customer_wishlist-btn"
+    onClick={() => handleToggleWishlist(item)}
+    title="Wishlist Product"
+    style={{
+      position: "absolute",
+      top: "10px",
+      right: "50px",
+      background: "white",
+      border: "none",
+      borderRadius: "50%",
+      width: "35px",
+      height: "35px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      cursor: "pointer",
+      boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
+      color: isWishlisted ? "red" : "#ccc",
+      transition: "color 0.2s ease",
+      zIndex: 2,
+    }}
+  >
+    <FaHeart />
+  </button>
+  
+</div>
+
+
 
                     <div className="card-body px-2 py-3 d-flex flex-column justify-content-between">
                       <div>

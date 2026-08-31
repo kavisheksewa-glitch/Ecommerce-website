@@ -385,6 +385,8 @@
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const { cloudinary } = require("../config/cloudinary");
 const {
   addProduct,
   getProducts,
@@ -393,10 +395,18 @@ const {
 } = require("../controllers/sellerProductController");
 const { protect } = require("../middleware/authMiddleware");
 
-const storage = multer.diskStorage({
-  destination: "./uploads/",
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + file.originalname);
+// const storage = multer.diskStorage({
+//   destination: "./uploads/",
+//   filename: (req, file, cb) => {
+//     cb(null, Date.now() + "-" + file.originalname);
+//   },
+// });
+
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "seller-products", // Cloudinary par kis folder me images save hongi
+    allowed_formats: ["jpg", "png", "jpeg", "webp"],
   },
 });
 const upload = multer({ storage });
@@ -478,7 +488,7 @@ router.get("/public", getProducts);
  * /api/seller/products/add:
  *   post:
  *     summary: Add a new product (Seller)
- *     description: Creates a new product with image and brand logo uploads. Requires authentication.
+ *     description: Creates a new product with all required specifications matching the seller add product form.
  *     tags: [Seller Products]
  *     security:
  *       - SellerBearerAuth: []
@@ -489,18 +499,46 @@ router.get("/public", getProducts);
  *           schema:
  *             type: object
  *             required:
- *               - title
+ *               - productName
+ *               - category
  *               - price
+ *               - discount
+ *               - stockQuantity
+ *               - fabric
+ *               - color
+ *               - size
+ *               - washCare
  *             properties:
- *               title:
+ *               productName:
  *                 type: string
  *                 example: "Kashmiri Pashmina Shawl"
- *               description:
+ *               category:
  *                 type: string
- *                 example: "Pure wool handmade shawl"
+ *                 example: "Women's Shawls"
  *               price:
  *                 type: number
  *                 example: 1500
+ *               discount:
+ *                 type: number
+ *                 example: 10
+ *               stockQuantity:
+ *                 type: number
+ *                 example: 50
+ *               description:
+ *                 type: string
+ *                 example: "Pure wool handmade shawl with intricate embroidery."
+ *               fabric:
+ *                 type: string
+ *                 example: "Pure Cashmere Wool"
+ *               color:
+ *                 type: string
+ *                 example: "Beige"
+ *               size:
+ *                 type: string
+ *                 example: "200cm x 100cm"
+ *               washCare:
+ *                 type: string
+ *                 example: "Dry clean only"
  *               productImage:
  *                 type: string
  *                 format: binary
@@ -511,9 +549,7 @@ router.get("/public", getProducts);
  *       '201':
  *         description: Product added successfully
  *       '400':
- *         description: Bad request
- *       '401':
- *         description: Unauthorized (Token missing or invalid)
+ *         description: Bad request (Missing required fields)
  *       '500':
  *         description: Server error
  */
@@ -549,7 +585,7 @@ router.get("/", protect, getProducts);
  * /api/seller/products/update/{id}:
  *   put:
  *     summary: Update product by ID
- *     description: Updates product information along with optional file re-uploads. Requires authentication.
+ *     description: Updates product information along with specifications and optional file re-uploads. Requires authentication.
  *     tags: [Seller Products]
  *     security:
  *       - SellerBearerAuth: []
@@ -568,15 +604,36 @@ router.get("/", protect, getProducts);
  *           schema:
  *             type: object
  *             properties:
- *               title:
+ *               productName:
  *                 type: string
  *                 example: "Updated Pashmina Shawl"
- *               description:
+ *               category:
  *                 type: string
- *                 example: "Updated description"
+ *                 example: "Women's Shawls"
  *               price:
  *                 type: number
  *                 example: 1800
+ *               discount:
+ *                 type: number
+ *                 example: 10
+ *               stockQuantity:
+ *                 type: number
+ *                 example: 40
+ *               description:
+ *                 type: string
+ *                 example: "Updated description"
+ *               fabric:
+ *                 type: string
+ *                 example: "Pure Cashmere Wool"
+ *               color:
+ *                 type: string
+ *                 example: "Beige"
+ *               size:
+ *                 type: string
+ *                 example: "200cm x 100cm"
+ *               washCare:
+ *                 type: string
+ *                 example: "Dry clean only"
  *               productImage:
  *                 type: string
  *                 format: binary
@@ -594,7 +651,6 @@ router.get("/", protect, getProducts);
  *         description: Server error
  */
 router.put("/update/:id", protect, uploadFields, updateProduct);
-
 /**
  * @swagger
  * /api/seller/products/delete/{id}:

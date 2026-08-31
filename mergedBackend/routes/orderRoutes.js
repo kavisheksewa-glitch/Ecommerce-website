@@ -2972,11 +2972,11 @@ router.post("/add", async (req, res) => {
  *       '500':
  *         description: Server error
  */
-router.get("/seller/my-orders",protect,async (req, res) => {
+router.get("/seller/my-orders", protect, async (req, res) => {
   try {
-
-
-    const orders = await Order.find({  }).sort({ createdAt: -1 });
+    // req.seller._id se sirf logged-in seller ke orders filter honge
+    const sellerId = req.seller._id || req.seller.id;
+    const orders = await Order.find({ sellerId: sellerId }).sort({ createdAt: -1 });
     return res.status(200).json({ success: true, count: orders.length, orders });
   } catch (error) {
     console.error("Seller orders fetch karte waqt error:", error);

@@ -293,15 +293,31 @@
 const SellerProduct = require('../models/SellerProduct');
 
 // 1. Get products function (Updated: ab yeh sirf logged-in seller ke products dikhayega)
+// const getProducts = async (req, res) => {
+//   try {
+//     // Check karein ki request ke sath seller ki ID aa rahi hai ya nahi (protect middleware se)
+//     if (req.seller && req.seller.id) {
+//       const products = await SellerProduct.find({ sellerId: req.seller.id });
+//       return res.status(200).json(products);
+//     } else {
+//       // Agar public route ya bina login ke call hua ho toh sabhi products dikhayein
+//       const products = await SellerProduct.find();
+//       return res.status(200).json(products);
+//     }
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// };
+
+
 const getProducts = async (req, res) => {
   try {
-    // Check karein ki request ke sath seller ki ID aa rahi hai ya nahi (protect middleware se)
+    // Agar logged-in seller hai toh sirf uske products, warna sabhi ke products
     if (req.seller && req.seller.id) {
-      const products = await SellerProduct.find({ sellerId: req.seller.id });
+      const products = await SellerProduct.find({ sellerId: req.seller.id }).sort({ createdAt: -1 });
       return res.status(200).json(products);
     } else {
-      // Agar public route ya bina login ke call hua ho toh sabhi products dikhayein
-      const products = await SellerProduct.find();
+      const products = await SellerProduct.find().sort({ createdAt: -1 });
       return res.status(200).json(products);
     }
   } catch (error) {
