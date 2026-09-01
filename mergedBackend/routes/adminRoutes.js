@@ -592,7 +592,7 @@
 
 const express = require("express");
 const router = express.Router();
-const { adminLogin } = require("../controllers/adminController");
+const { adminLogin } = require("../controllers/AdminController");
 const { protectAdmin } = require("../middleware/adminMiddleware"); // ✅ Middleware import kiya
 const User = require("../models/Customer");
 const Seller = require("../models/Seller");
