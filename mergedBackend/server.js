@@ -436,11 +436,15 @@ const swaggerOptions = {
       description: "API documentation for Kavi Shawls MERN E-Commerce Website",
     },
     servers: [
-      {
-        url: `http://localhost:${process.env.PORT || 5000}`,
-        description: "Local Development Server",
-      },
-    ],
+  {
+    url: "https://ecommerce-website-ggui.onrender.com",
+    description: "Production Server (Render)"
+  },
+  {
+    url: `http://localhost:${process.env.PORT || 5000}`,
+    description: "Local Development Server",
+  },
+],
   },
   apis: ["./routes/*.js"],
 };
