@@ -24,8 +24,8 @@ import BirthdayGifts from "./component/BirthdayGifts/BirthdayGifts";
 import WeddingGifts from "./component/WeddingGift/WeddingGifts";
 import FestiveGifts from "./component/FestiveGifts/FestiveGifts";
 import LuxuryGiftSets from "./component/LuxuryGift/LuxuryGiftSets";
-import History from "./component/History1/History";
-import StoreLocation from "./component/StoreLocation/StoreLocation";//error aya
+import History from "./component/History1/History";// error aya 
+import StoreLocation from "./component/StoreLocation1/StoreLocation";//error aya
 import Login from "./component/Login/Login";
 import ForgotPassword from "./component/ForgetPassword/ForgotPassword";// error aya
 import CustomerRegister from "./component/CustomerRegister/CustomerRegister"; //error aya
