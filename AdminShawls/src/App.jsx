@@ -24,20 +24,20 @@ import BirthdayGifts from "./component/BirthdayGifts/BirthdayGifts";
 import WeddingGifts from "./component/WeddingGift/WeddingGifts";
 import FestiveGifts from "./component/FestiveGifts/FestiveGifts";
 import LuxuryGiftSets from "./component/LuxuryGift/LuxuryGiftSets";
-import History from "./component/History1/History";// error aya 
+import History from "./component/History1/History"; 
 import StoreLocation from "./component/StoreLocation1/Storelocation";
 import Login from "./component/Login/Login";
-import ForgotPassword from "./component/ForgetPassword/ForgotPassword";// error aya
-import CustomerRegister from "./component/CustomerRegister/CustomerRegister"; //error aya
+import ForgotPassword from "./component/ForgetPassword/ForgotPassword";
+import CustomerRegister from "./component/CustomerRegister/CustomerRegister"; 
 //import Search from "./component/Search/Search";
-import Wishlist from "./component/Whislist/Wishlist";//error aya
+import Wishlist from "./component/Whislist/Wishlist";
 import Cart from "./component/Cart/cart";
 import ShippingReturns from "./component/Shipping/ShippingReturns";
 import TrackOrder from "./component/Trackord/TrackOrder";
 import PrivacyPolicy from "./component/Privacy/PrivacyPolicy";
-import Contact from "./component/Contact/Contact";//error aya
-import Notifications from "./component/Notifications/Notifications";//error aya
-import Checkout from "./component/CheckOut/Checkout";//error aya
+import Contact from "./component/Contact/Contact";
+import Notifications from "./component/Notifications/Notifications";
+import Checkout from "./component/CheckOut/Checkout";
 import ProductDetail from "./component/ProductDetails/ProductDetail";
 
 // Admin Pages
