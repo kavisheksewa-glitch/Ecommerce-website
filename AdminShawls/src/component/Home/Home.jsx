@@ -415,13 +415,12 @@ function Home() {
             },
             body: JSON.stringify({
               productId: product.id,
-            title: product.title,
-            description: product.description,
-            price: product.price,
-            originalPrice: product.originalPrice,
-            discount: product.discount,
-            image: product.image,
-            sellerId: product.sellerId,
+              title: product.title,
+              description: product.description,
+              price: product.price,
+              originalPrice: product.originalPrice,
+              discount: product.discount,
+              image: product.image,
             }),
           });
 
