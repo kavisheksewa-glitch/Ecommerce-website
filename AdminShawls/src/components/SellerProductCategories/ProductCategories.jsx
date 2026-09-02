@@ -338,6 +338,166 @@
 
 
 
+// import React, { useState, useEffect } from "react";
+// import axios from "axios";
+// import "./ProductCategories.css";
+// import logo from "../../assets/logooo.png";
+// import SellerHeader from "../SellerHeader/SellerHeader";
+
+// function ProductCategories() {
+//   const [productCounts, setProductCounts] = useState({});
+//   const [allProducts, setAllProducts] = useState([]); // Saare products store karne ke liye
+//   const [selectedCategoryProducts, setSelectedCategoryProducts] = useState(null); // Jis category par click ho uske products
+
+//   const categories = [
+//     "Women's Shawls", "Men's Shawls", "Pashmina Shawls", "Cashmere Shawls",
+//     "Wool Shawls", "Silk Shawls", "Printed Shawls", "Embroidered Shawls",
+//     "Designer Shawls", "Luxury Shawls", "Winter Shawls", "Summer Shawls"
+//   ];
+
+//   useEffect(() => {
+//     // ✅ FIX: seller ka token "sellerToken" key mein save hota hai (SellerLogin.jsx dekhein),
+//     // "token" key sirf customer login ke liye use hoti hai — isi mismatch ki wajah se
+//     // yeh page pehle kaam nahi kar raha tha (Authorization: Bearer undefined ja raha tha).
+//     const token = localStorage.getItem("sellerToken");
+
+//     if (!token) {
+//       console.error("No seller token found — please login again.");
+//       return;
+//     }
+
+//     axios.get("http://localhost:5000/api/seller/products", {
+//       headers: { "Authorization": `Bearer ${token}` }
+//     })
+//       .then((response) => {
+//         const products = Array.isArray(response.data)
+//           ? response.data
+//           : response.data.products || [];
+//         setAllProducts(products); // Saare products save kar liye
+
+//         const counts = {};
+//         categories.forEach((catName) => { counts[catName] = 0; });
+
+//         products.forEach((product) => {
+//           const productCat = product.category ? product.category.toLowerCase().trim() : "";
+//           const productFabric = product.fabric ? product.fabric.toLowerCase().trim() : "";
+
+//           categories.forEach((catName) => {
+//             const lowerCatName = catName.toLowerCase().trim();
+
+//             if (
+//               productCat === lowerCatName ||
+//               (productFabric && (productFabric.includes(lowerCatName) || lowerCatName.includes(productFabric)))
+//             ) {
+//               counts[catName] = (counts[catName] || 0) + 1;
+//             }
+//           });
+//         });
+
+//         setProductCounts(counts);
+//       })
+//       .catch((error) => {
+//         console.error("Error fetching products:", error);
+//       });
+//   }, []);
+
+//   // "View Products" par click hone par wahi ke wahi products filter karna
+//   const handleViewProducts = (categoryName) => {
+//     const lowerCatName = categoryName.toLowerCase().trim();
+
+//     const filtered = allProducts.filter((product) => {
+//       const productCat = product.category ? product.category.toLowerCase().trim() : "";
+//       const productFabric = product.fabric ? product.fabric.toLowerCase().trim() : "";
+
+//       return (
+//         productCat === lowerCatName ||
+//         (productFabric && (productFabric.includes(lowerCatName) || lowerCatName.includes(productFabric)))
+//       );
+//     });
+
+//     setSelectedCategoryProducts({ categoryName, products: filtered });
+//   };
+
+//   return (
+//     <div className="Seller_dashboard-page">
+//       <SellerHeader />
+//       <div className="container py-5 mt-5">
+//         <h2 className="text-center fw-bold mb-5 Seller_dashboard-title">
+//           <img src={logo} alt="Kavi Shawls Logo" className="Seller_dashboard-logo" />
+//           Product Categories
+//         </h2>
+
+//         {selectedCategoryProducts ? (
+//           <div>
+//             <div className="d-flex justify-content-between align-items-center mb-4">
+//               <h3>Products in "{selectedCategoryProducts.categoryName}"</h3>
+//               <button className="btn btn-secondary" onClick={() => setSelectedCategoryProducts(null)}>
+//                 Back to Categories
+//               </button>
+//             </div>
+
+//             {selectedCategoryProducts.products.length === 0 ? (
+//               <p className="text-center text-muted">No products found in this category.</p>
+//             ) : (
+//               <div className="row">
+//                 {selectedCategoryProducts.products.map((prod, idx) => (
+//                   <div className="col-lg-3 col-md-4 col-sm-6 mb-4" key={idx}>
+//                     <div className="shadow border-0 rounded-4 bg-white p-3 h-100 text-center">
+//                       <img
+//                         src={`http://localhost:5000/${prod.productImage}`}
+//                         alt={prod.productName}
+//                         style={{ width: "100%", height: "180px", objectFit: "cover", borderRadius: "8px" }}
+//                         className="mb-3"
+//                       />
+//                       <h6 className="fw-bold">{prod.productName}</h6>
+//                       <p className="text-muted small mb-1">Price: ₹{prod.price}</p>
+//                       <p className="text-muted small">Fabric: {prod.fabric || "N/A"}</p>
+//                     </div>
+//                   </div>
+//                 ))}
+//               </div>
+//             )}
+//           </div>
+//         ) : (
+//           <div className="row">
+//             {categories.map((category, index) => (
+//               <div className="col-lg-4 col-md-6 mb-4" key={index}>
+//                 <div className="shadow border-0 rounded-4 h-100 Seller_card bg-white p-4">
+//                   <div className="text-center">
+//                     <div style={{ fontSize: "45px" }}>🧣</div>
+//                     <h5 className="mt-3 fw-bold">{category}</h5>
+
+//                     <p className="text-muted small">
+//                       Products: {productCounts[category] || 0} available
+//                     </p>
+
+//                     <button
+//                       className="btn btn-primary mt-2"
+//                       onClick={() => handleViewProducts(category)}
+//                     >
+//                       View Products
+//                     </button>
+//                   </div>
+//                 </div>
+//               </div>
+//             ))}
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   );
+// }
+
+// export default ProductCategories;
+
+
+
+
+//2 sept 2026 moring
+
+
+
+
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./ProductCategories.css";
@@ -348,6 +508,7 @@ function ProductCategories() {
   const [productCounts, setProductCounts] = useState({});
   const [allProducts, setAllProducts] = useState([]); // Saare products store karne ke liye
   const [selectedCategoryProducts, setSelectedCategoryProducts] = useState(null); // Jis category par click ho uske products
+  const [viewProduct, setViewProduct] = useState(null); // "View" button click hone par yahan product save hota hai (modal ke liye)
 
   const categories = [
     "Women's Shawls", "Men's Shawls", "Pashmina Shawls", "Cashmere Shawls",
@@ -418,6 +579,16 @@ function ProductCategories() {
     setSelectedCategoryProducts({ categoryName, products: filtered });
   };
 
+  // Ek product ki image ka proper URL banane wala helper (backslash aur missing field handle karta hai)
+  const getProductImage = (prod) => {
+    const rawImage = prod.productImage || prod.image || "";
+    return rawImage.startsWith("http")
+      ? rawImage
+      : rawImage
+      ? `http://localhost:5000/${rawImage.replace(/\\/g, "/")}`
+      : "https://via.placeholder.com/180";
+  };
+
   return (
     <div className="Seller_dashboard-page">
       <SellerHeader />
@@ -441,17 +612,24 @@ function ProductCategories() {
             ) : (
               <div className="row">
                 {selectedCategoryProducts.products.map((prod, idx) => (
-                  <div className="col-lg-3 col-md-4 col-sm-6 mb-4" key={idx}>
+                  <div className="col-lg-3 col-md-4 col-sm-6 mb-4" key={prod._id || prod.id || idx}>
                     <div className="shadow border-0 rounded-4 bg-white p-3 h-100 text-center">
                       <img
-                        src={`http://localhost:5000/${prod.productImage}`}
+                        src={getProductImage(prod)}
                         alt={prod.productName}
                         style={{ width: "100%", height: "180px", objectFit: "cover", borderRadius: "8px" }}
                         className="mb-3"
                       />
                       <h6 className="fw-bold">{prod.productName}</h6>
                       <p className="text-muted small mb-1">Price: ₹{prod.price}</p>
-                      <p className="text-muted small">Fabric: {prod.fabric || "N/A"}</p>
+                      <p className="text-muted small mb-3">Fabric: {prod.fabric || "N/A"}</p>
+
+                      <button
+                        className="btn btn-outline-primary btn-sm w-100"
+                        onClick={() => setViewProduct(prod)}
+                      >
+                        👁️ View
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -484,6 +662,55 @@ function ProductCategories() {
           </div>
         )}
       </div>
+
+      {/* Product View Modal */}
+      {viewProduct && (
+        <div
+          className="modal d-block"
+          tabIndex="-1"
+          style={{ background: "rgba(0,0,0,0.5)" }}
+          onClick={() => setViewProduct(null)}
+        >
+          <div
+            className="modal-dialog modal-dialog-centered"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal-content rounded-4">
+              <div className="modal-header">
+                <h5 className="modal-title fw-bold">{viewProduct.productName}</h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => setViewProduct(null)}
+                ></button>
+              </div>
+              <div className="modal-body text-center">
+                <img
+                  src={getProductImage(viewProduct)}
+                  alt={viewProduct.productName}
+                  style={{ width: "100%", maxHeight: "300px", objectFit: "cover", borderRadius: "10px" }}
+                  className="mb-3"
+                />
+                <p className="mb-1"><strong>Price:</strong> ₹{viewProduct.price}</p>
+                <p className="mb-1"><strong>Category:</strong> {viewProduct.category || "N/A"}</p>
+                <p className="mb-1"><strong>Fabric:</strong> {viewProduct.fabric || "N/A"}</p>
+                <p className="mb-1">
+                  <strong>Stock:</strong>{" "}
+                  {viewProduct.stockQuantity !== undefined ? viewProduct.stockQuantity : viewProduct.stock ?? "N/A"} units
+                </p>
+                {viewProduct.description && (
+                  <p className="mb-1"><strong>Description:</strong> {viewProduct.description}</p>
+                )}
+              </div>
+              <div className="modal-footer">
+                <button className="btn btn-secondary" onClick={() => setViewProduct(null)}>
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

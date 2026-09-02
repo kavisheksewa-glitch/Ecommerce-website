@@ -2192,27 +2192,38 @@ function WeddingGifts() {
         if (Array.isArray(res.data)) {
           const dbProducts = res.data
             .filter((p) => p.category === "weddingGift Shawls")
-            .map((p) => ({
+            .map((p) => {
+              // ✅ seller ne jo price enter kiya wahi "original" price hai; discount hone par
+              // actual bikne wala price (finalPrice) usse kam hoga
+              const basePrice = Number(p.price || 0);
+              const discountPercent = Number(p.discount || 0);
+              const finalPrice = discountPercent > 0
+                ? Math.round(basePrice - (basePrice * discountPercent) / 100)
+                : basePrice;
+
+              return {
               id: p._id,
               title: p.productName,
               description: p.description,
-              priceNum: Number(p.price),
-              price: `₹${p.price}`,
-              originalPrice: p.discount ? `₹${Math.round(p.price * (1 + p.discount / 100))}` : "",
-              discount: p.discount ? `${p.discount}% OFF` : null,
+              priceNum: finalPrice,
+              price: `₹${finalPrice}`,
+              originalPrice: discountPercent > 0 ? `₹${basePrice}` : "",
+              discount: discountPercent > 0 ? `${discountPercent}% OFF` : null,
              // image: `http://localhost:5000/${p.productImage}`,
              image: p.productImage?.startsWith("http") ? p.productImage : `http://localhost:5000/${p.productImage}`, // ✅ SAHI CODE 
-              brandLogo: p.brandLogo ? (p.brandLogo.startsWith("http") ? p.brandLogo : `http://localhost:5000/${p.brandLogo}`) : "",
-             stock: `Stock: ${p.stockQuantity}`,
+              //brandLogo: p.brandLogo ? (p.brandLogo.startsWith("http") ? p.brandLogo : `http://localhost:5000/${p.brandLogo}`) : "",
+             brandLogo: p.sellerId?.brandLogo ? (p.sellerId.brandLogo.startsWith("http") ? p.sellerId.brandLogo : `http://localhost:5000/${p.sellerId.brandLogo}`): "",stock: `Stock: ${p.stockQuantity}`,
+              stock: `Stock: ${p.stockQuantity}`,
               fabric: p.fabric || "N/A",
               color: p.color || "N/A",
               size: p.size || "N/A",
               careInstructions: p.washCare || "N/A",
               rating: 5,
               reviews: 18,
-               sellerId: p.sellerId || "",
-            }));
-
+               //sellerId: p.sellerId || "",
+              sellerId: p.sellerId?._id || p.sellerId || "",
+              };
+            });
           const staticWithPrice = WeddingShawls.map(item => ({
             ...item,
             priceNum: Number(item.price.replace(/[^0-9]/g, ""))
@@ -2715,12 +2726,11 @@ function WeddingGifts() {
                                                                         
                                                                           <button
                                                                             className="Customer_share-btn"
-                                                                            onClick={() => handleShare(item)}
+                                                                            onClick={() => setShareProduct(item)}
                                                                             title="Share Product"
                                                                           >
-                                                                            <FaShareAlt />
-                                                                          </button>
-                                                                        
+                                                                                <FaShareAlt />
+                                                                              </button>
                                                                           <button
                                                                             className="Customer_wishlist-btn"
                                                                             onClick={() => handleToggleWishlist(item)}

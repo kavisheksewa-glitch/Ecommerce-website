@@ -5582,6 +5582,54 @@ const registerCustomer = async (req, res) => {
  *       400:
  *         description: Invalid email or password
  */
+// const loginCustomer = async (req, res) => {
+//   try {
+//     const { email: userEmail, password: userPassword } = req.body;
+
+//     const user = await Customer.findOne({ email: userEmail });
+//     if (!user) {
+//       return res.status(400).json({ message: "Invalid email or password!" });
+//     }
+
+//     const isMatch = await bcrypt.compare(userPassword, user.password);
+//     if (!isMatch) {
+//       return res.status(400).json({ message: "Invalid email or password!" });
+//     }
+
+//     try {
+//       await Notification.create({
+//         userId: user._id,
+//         title: "Login Successful! 🔓",
+//         message: `Welcome back, ${user.fullName || "Customer"}! You successfully logged into your account.`,
+//         type: "order",
+//       });
+//     } catch (notifyError) {
+//       console.error("Notification creation failed (login):", notifyError.message);
+//     }
+
+//     const token = jwt.sign(
+//       { id: user._id, email: user.email, role: "customer" },
+//       JWT_SECRET,
+//       { expiresIn: "1d" }
+//     );
+
+//     res.cookie("token", token, {
+//       httpOnly: true,
+//       secure: false,
+//       sameSite: "strict",
+//       maxAge: 24 * 60 * 60 * 1000,
+//     });
+
+//     res.status(200).json({
+//       message: "Login Successfully",
+//       token,
+//       isEmailVerified: user.isEmailVerified,
+//     });
+//   } catch (error) {
+//     console.error("Error during login:", error);
+//     res.status(500).json({ message: error.message || "Server error during login" });
+//   }
+// };
 const loginCustomer = async (req, res) => {
   try {
     const { email: userEmail, password: userPassword } = req.body;
@@ -5594,6 +5642,16 @@ const loginCustomer = async (req, res) => {
     const isMatch = await bcrypt.compare(userPassword, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid email or password!" });
+    }
+
+    // ✅ Agar email verify nahi hai to login block karo
+    if (!user.isEmailVerified) {
+      return res.status(403).json({
+        message: "Your email is not verified. Please verify your email to login.",
+        needsVerification: true,
+        userId: user._id,
+        email: user.email,
+      });
     }
 
     try {
@@ -6458,6 +6516,93 @@ const getCustomerOrders = async (req, res) => {
   }
 };
 
+/**
+ * @swagger
+ * /api/customer/order/cancel/{id}:
+ *   put:
+ *     summary: Cancel an order (only if not already Delivered/Cancelled)
+ *     tags: [Customer Authentication & Management]
+ *     security:
+ *       - CustomerBearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Order ID to cancel
+ *     responses:
+ *       200:
+ *         description: Order cancelled successfully
+ *       400:
+ *         description: Order cannot be cancelled (already delivered or already cancelled)
+ *       401:
+ *         description: Not authorized
+ *       404:
+ *         description: Order not found or does not belong to this customer
+ */
+const cancelOrder = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { id } = req.params;
+
+    // ✅ Ownership check: sirf apna khud ka order cancel kar sake, koi dusre ka nahi
+    const order = await Order.findOne({ _id: id, userId });
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found or does not belong to this customer",
+      });
+    }
+
+    // ✅ Delivered/already-Cancelled order dobara cancel nahi ho sakta
+    if (["Delivered", "Cancelled"].includes(order.orderStatus)) {
+      return res.status(400).json({
+        success: false,
+        message: `This order cannot be cancelled because it is already ${order.orderStatus}.`,
+      });
+    }
+
+    order.orderStatus = "Cancelled";
+    await order.save();
+
+    try {
+      await Notification.create({
+        userId,
+        productId: order.productId,
+        title: "Order Cancelled ❌",
+        message: `Your order for "${order.productTitle}" has been cancelled successfully.`,
+        type: "order",
+      });
+    } catch (notifyError) {
+      console.error("Notification creation failed (order cancel - customer):", notifyError.message);
+    }
+
+    if (order.sellerId) {
+      try {
+        await SellerNotification.create({
+          sellerId: order.sellerId,
+          title: "Order Cancelled by Customer ⚠️",
+          message: `${order.fullName || "A customer"} ne "${order.productTitle}" ka order cancel kar diya hai.`,
+          type: "warning",
+        });
+      } catch (notifyError) {
+        console.error("Notification creation failed (order cancel - seller):", notifyError.message);
+      }
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Order cancelled successfully",
+      order,
+    });
+  } catch (error) {
+    console.error("Error in cancelOrder:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 // ==================== NOTIFICATION CONTROLLERS ====================
 
 /**
@@ -6593,6 +6738,10 @@ router.get("/cart", protectCustomer, getCart);
 
 router.post("/order/create", protectCustomer, createOrder);
 router.get("/orders", protectCustomer, getCustomerOrders);
+
+router.post("/order/create", protectCustomer, createOrder);
+router.get("/orders", protectCustomer, getCustomerOrders);
+router.put("/order/cancel/:id", protectCustomer, cancelOrder);   // ✅ NEW
 
 router.get("/notifications", protectCustomer, getCustomerNotifications);
 router.put("/notifications/read", protectCustomer, markNotificationsAsRead);

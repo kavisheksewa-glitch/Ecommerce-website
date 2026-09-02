@@ -2133,18 +2133,26 @@ function FestiveGifts() {
           const dbProducts = res.data
             .filter((p) => p.category === "FestiveGift Shawls")
             .map((p) => {
-              const numericPrice = Number(p.price) || 0;
-              return {
+             // const numericPrice = Number(p.price) || 0;
+             // ✅ seller ne jo price enter kiya wahi "original" price hai; discount hone par
+              // actual bikne wala price (finalPrice) usse kam hoga
+              const basePrice = Number(p.price) || 0;
+              const discountPercent = Number(p.discount || 0);
+              const finalPrice = discountPercent > 0
+                ? Math.round(basePrice - (basePrice * discountPercent) / 100)
+                : basePrice; 
+             return {
                 id: p._id,
                 title: p.productName,
                 description: p.description,
-                numericPrice: numericPrice,
-                price: `₹${numericPrice}`,
-                originalPrice: p.discount ? `₹${Math.round(numericPrice * (1 + p.discount / 100))}` : "",
-                discount: p.discount ? `${p.discount}% OFF` : null,
+                numericPrice: finalPrice,
+                price: `₹${finalPrice}`,
+                originalPrice: discountPercent > 0 ? `₹${basePrice}` : "",
+                discount: discountPercent > 0 ? `${discountPercent}% OFF` : null,
                 //image: `http://localhost:5000/${p.productImage}`,
                 image: p.productImage?.startsWith("http") ? p.productImage : `http://localhost:5000/${p.productImage}`, // ✅ SAHI CODE
-                brandLogo: p.brandLogo ? (p.brandLogo.startsWith("http") ? p.brandLogo : `http://localhost:5000/${p.brandLogo}`) : "",
+                //brandLogo: p.brandLogo ? (p.brandLogo.startsWith("http") ? p.brandLogo : `http://localhost:5000/${p.brandLogo}`) : "",
+                brandLogo: p.sellerId?.brandLogo ? (p.sellerId.brandLogo.startsWith("http") ? p.sellerId.brandLogo : `http://localhost:5000/${p.sellerId.brandLogo}`): "",stock: `Stock: ${p.stockQuantity}`,
                 stock: `Stock: ${p.stockQuantity}`,
                 fabric: p.fabric || "N/A",
                 color: p.color || "N/A",
@@ -2152,8 +2160,8 @@ function FestiveGifts() {
                 careInstructions: p.washCare || "N/A",
                 rating: 5,
                 reviews: 14,
-                 sellerId: p.sellerId || "",
-              };
+                //  sellerId: p.sellerId || "",
+                sellerId: p.sellerId?._id || p.sellerId || "",           };
             });
 
           const formattedStaticShawls = FestiveShawls.map(item => ({
@@ -2572,13 +2580,13 @@ function FestiveGifts() {
                                                           alt={item.title}
                                                         />
                                                       
-                                                        <button
-                                                          className="Customer_share-btn"
-                                                          onClick={() => handleShare(item)}
-                                                          title="Share Product"
-                                                        >
-                                                          <FaShareAlt />
-                                                        </button>
+                                                       <button
+                                                        className="Customer_share-btn"
+                                                        onClick={() => setShareProduct(item)}
+                                                        title="Share Product"
+                                                      >
+                                                        <FaShareAlt />
+                                                      </button>
                                                       
                                                         <button
                                                           className="Customer_wishlist-btn"

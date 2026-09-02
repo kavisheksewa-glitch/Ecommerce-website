@@ -54,23 +54,35 @@ function Men() {
         if (Array.isArray(res.data)) {
           const dbProducts = res.data
             .filter((p) => p.category === "Men's Shawls")
-            .map((p, index) => ({
-              id: p._id,
-              title: p.productName,
-              description: p.description,
-              price: `₹${p.price}`,
-              numericPrice: Number(p.price) || 0,
-              originalPrice: p.discount ? `₹${Math.round(p.price * (1 + p.discount / 100))}` : "",
-              discount: p.discount ? `${p.discount}% OFF` : null,
+            .map((p, index) => {
+              // ✅ seller ne jo price enter kiya wahi "original" price hai; discount hone par
+              // actual bikne wala price (finalPrice) usse kam hoga
+              const basePrice = Number(p.price || 0);
+              const discountPercent = Number(p.discount || 0);
+              const finalPrice = discountPercent > 0
+                ? Math.round(basePrice - (basePrice * discountPercent) / 100)
+                : basePrice;
+
+              return {
+                id: p._id,
+                title: p.productName,
+                description: p.description,
+                price: `₹${finalPrice}`,
+                numericPrice: finalPrice || 0,
+              originalPrice: discountPercent > 0 ? `₹${basePrice}` : "",
+              discount: discountPercent > 0 ? `${discountPercent}% OFF` : null,
              // image: `http://localhost:5000/${p.productImage}`,
              image: p.productImage?.startsWith("http") ? p.productImage : `http://localhost:5000/${p.productImage}`, // ✅ SAHI CODE
-              brandLogo: p.brandLogo ? (p.brandLogo.startsWith("http") ? p.brandLogo : `http://localhost:5000/${p.brandLogo}`) : "",
+              // brandLogo: p.brandLogo ? (p.brandLogo.startsWith("http") ? p.brandLogo : `http://localhost:5000/${p.brandLogo}`) : "",
+              brandLogo: p.sellerId?.brandLogo ? (p.sellerId.brandLogo.startsWith("http") ? p.sellerId.brandLogo : `http://localhost:5000/${p.sellerId.brandLogo}`): "",
              stock: `Stock: ${p.stockQuantity}`,
               fabric: p.fabric || "Pashmina",
               color: p.color || "N/A",
               createdAt: p.createdAt ? new Date(p.createdAt).getTime() : index,
-              sellerId: p.sellerId || "",
-            }));
+              // sellerId: p.sellerId || "",
+              sellerId: p.sellerId?._id || p.sellerId || "",
+            }
+        });
 
           const staticFormatted = menShawls.map((item, index) => ({
             ...item,
@@ -568,12 +580,12 @@ function Men() {
                           />
                         
                           <button
-                            className="Customer_share-btn"
-                            onClick={() => handleShare(item)}
-                            title="Share Product"
-                          >
-                            <FaShareAlt />
-                          </button>
+                        className="Customer_share-btn"
+                        onClick={() => setShareProduct(item)}
+                        title="Share Product"
+                      >
+                        <FaShareAlt />
+                      </button>
                         
                           <button
                             className="Customer_wishlist-btn"
