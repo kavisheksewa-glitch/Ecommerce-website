@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import image11 from "../../assets/spring.png";
 import { FaShareAlt, FaLink, FaHeart, FaFilter } from "react-icons/fa";
 import {
   WhatsappShareButton,
@@ -14,7 +15,6 @@ import {
   TwitterIcon,
   EmailIcon,
 } from "react-share";
-import image11 from "../../assets/women.png";
 import { womenShawls } from "../../data/shawls";
 import "./women.css";
 
