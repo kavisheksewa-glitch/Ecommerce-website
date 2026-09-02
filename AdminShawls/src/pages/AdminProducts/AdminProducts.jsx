@@ -16,7 +16,7 @@ function AdminProducts() {
 
   // 2. Backend se MongoDB ka data fetch karein
   useEffect(() => {
-    fetch("http://localhost:5000/api/products")
+    fetch("https://ecommerce-website-ggui.onrender.com/api/products")
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
@@ -30,7 +30,7 @@ function AdminProducts() {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
       try {
-        const response = await fetch(`http://localhost:5000/api/products/${id}`, {
+        const response = await fetch(`https://ecommerce-website-ggui.onrender.com/api/products/${id}`, {
           method: "DELETE",
         });
         if (response.ok) {

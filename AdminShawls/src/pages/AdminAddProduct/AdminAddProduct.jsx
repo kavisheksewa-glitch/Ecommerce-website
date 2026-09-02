@@ -25,7 +25,7 @@ function AdminAddProduct() {
   const handleSubmit = async (e) => {
   e.preventDefault();
   try {
-    const response = await fetch("http://localhost:5000/api/products", {
+    const response = await fetch("https://ecommerce-website-ggui.onrender.com/api/products", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -172,7 +172,6 @@ function AdminAddProduct() {
                   <input 
                     type="text" 
                     name="category" // wait, field name check: price
-                    name="price"
                     className="form-control shadow-none" 
                     placeholder="e.g. ₹4,500" 
                     value={formData.price} 

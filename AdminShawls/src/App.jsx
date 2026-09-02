@@ -96,7 +96,7 @@ function AppContent() {
       return;
     }
 
-    fetch("http://localhost:5000/api/customer/cart", {
+    fetch("https://ecommerce-website-ggui.onrender.com/api/customer/cart", {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(async (res) => {
@@ -129,7 +129,7 @@ function AppContent() {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/customer/cart/add", {
+      const response = await fetch("https://ecommerce-website-ggui.onrender.com/api/customer/cart/add", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

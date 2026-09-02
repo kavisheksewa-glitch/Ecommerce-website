@@ -13,7 +13,7 @@ function ProductsList() {
   const selectedCategory = queryParams.get("category");
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/products")
+    axios.get("https://ecommerce-website-ggui.onrender.com/api/products")
       .then((response) => {
         const allProducts = response.data;
         
@@ -54,7 +54,7 @@ function ProductsList() {
                 <div className="card shadow border-0 rounded-4 h-100 p-3 Seller_card">
                   {product.productImage && (
                     <img 
-                      src={`http://localhost:5000/${product.productImage}`} 
+                      src={`https://ecommerce-website-ggui.onrender.com/${product.productImage}`} 
                       alt={product.productName} 
                       className="card-img-top rounded-3"
                       style={{ height: "300px", objectFit: "contain" }}

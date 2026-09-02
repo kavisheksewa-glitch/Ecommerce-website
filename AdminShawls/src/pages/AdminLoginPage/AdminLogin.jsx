@@ -16,7 +16,7 @@ function AdminLogin() {
 
     try {
       // Backend API ko request bhej rahe hain
-      const response = await fetch("http://localhost:5000/api/admin/login", {
+      const response = await fetch("https://ecommerce-website-ggui.onrender.com/api/admin/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
