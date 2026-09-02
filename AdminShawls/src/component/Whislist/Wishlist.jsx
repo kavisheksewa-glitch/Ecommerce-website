@@ -95,6 +95,7 @@ function Wishlist() {
           originalPrice: product.originalPrice,
           discount: product.discount,
           image: product.image,
+          sellerId: product.sellerId,
           quantity: 1,
         }),
       });

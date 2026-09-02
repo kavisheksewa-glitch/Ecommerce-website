@@ -6126,6 +6126,7 @@ const addToWishlist = async (req, res) => {
       originalPrice,
       discount,
       image,
+      sellerId,
     });
 
     await wishlistItem.save();
