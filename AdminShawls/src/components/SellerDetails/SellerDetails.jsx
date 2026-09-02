@@ -48,7 +48,7 @@ function SellerDetails() {
     try {
       // ✅ FIX: Authorization header add kiya, kyunki route par "protect" middleware lagi hai
       const res = await axios.get(
-        `https://kavi-shawls.vercel.app/api/seller/auth/${sellerId}`,
+        `https://ecommerce-website-ggui.onrender.com/api/seller/auth/${sellerId}`,
         {
           headers: {
             Authorization: `Bearer ${sellerToken}`,
