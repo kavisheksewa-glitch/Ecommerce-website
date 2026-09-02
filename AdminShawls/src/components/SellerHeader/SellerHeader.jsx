@@ -26,7 +26,7 @@ function SellerHeader() {
 
         if (!token) return;
 
-        const response = await fetch("https://kavi-shawls.vercel.app/api/seller/notifications", {
+        const response = await fetch("https://ecommerce-website-ggui.onrender.com/api/seller/notifications", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

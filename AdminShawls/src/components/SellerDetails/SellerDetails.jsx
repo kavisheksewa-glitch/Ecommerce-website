@@ -91,7 +91,7 @@ function SellerDetails() {
                     Profile Image
                   </label>
                   <img
-                    src={`https://kavi-shawls.vercel.app/${seller.profileImage}`}
+                    src={`https://ecommerce-website-ggui.onrender.com/${seller.profileImage}`}
                     alt="Seller Profile"
                     className="rounded-circle object-fit-cover shadow-sm ingg"
                   />

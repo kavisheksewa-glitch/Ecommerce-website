@@ -50,7 +50,7 @@ function AddProduct() {
       }
 
       const response = await axios.post(
-        "https://kavi-shawls.vercel.app/api/seller/products/add",
+        "https://ecommerce-website-ggui.onrender.com/api/seller/products/add",
         productData,
         {
           headers: {
