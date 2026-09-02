@@ -421,6 +421,7 @@ function Home() {
               originalPrice: product.originalPrice,
               discount: product.discount,
               image: product.image,
+              sellerId: product.sellerId,
             }),
           });
 
@@ -445,7 +446,7 @@ function Home() {
     checkAuthAndExecute(async (token) => {
       if (!cartProductIds.includes(String(product.id))) {
         try {
-          await fetch("https://ecommerce-website-ggui.onrender.com/api/customer/cart/add", {
+          await fetch("http://localhost:5000/api/customer/cart/add", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -775,7 +776,7 @@ function Home() {
                                                                             src={
                                                                               item.brandLogo.startsWith("http") 
                                                                                 ? item.brandLogo 
-                                                                                : `https://ecommerce-website-ggui.onrender.com/${item.brandLogo}`
+                                                                                : `http://localhost:5000/${item.brandLogo}`
                                                                             }
                                                                             alt="Brand Logo"
                                                                             style={{ width: "100%", height: "100%", objectFit: "cover" }}

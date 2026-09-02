@@ -6110,7 +6110,7 @@ const getAllProductsForCustomer = async (req, res) => {
 const addToWishlist = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { productId, title, description, price, originalPrice, discount, image } = req.body;
+    const { productId, title, description, price, originalPrice, discount, image,sellerId } = req.body;
 
     const existingWishlist = await Wishlist.findOne({ userId, productId });
     if (existingWishlist) {
