@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
-const API_BASE = "http://localhost:5000/api/customer";
+const API_BASE = "https://ecommerce-website-ggui.onrender.com/api/customer";
 
 function VerifyEmail() {
   const navigate = useNavigate();

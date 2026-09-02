@@ -43,7 +43,7 @@ function Women() {
       return;
     }
 
-    fetch("http://localhost:5000/api/customer/cart", {
+    fetch("https://ecommerce-website-ggui.onrender.com/api/customer/cart", {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -54,7 +54,7 @@ function Women() {
       })
       .catch((err) => console.error("Error fetching cart items:", err));
 
-    fetch("http://localhost:5000/api/customer/wishlist", {
+    fetch("https://ecommerce-website-ggui.onrender.com/api/customer/wishlist", {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -66,67 +66,10 @@ function Women() {
       .catch((err) => console.error("Error fetching wishlist items:", err));
   };
 
-  // useEffect(() => {
-  //   axios
-  //     .get("http://localhost:5000/api/seller/products/public")
-  //     .then((res) => {
-  //       if (Array.isArray(res.data)) {
-  //         const dbProducts = res.data
-  //           .filter((p) => p.category === "Women's Shawls")
-  //           .map((p, index) => ({
-  //             id: p._id,
-  //             title: p.productName,
-  //             description: p.description,
-  //             price: `₹${p.price}`,
-  //             rawPrice: Number(p.price) || 0,
-  //             originalPrice: p.discount ? `₹${Math.round(p.price * (1 + p.discount / 100))}` : "",
-  //             discount: p.discount ? `${p.discount}% OFF` : null,
-  //            // image: `http://localhost:5000/${p.productImage}`,
-  //            image: p.productImage?.startsWith("http") ? p.productImage : `http://localhost:5000/${p.productImage}`, // ✅ SAHI CODE
-  //             stock: `Stock: ${p.stockQuantity}`,
-  //             fabric: p.fabric || "N/A",
-  //             color: p.color || "N/A",
-  //             size: p.size || "N/A",
-  //             careInstructions: p.washCare || "N/A",
-  //             createdAt: p.createdAt ? new Date(p.createdAt).getTime() : index,
-  //             sellerId: p.sellerId || "", // ✅ FIX: was missing, cart/wishlist need this
-  //           }));
-
-  //         const formattedStatic = womenShawls.map((item, index) => ({
-  //           ...item,
-  //           rawPrice: Number(item.price.replace(/[^0-9]/g, "")) || 0,
-  //           createdAt: index,
-  //           sellerId: item.sellerId || "", // ✅ keep consistent for static items too
-  //         }));
-
-  //         setAllProducts([...formattedStatic, ...dbProducts]);
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       console.error("Error fetching live products:", err);
-  //       const formattedStatic = womenShawls.map((item, index) => ({
-  //         ...item,
-  //         rawPrice: Number(item.price.replace(/[^0-9]/g, "")) || 0,
-  //         createdAt: index,
-  //         sellerId: item.sellerId || "",
-  //       }));
-  //       setAllProducts(formattedStatic);
-  //     });
-
-  //   fetchCartAndWishlist();
-  //   window.addEventListener("cartUpdated", fetchCartAndWishlist);
-  //   window.addEventListener("wishlistUpdated", fetchCartAndWishlist);
-  //   return () => {
-  //     window.removeEventListener("cartUpdated", fetchCartAndWishlist);
-  //     window.removeEventListener("wishlistUpdated", fetchCartAndWishlist);
-  //   };
-  // }, []);
-
-
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/seller/products/public")
+      .get("https://ecommerce-website-ggui.onrender.com/api/seller/products/public")
       .then((res) => {
         if (Array.isArray(res.data)) {
           const dbProducts = res.data
@@ -148,11 +91,11 @@ function Women() {
                 rawPrice: finalPrice || 0,
               originalPrice: discountPercent > 0 ? `₹${basePrice}` : "",
               discount: discountPercent > 0 ? `${discountPercent}% OFF` : null,
-              image: p.productImage?.startsWith("http") ? p.productImage : `http://localhost:5000/${p.productImage}`,
+              image: p.productImage?.startsWith("http") ? p.productImage : `https://ecommerce-website-ggui.onrender.com/${p.productImage}`,
               
               // ✅ FIX: Yeh line missing thi, ab brand logo backend se map ho jayega
               // brandLogo: p.brandLogo ? (p.brandLogo.startsWith("http") ? p.brandLogo : `http://localhost:5000/${p.brandLogo}`) : "",
-               brandLogo: p.sellerId?.brandLogo ? (p.sellerId.brandLogo.startsWith("http") ? p.sellerId.brandLogo : `http://localhost:5000/${p.sellerId.brandLogo}`): "",
+               brandLogo: p.sellerId?.brandLogo ? (p.sellerId.brandLogo.startsWith("http") ? p.sellerId.brandLogo : `https://ecommerce-website-ggui.onrender.com/${p.sellerId.brandLogo}`): "",
               
               stock: `Stock: ${p.stockQuantity}`,
               fabric: p.fabric || "N/A",
@@ -259,7 +202,7 @@ function Women() {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/customer/cart/add", {
+      const response = await fetch("https://ecommerce-website-ggui.onrender.com/api/customer/cart/add", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -307,7 +250,7 @@ function Women() {
 
     try {
       if (isWishlisted) {
-        const res = await fetch("http://localhost:5000/api/customer/wishlist", {
+        const res = await fetch("https://ecommerce-website-ggui.onrender.com/api/customer/wishlist", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -317,7 +260,7 @@ function Women() {
 
         if (wishlistItem) {
           const delRes = await fetch(
-            `http://localhost:5000/api/customer/wishlist/remove/${wishlistItem._id}`,
+            `https://ecommerce-website-ggui.onrender.com/api/customer/wishlist/remove/${wishlistItem._id}`,
             { method: "DELETE", headers: { Authorization: `Bearer ${token}` } }
           );
           if (delRes.ok) {
@@ -328,7 +271,7 @@ function Women() {
           }
         }
       } else {
-        const response = await fetch("http://localhost:5000/api/customer/wishlist/add", {
+        const response = await fetch("https://ecommerce-website-ggui.onrender.com/api/customer/wishlist/add", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -664,7 +607,7 @@ function Women() {
         src={
           item.brandLogo.startsWith("http") 
             ? item.brandLogo 
-            : `http://localhost:5000/${item.brandLogo}`
+            : `https://ecommerce-website-ggui.onrender.com/${item.brandLogo}`
         }
         alt="Brand Logo"
         style={{ width: "100%", height: "100%", objectFit: "cover" }}

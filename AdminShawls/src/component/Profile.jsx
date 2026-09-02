@@ -18,7 +18,7 @@ function Profile() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/customer/profile", {
+        const response = await fetch("https://ecommerce-website-ggui.onrender.com/api/customer/profile", {
           headers: {
             "Authorization": `Bearer ${token}`,
           },
@@ -59,7 +59,7 @@ function Profile() {
     setUpdating(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/customer/profile/update", {
+      const response = await fetch("https://ecommerce-website-ggui.onrender.com/api/customer/profile/update", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
