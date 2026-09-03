@@ -82,6 +82,7 @@ h1 {
   justify-content: center;
   align-items: center;
   z-index: 9999;
+  padding: 16px;
 }
 
 .Customer_share-modal {
@@ -100,6 +101,7 @@ h1 {
   justify-content: center;
   gap: 16px;
   margin: 20px 0;
+  flex-wrap: wrap;
 }
 
 .Customer_copy-btn {
@@ -169,7 +171,6 @@ h1 {
   height: auto;
   object-fit: contain;
   display: block;
- 
 }
 
 .Customer_carousel-dots button {
@@ -180,6 +181,202 @@ h1 {
   height: 350px;
   object-fit: cover;
 }
-.card-img-top{
+.card-img-top {
   height: 300px;
+}
+
+/* =====================================================
+   RESPONSIVE — LAPTOP / LARGE DESKTOP (≥1200px)
+===================================================== */
+@media (min-width: 1200px) {
+  .Customer_luxury-title {
+    font-size: 2.2rem;
+  }
+
+  .Customer_product-image-box {
+    height: 260px;
+  }
+}
+
+/* =====================================================
+   RESPONSIVE — TABLET (768px – 991px)
+===================================================== */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .Customer_luxury-title {
+    font-size: 1.7rem;
+  }
+
+  .Customer_product-image-box {
+    height: 200px;
+  }
+
+  .card img,
+  .card-img-top {
+    height: 260px;
+  }
+
+  /* Filter/Sort bar - thoda tight rakho */
+  .container.my-5 > div.bg-white.p-3 {
+    gap: 12px !important;
+  }
+}
+
+/* =====================================================
+   RESPONSIVE — SMALL TABLET / LARGE MOBILE (576px – 767px)
+===================================================== */
+@media (min-width: 576px) and (max-width: 767.98px) {
+  .Customer_product-image-box {
+    height: 190px;
+  }
+
+  .card img,
+  .card-img-top {
+    height: 230px;
+  }
+}
+
+/* =====================================================
+   RESPONSIVE — MOBILE (≤576px)
+===================================================== */
+@media (max-width: 576px) {
+  /* Title */
+  .Customer_luxury-title {
+    font-size: 1.4rem;
+    margin-bottom: 1rem !important;
+  }
+
+  /* Search bar */
+  .container.my-4 {
+    margin-top: 1rem !important;
+    margin-bottom: 1rem !important;
+  }
+
+  /* Product card image */
+  .Customer_product-image-box {
+    height: 170px;
+  }
+
+  .card img,
+  .card-img-top {
+    height: 200px;
+  }
+
+  .Customer_card-body {
+    padding: 12px !important;
+  }
+
+  .Customer_card-body h6 {
+    font-size: 0.85rem !important;
+  }
+
+  .Customer_card-body p {
+    font-size: 0.75rem !important;
+  }
+
+  /* Share button size chota */
+  .Customer_share-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+    top: 8px;
+    right: 8px;
+  }
+
+  /* Wishlist button ko share button ke hisab se adjust (inline style override) */
+  .Customer_wishlist-btn {
+    width: 32px !important;
+    height: 32px !important;
+    top: 8px !important;
+    right: 44px !important;
+  }
+
+  /* Filter/Sort bar - mobile par stack ho */
+  .bg-white.p-3.rounded.shadow-sm.border.mb-4 {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+
+  .bg-white.p-3.rounded.shadow-sm.border.mb-4 > span {
+    text-align: center;
+  }
+
+  .bg-white.p-3.rounded.shadow-sm.border.mb-4 .d-flex.align-items-center.gap-3 {
+    flex-direction: column;
+    align-items: stretch !important;
+    width: 100%;
+  }
+
+  .bg-white.p-3.rounded.shadow-sm.border.mb-4 .position-relative {
+    width: 100%;
+  }
+
+  .bg-white.p-3.rounded.shadow-sm.border.mb-4 .btn.btn-outline-dark {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .bg-white.p-3.rounded.shadow-sm.border.mb-4 .d-flex.align-items-center.gap-2 {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .bg-white.p-3.rounded.shadow-sm.border.mb-4 .form-select-sm {
+    flex: 1;
+  }
+
+  /* Filter dropdown panel - full width on mobile */
+  .position-absolute.end-0.mt-2.bg-white.p-3.rounded.shadow.border {
+    width: 100% !important;
+    left: 0;
+    right: 0;
+  }
+
+  /* Explore category buttons - stack neatly */
+  .d-flex.justify-content-center.gap-3.mt-4.flex-wrap {
+    gap: 8px !important;
+  }
+
+  .d-flex.justify-content-center.gap-3.mt-4.flex-wrap .btn {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+  }
+
+  /* Share modal padding kam karo */
+  .Customer_share-modal {
+    padding: 18px;
+  }
+
+  .Customer_share-icons {
+    gap: 10px;
+  }
+
+  /* Pagination - chhota */
+  .pagination .page-link {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+  }
+
+  /* Cookie banner */
+  .position-fixed.bottom-0.start-0.w-100.bg-dark {
+    padding: 12px !important;
+  }
+}
+
+/* =====================================================
+   RESPONSIVE — EXTRA SMALL (≤375px)
+===================================================== */
+@media (max-width: 375px) {
+  .Customer_product-image-box {
+    height: 150px;
+  }
+
+  .card img,
+  .card-img-top {
+    height: 180px;
+  }
+
+  .Customer_luxury-title {
+    font-size: 1.2rem;
+  }
 }
