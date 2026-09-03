@@ -210,7 +210,7 @@ function Settings() {
                       <div className="mb-3 text-center">
                         <label className="form-label fw-semibold d-block">My Profile Picture</label>
                         <img
-                          src={`https://ecommerce-website-ggui.onrender.com/${seller.profileImage}`}
+                          src={seller.profileImage}
                           alt="Seller Profile"
                           className="rounded-circle shadow-sm"
                           style={{ width: "150px", height: "150px", objectFit: "cover" }}
@@ -271,7 +271,7 @@ function Settings() {
                       <div className="mb-3 text-center">
                         <label className="form-label fw-semibold d-block">Current Brand Logo</label>
                         <img
-                          src={`https://ecommerce-website-ggui.onrender.com/${seller.brandLogo}`}
+                          src={brandLogo}
                           alt="Brand Logo"
                           className="rounded shadow-sm"
                           style={{ width: "150px", height: "150px", objectFit: "cover" }}
