@@ -101,9 +101,13 @@ function Notification() {
             notifications.map((item) => {
               const notifId = item._id || item.id;
               return (
+                // <div
+                //   key={notifId}
+                //   className={`alert alert-${item.type || "info"} mb-3 shadow-sm d-flex justify-content-between align-items-center`}
+                // >
                 <div
                   key={notifId}
-                  className={`alert alert-${item.type || "info"} mb-3 shadow-sm d-flex justify-content-between align-items-center`}
+                  className={`alert alert-${item.type || "info"} mb-3 shadow-sm d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2 Seller_notif-item`}
                 >
                   <div>
                     <h5 className="alert-heading fw-bold">{item.title}</h5>

@@ -1,21 +1,60 @@
+:root {
+    --gold: #b8860b;
+    --gold-light: #d4a373;
+    --brown-dark: #5c3a21;
+    --brown: #8b5a2b;
+    --cream: #fdf8f3;
+    --text-dark: #2e2119;
+}
+
 body {
-    background: linear-gradient(135deg, #fdf8f3, #f4ece3, #efe2d0);
+    background: linear-gradient(160deg, #fdf8f3, #f4ece3 55%, #ecdfc9);
     min-height: 100vh;
 }
 
-.Seller_card {
-    border-radius: 15px;
-    transition: 0.3s;
+/* ================= TITLE ================= */
+.Seller_dashboard-title {
+    font-style: italic;
+    color: var(--brown-dark);
+    font-family: "Georgia", serif;
+    letter-spacing: 1.5px;
+    position: relative;
+    padding-bottom: 14px;
 }
 
-.Seller_card:hover {
-    transform: translateY(-5px);
+.Seller_dashboard-title::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    border-radius: 2px;
+}
+
+.Seller_dashboard-logo {
+    width: 90px;
+    height: auto;
+    display: block;
+    margin: 0 auto 8px;
+    filter: drop-shadow(0 4px 10px rgba(139, 90, 43, 0.25));
+}
+
+/* ================= OUTER CARD (container) ================= */
+.Seller_card {
+    border-radius: 18px;
+    background: linear-gradient(160deg, #ffffff, #fdf8f3);
+    border: 1px solid rgba(184, 134, 11, 0.18);
+    box-shadow: 0 8px 24px rgba(139, 90, 43, 0.10);
+    transition: 0.3s;
 }
 
 .Seller_card h5 {
     font-size: 18px;
     font-weight: 600;
-    color: #555;
+    color: var(--brown-dark);
 }
 
 .Seller_card h2 {
@@ -24,32 +63,78 @@ body {
     font-weight: bold;
 }
 
-.Seller_dashboard-logo {
-    width: 100px;
-    height: auto;
-    display: block;
-    margin: 0 auto;
+/* ================= INDIVIDUAL NOTIFICATION ITEM ================= */
+.Seller_notif-item {
+    border-radius: 14px !important;
+    border: 1px solid rgba(184, 134, 11, 0.18) !important;
+    background: linear-gradient(160deg, #ffffff, #fdf8f3) !important;
+    padding: 18px 20px;
+    transition: all 0.3s ease;
 }
 
-.Seller_dashboard-title {
-    font-style: italic;
-    color: #8b5a2b;      /* Brown */
+.Seller_notif-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 22px rgba(139, 90, 43, 0.15);
+}
+
+.Seller_notif-item .alert-heading {
     font-family: "Georgia", serif;
-    letter-spacing: 1px;
+    color: var(--brown-dark);
+    font-size: 17px;
+    margin-bottom: 6px;
 }
 
+.Seller_notif-item p {
+    color: var(--text-dark);
+    font-size: 14.5px;
+}
+
+.Seller_notif-item small {
+    font-size: 12px;
+    color: #9a8674 !important;
+}
+
+.Seller_notif-item .btn {
+    background: linear-gradient(135deg, var(--gold-light), var(--gold));
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-style: normal;
+    white-space: nowrap;
+    transition: all 0.25s ease;
+}
+
+.Seller_notif-item .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(139, 90, 43, 0.3);
+    color: #fff;
+}
+
+/* ================= EMPTY / LOADING STATE ================= */
+.Seller_card .text-muted {
+    font-family: "Georgia", serif;
+    font-style: italic;
+    color: var(--brown) !important;
+}
+
+.spinner-border.text-warning {
+    color: var(--gold) !important;
+}
+
+/* ================= UNUSED / LEGACY (kept for compatibility) ================= */
 .Seller_tr {
     font-weight: bold;
     font-style: italic;
 }
 
-.Seller_btn-hover-zoom { 
-    transition: all 0.3s ease; 
+.Seller_btn-hover-zoom {
+    transition: all 0.3s ease;
 }
 
-.Seller_btn-hover-zoom:hover { 
-    transform: scale(1.05); 
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2); 
+.Seller_btn-hover-zoom:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
 .Seller_dashboard-menu-btn {
@@ -95,4 +180,76 @@ body {
 
 .Seller_arrow {
     font-size: 24px;
+}
+
+/* =====================================================
+   RESPONSIVE — LAPTOP / LARGE DESKTOP (≥1200px)
+===================================================== */
+@media (min-width: 1200px) {
+    .container {
+        max-width: 900px;
+    }
+
+    .Seller_notif-item {
+        padding: 22px 26px;
+    }
+
+    .Seller_notif-item .alert-heading {
+        font-size: 19px;
+    }
+}
+
+/* =====================================================
+   RESPONSIVE — TABLET (768px – 991px)
+===================================================== */
+@media (min-width: 768px) and (max-width: 991px) {
+    .container {
+        max-width: 90%;
+    }
+
+    .Seller_notif-item {
+        padding: 16px 18px;
+    }
+}
+
+/* =====================================================
+   RESPONSIVE — MOBILE (≤576px)
+===================================================== */
+@media (max-width: 576px) {
+    .Seller_dashboard-logo {
+        width: 65px;
+    }
+
+    .Seller_dashboard-title {
+        font-size: 19px;
+        padding-bottom: 10px;
+    }
+
+    .Seller_card {
+        border-radius: 14px;
+    }
+
+    .Seller_notif-item {
+        padding: 14px 14px;
+        border-radius: 12px !important;
+    }
+
+    .Seller_notif-item .alert-heading {
+        font-size: 15px;
+    }
+
+    .Seller_notif-item p {
+        font-size: 13.5px;
+    }
+
+    .Seller_notif-item small {
+        font-size: 11px;
+    }
+
+    .Seller_notif-item .btn {
+        font-size: 13px;
+        padding: 6px 14px !important;
+        margin-left: 0 !important;
+        align-self: flex-end;
+    }
 }
