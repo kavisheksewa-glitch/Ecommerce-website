@@ -6600,8 +6600,8 @@ const createOrder = async (req, res) => {
       sellerId,
     } = req.body;
 
-    const finding = await SellerProduct.findOne({ _id: productId, sellerId: sellerId });
-
+    //const finding = await SellerProduct.findOne({ _id: productId, sellerId: sellerId });
+    const finding = await SellerProduct.findById(productId);
     if (!finding) {
       return res.status(404).json({ success: false, message: "Product not found for this seller" });
     }
