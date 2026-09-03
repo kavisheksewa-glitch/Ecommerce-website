@@ -271,7 +271,7 @@ function Settings() {
                       <div className="mb-3 text-center">
                         <label className="form-label fw-semibold d-block">Current Brand Logo</label>
                         <img
-                          src={brandLogo}
+                          src={seller.brandLogo}
                           alt="Brand Logo"
                           className="rounded shadow-sm"
                           style={{ width: "150px", height: "150px", objectFit: "cover" }}
