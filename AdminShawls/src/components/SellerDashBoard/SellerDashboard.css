@@ -1,5 +1,15 @@
+:root {
+    --gold: #b8860b;
+    --gold-light: #d4a373;
+    --brown-dark: #5c3a21;
+    --brown: #8b5a2b;
+    --cream: #fdf8f3;
+    --cream2: #f4ece3;
+    --text-dark: #2e2119;
+}
+
 body {
-    background: linear-gradient(135deg, #fdf8f3, #f4ece3, #efe2d0);
+    background: linear-gradient(160deg, #fdf8f3, #f4ece3 55%, #ecdfc9);
     min-height: 100vh;
 }
 
@@ -7,110 +17,10 @@ body {
     min-height: 100vh;
 }
 
-.Seller_card {
-    border-radius: 15px;
-    transition: 0.3s;
-}
-
-.Seller_card:hover {
-    transform: translateY(-5px);
-}
-
-.Seller_card h5 {
-    font-size: 18px;
-    font-weight: 600;
-    color: #555;
-}
-
-.Seller_card h2 {
-    margin-top: 10px;
-    font-size: 35px;
-    font-weight: bold;
-}
-
-.Seller_dashboard-logo {
-    width: 100px;
-    height: auto;
-    display: block;
-    margin: 0 auto;
-}
-
-.Seller_dashboard-title {
-    font-style: italic;
-    color: #8b5a2b;      /* Brown */
-    font-family: "Georgia", serif;
-    letter-spacing: 1px;
-}
-
-.Seller_tr {
-    font-weight: bold;
-    font-style: italic;
-}
-
-.Seller_btn-hover-zoom { 
-    transition: all 0.3s ease; 
-}
-
-.Seller_btn-hover-zoom:hover { 
-    transform: scale(1.05); 
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2); 
-}
-
-/* ================= MENU BUTTONS ================= */
-.Seller_dashboard-menu-btn {
-    background-color: rgb(212, 215, 215) !important;
-    width: 100%;
-    border: none;
-    border-radius: 12px;
-    padding: 18px 20px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    font-weight: bold;
-    font-style: italic;
-    text-align: left;
-    color: rgb(12, 10, 10) !important;
-    transition: all 0.3s ease;
-    cursor: pointer;
-}
-
-/* Hover karne par color bilkul CHANGE NAHI HOGA */
-.Seller_dashboard-menu-btn:hover {
-    background-color: rgb(212, 215, 215) !important; /* Normal state wala hi background rahega */
-    color: rgb(12, 10, 10) !important;            /* Text color bhi same rahega */
-    transform: translateY(-5px);                     /* Sirf halka sa lift animation rahega */
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);      /* Halka shadow aayega */
-}
-
-.Seller_dashboard-menu-btn span:nth-child(2) {
-    flex: 1;
-}
-
-.Seller_menu-icon {
-    font-size: 30px;
-}
-
-.Seller_dashboard-menu-btn strong {
-    display: block;
-    font-size: 17px;
-    color: inherit;
-}
-
-.Seller_dashboard-menu-btn small {
-    display: block;
-    margin-top: 4px;
-    opacity: 0.85;
-    font-size: 12px;
-    color: inherit;
-}
-
-.Seller_arrow {
-    font-size: 24px;
-    color: inherit;
-}
-/* ================= DASHBOARD CONTENT SPACING (header ke neeche) ================= */
+/* ================= HEADER TITLE ================= */
 .Seller_dashboard-content {
     margin-top: 3rem;
+    max-width: 1200px;
 }
 
 @media (max-width: 576px) {
@@ -119,9 +29,215 @@ body {
     }
 }
 
+.Seller_dashboard-logo {
+    width: 90px;
+    height: auto;
+    display: block;
+    margin: 0 auto 8px;
+    filter: drop-shadow(0 4px 10px rgba(139, 90, 43, 0.25));
+}
 
+.Seller_dashboard-title {
+    font-style: italic;
+    color: var(--brown-dark);
+    font-family: "Georgia", serif;
+    letter-spacing: 1.5px;
+    position: relative;
+    padding-bottom: 14px;
+}
 
-/* ================= MOBILE RESPONSIVE (2 cards per row) ================= */
+.Seller_dashboard-title::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    border-radius: 2px;
+}
+
+/* ================= STAT CARDS ================= */
+.Seller_card {
+    border-radius: 18px !important;
+    background: linear-gradient(160deg, #ffffff, #fdf8f3);
+    border: 1px solid rgba(184, 134, 11, 0.18) !important;
+    box-shadow: 0 8px 24px rgba(139, 90, 43, 0.10);
+    transition: all 0.35s cubic-bezier(.22,1,.36,1);
+    position: relative;
+    overflow: hidden;
+}
+
+.Seller_card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--gold-light), var(--gold));
+    opacity: 0.9;
+}
+
+.Seller_card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 34px rgba(139, 90, 43, 0.22);
+    border-color: rgba(184, 134, 11, 0.4) !important;
+}
+
+.Seller_card h5 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--brown-dark);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    opacity: 0.75;
+}
+
+.Seller_card h2 {
+    margin-top: 10px;
+    font-size: 32px;
+    font-weight: 700;
+    font-family: "Georgia", serif;
+}
+
+/* Muted luxury color overrides (replacing plain bootstrap colors) */
+.Seller_card .text-primary   { color: #8b5a2b !important; }
+.Seller_card .text-warning   { color: #c58a1f !important; }
+.Seller_card .text-success   { color: #3e7d4f !important; }
+.Seller_card .text-danger    { color: #a13f3f !important; }
+.Seller_card .text-info      { color: #4a7a8c !important; }
+
+/* ================= MENU BUTTONS ================= */
+.Seller_dashboard-menu-btn {
+    background: linear-gradient(160deg, #ffffff, #f4ece3) !important;
+    width: 100%;
+    border: 1px solid rgba(184, 134, 11, 0.18);
+    border-radius: 16px;
+    padding: 20px 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-weight: bold;
+    font-style: italic;
+    text-align: left;
+    color: var(--text-dark) !important;
+    box-shadow: 0 6px 18px rgba(139, 90, 43, 0.08);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.Seller_dashboard-menu-btn::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, var(--gold-light), var(--gold));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.Seller_dashboard-menu-btn:hover {
+    background: linear-gradient(160deg, #ffffff, #f4ece3) !important;
+    color: var(--text-dark) !important;
+    transform: translateY(-6px);
+    box-shadow: 0 14px 30px rgba(139, 90, 43, 0.2);
+    border-color: rgba(184, 134, 11, 0.4);
+}
+
+.Seller_dashboard-menu-btn:hover::before {
+    opacity: 1;
+}
+
+.Seller_dashboard-menu-btn span:nth-child(2) {
+    flex: 1;
+}
+
+.Seller_menu-icon {
+    font-size: 26px;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 30% 30%, #f4ece3, #e9d9bd);
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1px rgba(184, 134, 11, 0.25);
+    flex-shrink: 0;
+}
+
+.Seller_dashboard-menu-btn strong {
+    display: block;
+    font-size: 16px;
+    color: var(--brown-dark);
+    font-family: "Georgia", serif;
+}
+
+.Seller_dashboard-menu-btn small {
+    display: block;
+    margin-top: 4px;
+    opacity: 0.75;
+    font-size: 12.5px;
+    font-style: normal;
+    color: var(--text-dark);
+}
+
+.Seller_arrow {
+    font-size: 22px;
+    color: var(--gold);
+    transition: transform 0.3s ease;
+}
+
+.Seller_dashboard-menu-btn:hover .Seller_arrow {
+    transform: translateX(6px);
+}
+
+/* ================= LOADING TEXT ================= */
+.Seller_dashboard-page p.text-center {
+    font-family: "Georgia", serif;
+    font-style: italic;
+    color: var(--brown-dark);
+    letter-spacing: 0.5px;
+}
+
+/* =====================================================
+   RESPONSIVE — TABLET (768px – 991px): 3 cards per row
+===================================================== */
+@media (min-width: 768px) and (max-width: 991px) {
+    .Seller_card h2 { font-size: 30px; }
+    .Seller_dashboard-menu-btn { padding: 18px 20px; }
+}
+
+/* =====================================================
+   RESPONSIVE — LAPTOP / DESKTOP (≥1200px): extra polish
+===================================================== */
+@media (min-width: 1200px) {
+    .Seller_dashboard-content {
+        margin-top: 4rem;
+    }
+
+    .Seller_card {
+        padding: 1.75rem !important;
+    }
+
+    .Seller_card h2 {
+        font-size: 38px;
+    }
+
+    .Seller_dashboard-menu-btn {
+        padding: 24px 26px;
+    }
+}
+
+/* =====================================================
+   RESPONSIVE — MOBILE (≤576px): 2 stat cards per row,
+   menu buttons stay full width (stacked)
+===================================================== */
 @media (max-width: 576px) {
     .row.g-4 {
         --bs-gutter-x: 0.6rem;
@@ -129,30 +245,55 @@ body {
     }
 
     .Seller_card {
+        border-radius: 14px !important;
         padding: 0.9rem !important;
-        min-height: 95px;
+        min-height: 100px;
     }
 
     .Seller_card h5 {
-        font-size: 13px;
+        font-size: 11.5px;
         margin-bottom: 4px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        letter-spacing: 0.2px;
     }
 
     .Seller_card h2 {
-        font-size: 22px;
+        font-size: 21px;
         margin-top: 4px;
     }
 
     .Seller_dashboard-logo {
-        width: 70px;
+        width: 65px;
     }
 
     .Seller_dashboard-title {
+        font-size: 19px;
+        padding-bottom: 10px;
+    }
+
+    .Seller_dashboard-menu-btn {
+        padding: 14px 16px;
+        border-radius: 12px;
+        gap: 12px;
+    }
+
+    .Seller_menu-icon {
+        width: 42px;
+        height: 42px;
         font-size: 20px;
     }
 
-    
+    .Seller_dashboard-menu-btn strong {
+        font-size: 14px;
+    }
+
+    .Seller_dashboard-menu-btn small {
+        font-size: 11px;
+    }
+
+    .Seller_arrow {
+        font-size: 18px;
+    }
 }
