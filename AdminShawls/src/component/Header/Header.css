@@ -218,7 +218,10 @@ body::-webkit-scrollbar {
     border-bottom: none;
   }
 
-  .customer_nav-link {
+  /* Specificity boost: .navbar-collapse prefix, taaki Bootstrap ki
+     .text-dark (JSX me lagi hui) hamesha override ho, load-order chahe kuch bhi ho */
+  .navbar-collapse .customer_nav-link,
+  .navbar-collapse .nav-link.customer_nav-link {
     color: #f3e7c9 !important;
     font-size: 20px;
     font-weight: 600;
@@ -228,12 +231,12 @@ body::-webkit-scrollbar {
     display: block;
   }
 
-  .customer_nav-link:hover {
+  .navbar-collapse .customer_nav-link:hover {
     color: #d4af37 !important;
   }
 
   /* Dropdown items (Shop / About) — accordion style, no floating absolute box */
-  .customer_dropdown-menu {
+  .navbar-collapse .customer_dropdown-menu {
     position: static !important;
     width: 100%;
     background: rgba(255, 255, 255, 0.04) !important;
@@ -244,25 +247,25 @@ body::-webkit-scrollbar {
     display: none;
   }
 
-  .customer_dropdown-menu.show {
+  .navbar-collapse .customer_dropdown-menu.show {
     display: block !important;
     animation: customer_fadeInDown 0.25s ease;
   }
 
-  .customer_dropdown-item {
+  .navbar-collapse .customer_dropdown-item {
     text-align: center !important;
     color: #e8dcc0 !important;
     font-size: 15.5px;
     padding: 10px 16px !important;
   }
 
-  .customer_dropdown-item:hover {
+  .navbar-collapse .customer_dropdown-item:hover {
     background: rgba(212, 175, 55, 0.15) !important;
     color: #ffd76a !important;
   }
 
   /* Icons row — centered pill row below nav links */
-  .customer_icons {
+  .navbar-collapse .customer_icons {
     margin-top: 30px !important;
     justify-content: center !important;
     gap: 22px !important;
@@ -272,28 +275,28 @@ body::-webkit-scrollbar {
     max-width: 420px;
   }
 
-  .customer_icons svg {
-    color: #f3e7c9;
+  .navbar-collapse .customer_icons svg {
+    color: #f3e7c9 !important;
     font-size: 24px;
   }
 
-  .customer_icons svg:hover {
-    color: #ffd76a;
+  .navbar-collapse .customer_icons svg:hover {
+    color: #ffd76a !important;
   }
 
-  .customer_icons .btn-outline-danger {
+  .navbar-collapse .customer_icons .btn-outline-danger {
     color: #ff8a8a !important;
     border-color: #ff8a8a !important;
     background: transparent;
   }
 
-  .customer_icons .btn-outline-danger:hover {
+  .navbar-collapse .customer_icons .btn-outline-danger:hover {
     background: #ff8a8a !important;
     color: #1b1b1b !important;
   }
 
-  .customer_icons a[title="Login"] svg {
-    color: #f3e7c9;
+  .navbar-collapse .customer_icons a[title="Login"] svg {
+    color: #f3e7c9 !important;
   }
 }
 
@@ -307,7 +310,7 @@ body::-webkit-scrollbar {
     padding-top: 120px;
   }
 
-  .customer_nav-link {
+  .navbar-collapse .customer_nav-link {
     font-size: 21px;
   }
 }
@@ -328,16 +331,16 @@ body::-webkit-scrollbar {
     padding: 90px 18px 30px;
   }
 
-  .customer_nav-link {
+  .navbar-collapse .customer_nav-link {
     font-size: 18px;
     padding: 14px 0 !important;
   }
 
-  .customer_icons {
+  .navbar-collapse .customer_icons {
     gap: 18px !important;
   }
 
-  .customer_icons svg {
+  .navbar-collapse .customer_icons svg {
     font-size: 21px;
   }
 }
@@ -348,11 +351,11 @@ body::-webkit-scrollbar {
     font-size: 1.5rem;
   }
 
-  .customer_nav-link {
+  .navbar-collapse .customer_nav-link {
     font-size: 16.5px;
   }
 
-  .customer_icons {
+  .navbar-collapse .customer_icons {
     gap: 14px !important;
   }
 }

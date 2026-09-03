@@ -430,7 +430,7 @@ function Header() {
     };
   }, []);
 
-  // ✅ NAYA: Mobile menu khulne par background scroll lock ho jaye (professional UX)
+  // ✅ Mobile menu khulne par background scroll lock ho jaye (professional UX)
   useEffect(() => {
     document.body.style.overflow = isMobileMenuOpen ? "hidden" : "auto";
     return () => {
