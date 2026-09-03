@@ -144,24 +144,5 @@ body {
         font-size: 20px;
     }
 
-    .Seller_dashboard-menu-btn {
-        padding: 12px 14px;
-        gap: 10px;
-    }
-
-    .Seller_menu-icon {
-        font-size: 22px;
-    }
-
-    .Seller_dashboard-menu-btn strong {
-        font-size: 14px;
-    }
-
-    .Seller_dashboard-menu-btn small {
-        font-size: 11px;
-    }
-
-    .Seller_arrow {
-        font-size: 18px;
-    }
+    
 }

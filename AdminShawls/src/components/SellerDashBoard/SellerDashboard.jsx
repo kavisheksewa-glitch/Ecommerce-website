@@ -255,7 +255,6 @@
 //000003 sept 2026 evening
 
 
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./SellerDashboard.css";
@@ -409,7 +408,7 @@ function SellerDashboard() {
         )}
 
         <div className="row g-4 mt-4">
-          <div className="col-6 col-lg-4 col-md-6">
+          <div className="col-lg-4 col-md-6">
             <button
               className="Seller_dashboard-menu-btn"
               onClick={() => navigate("/add-product")}
@@ -423,7 +422,7 @@ function SellerDashboard() {
             </button>
           </div>
 
-          <div className="col-6 col-lg-4 col-md-6">
+          <div className="col-lg-4 col-md-6">
             <button
               className="Seller_dashboard-menu-btn"
               onClick={() => navigate("/product-categories")}
@@ -437,7 +436,7 @@ function SellerDashboard() {
             </button>
           </div>
 
-          <div className="col-6 col-lg-4 col-md-6">
+          <div className="col-lg-4 col-md-6">
             <button
               className="Seller_dashboard-menu-btn"
               onClick={() => navigate("/manage-products")}
@@ -451,7 +450,7 @@ function SellerDashboard() {
             </button>
           </div>
 
-          <div className="col-6 col-lg-4 col-md-6">
+          <div className="col-lg-4 col-md-6">
             <button
               className="Seller_dashboard-menu-btn"
               onClick={() => navigate("/shipping")}
@@ -465,7 +464,7 @@ function SellerDashboard() {
             </button>
           </div>
 
-          <div className="col-6 col-lg-4 col-md-6">
+          <div className="col-lg-4 col-md-6">
             <button
               className="Seller_dashboard-menu-btn"
               onClick={() => navigate("/payment-gateway")}
@@ -479,7 +478,7 @@ function SellerDashboard() {
             </button>
           </div>
 
-          <div className="col-6 col-lg-4 col-md-6">
+          <div className="col-lg-4 col-md-6">
             <button
               className="Seller_dashboard-menu-btn"
               onClick={() => navigate("/analytics")}
