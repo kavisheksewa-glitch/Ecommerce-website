@@ -6599,22 +6599,21 @@ const createOrder = async (req, res) => {
       razorpayPaymentId,
       sellerId,
     } = req.body;
-    const finding=await sellerProduct.findOne({_id:productId,sellerId:sellerId});
-    if(!finding){
+
+    const finding = await SellerProduct.findOne({ _id: productId, sellerId: sellerId });
+
+    if (!finding) {
       return res.status(404).json({ success: false, message: "Product not found for this seller" });
     }
-    if(finding.stock<quantity){
+
+    if (finding.stockQuantity < quantity) {
       return res.status(400).json({ success: false, message: "Insufficient stock for the requested quantity" });
     }
-    if(finding.stock===quantity){
-      finding.stock=0;
-      finding.isAvailable=false;
-    }
-    else{
-      finding.stock-=quantity;
-    }
+
+    finding.stockQuantity -= quantity;
     await finding.save();
-      const newOrder = new Order({
+
+    const newOrder = new Order({
       userId,
       productId,
       productTitle,
@@ -6660,8 +6659,9 @@ const createOrder = async (req, res) => {
       console.warn("Order create: sellerId missing, seller notification skip ho gayi.");
     }
 
-    res.status(201).json({ success: true, message: "Order created successfully", order: savedOrder });
+    res.status(201).json({ success: true, message: "Order created successfully", order: savedOrder, remainingStock: finding.stockQuantity });
   } catch (error) {
+    console.error("❌ Error in createOrder:", error.message);
     res.status(500).json({ success: false, message: error.message });
   }
 };
