@@ -172,6 +172,8 @@ body::-webkit-scrollbar {
 
 /* =====================================================
    FULL-SCREEN MOBILE / TABLET MENU (<992px)
+   — colors original hi hain (#eac35fe4 background, #222 text),
+     bas ab poori screen cover karta hai
 ===================================================== */
 @media (max-width: 991.98px) {
   .navbar-collapse {
@@ -181,7 +183,7 @@ body::-webkit-scrollbar {
     width: 100vw;
     height: 100vh;
     height: 100dvh;
-    background: linear-gradient(160deg, #1b1b1b, #2a2210 70%, #1b1b1b);
+    background-color: #eac35fe4;
     z-index: 2000;
     display: flex !important;
     flex-direction: column;
@@ -210,7 +212,7 @@ body::-webkit-scrollbar {
   }
 
   .navbar-nav .nav-item {
-    border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+    border-bottom: 1px solid rgba(74, 58, 11, 0.15);
     width: 100%;
   }
 
@@ -218,11 +220,9 @@ body::-webkit-scrollbar {
     border-bottom: none;
   }
 
-  /* Specificity boost: .navbar-collapse prefix, taaki Bootstrap ki
-     .text-dark (JSX me lagi hui) hamesha override ho, load-order chahe kuch bhi ho */
   .navbar-collapse .customer_nav-link,
   .navbar-collapse .nav-link.customer_nav-link {
-    color: #f3e7c9 !important;
+    color: #222 !important;
     font-size: 20px;
     font-weight: 600;
     letter-spacing: 0.5px;
@@ -232,14 +232,14 @@ body::-webkit-scrollbar {
   }
 
   .navbar-collapse .customer_nav-link:hover {
-    color: #d4af37 !important;
+    color: #6b4e00 !important;
   }
 
-  /* Dropdown items (Shop / About) — accordion style, no floating absolute box */
+  /* Dropdown items (Shop / About) — original dark bg + white text, ab static block me */
   .navbar-collapse .customer_dropdown-menu {
     position: static !important;
     width: 100%;
-    background: rgba(255, 255, 255, 0.04) !important;
+    background: #1b1b1b !important;
     box-shadow: none;
     border-radius: 10px;
     padding: 4px 0;
@@ -254,14 +254,14 @@ body::-webkit-scrollbar {
 
   .navbar-collapse .customer_dropdown-item {
     text-align: center !important;
-    color: #e8dcc0 !important;
+    color: white !important;
     font-size: 15.5px;
     padding: 10px 16px !important;
   }
 
   .navbar-collapse .customer_dropdown-item:hover {
-    background: rgba(212, 175, 55, 0.15) !important;
-    color: #ffd76a !important;
+    background: #d4af37 !important;
+    color: black !important;
   }
 
   /* Icons row — centered pill row below nav links */
@@ -270,33 +270,33 @@ body::-webkit-scrollbar {
     justify-content: center !important;
     gap: 22px !important;
     padding-top: 24px;
-    border-top: 1px solid rgba(212, 175, 55, 0.15);
+    border-top: 1px solid rgba(74, 58, 11, 0.2);
     width: 100%;
     max-width: 420px;
   }
 
   .navbar-collapse .customer_icons svg {
-    color: #f3e7c9 !important;
+    color: #4a3a0b !important;
     font-size: 24px;
   }
 
   .navbar-collapse .customer_icons svg:hover {
-    color: #ffd76a !important;
+    color: #000 !important;
   }
 
   .navbar-collapse .customer_icons .btn-outline-danger {
-    color: #ff8a8a !important;
-    border-color: #ff8a8a !important;
+    color: #c0392b !important;
+    border-color: #c0392b !important;
     background: transparent;
   }
 
   .navbar-collapse .customer_icons .btn-outline-danger:hover {
-    background: #ff8a8a !important;
-    color: #1b1b1b !important;
+    background: #c0392b !important;
+    color: #fff !important;
   }
 
   .navbar-collapse .customer_icons a[title="Login"] svg {
-    color: #f3e7c9 !important;
+    color: #4a3a0b !important;
   }
 }
 
