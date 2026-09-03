@@ -6599,8 +6599,22 @@ const createOrder = async (req, res) => {
       razorpayPaymentId,
       sellerId,
     } = req.body;
-
-    const newOrder = new Order({
+    const finding=await sellerProduct.findOne({_id:productId,sellerId:sellerId});
+    if(!finding){
+      return res.status(404).json({ success: false, message: "Product not found for this seller" });
+    }
+    if(finding.stock<quantity){
+      return res.status(400).json({ success: false, message: "Insufficient stock for the requested quantity" });
+    }
+    if(finding.stock===quantity){
+      finding.stock=0;
+      finding.isAvailable=false;
+    }
+    else{
+      finding.stock-=quantity;
+    }
+    await finding.save();
+      const newOrder = new Order({
       userId,
       productId,
       productTitle,
