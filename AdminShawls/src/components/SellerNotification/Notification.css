@@ -66,10 +66,45 @@ body {
 /* ================= INDIVIDUAL NOTIFICATION ITEM ================= */
 .Seller_notif-item {
     border-radius: 14px !important;
-    border: 1px solid rgba(184, 134, 11, 0.18) !important;
-    background: linear-gradient(160deg, #ffffff, #fdf8f3) !important;
-    padding: 18px 20px;
+    padding: 18px 20px 18px 22px;
     transition: all 0.3s ease;
+    border: 1px solid transparent !important;
+    border-left-width: 5px !important;
+    background: linear-gradient(160deg, #ffffff, #fdf8f3);
+}
+
+/* ===== Type-based colors (danger = low stock, warning, info, success) ===== */
+.Seller_notif-item.alert-danger {
+    border-left-color: #a13f3f !important;
+    background: linear-gradient(160deg, #fff5f5, #fbeaea) !important;
+}
+.Seller_notif-item.alert-danger .alert-heading {
+    color: #8c2f2f;
+}
+
+.Seller_notif-item.alert-warning {
+    border-left-color: #c58a1f !important;
+    background: linear-gradient(160deg, #fffaf0, #fbf1de) !important;
+}
+.Seller_notif-item.alert-warning .alert-heading {
+    color: #9c6a10;
+}
+
+.Seller_notif-item.alert-success {
+    border-left-color: #3e7d4f !important;
+    background: linear-gradient(160deg, #f5faf6, #eaf5ec) !important;
+}
+.Seller_notif-item.alert-success .alert-heading {
+    color: #2f6b3f;
+}
+
+.Seller_notif-item.alert-info {
+    border-left-color: #4a7a8c !important;
+    background: linear-gradient(160deg, #f4fafc, #e8f3f6) !important;
+    border-radius: 14px;
+}
+.Seller_notif-item.alert-info .alert-heading {
+    color: #3a6474;
 }
 
 .Seller_notif-item:hover {
