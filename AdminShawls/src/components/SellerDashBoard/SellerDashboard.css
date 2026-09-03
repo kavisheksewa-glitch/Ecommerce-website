@@ -108,3 +108,60 @@ body {
     font-size: 24px;
     color: inherit;
 }
+
+
+
+/* ================= MOBILE RESPONSIVE (2 cards per row) ================= */
+@media (max-width: 576px) {
+    .row.g-4 {
+        --bs-gutter-x: 0.6rem;
+        --bs-gutter-y: 0.6rem;
+    }
+
+    .Seller_card {
+        padding: 0.9rem !important;
+        min-height: 95px;
+    }
+
+    .Seller_card h5 {
+        font-size: 13px;
+        margin-bottom: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .Seller_card h2 {
+        font-size: 22px;
+        margin-top: 4px;
+    }
+
+    .Seller_dashboard-logo {
+        width: 70px;
+    }
+
+    .Seller_dashboard-title {
+        font-size: 20px;
+    }
+
+    .Seller_dashboard-menu-btn {
+        padding: 12px 14px;
+        gap: 10px;
+    }
+
+    .Seller_menu-icon {
+        font-size: 22px;
+    }
+
+    .Seller_dashboard-menu-btn strong {
+        font-size: 14px;
+    }
+
+    .Seller_dashboard-menu-btn small {
+        font-size: 11px;
+    }
+
+    .Seller_arrow {
+        font-size: 18px;
+    }
+}
