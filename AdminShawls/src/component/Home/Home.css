@@ -165,11 +165,31 @@ h1 {
 }
 
 .Customer_hero-image {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
+  width: 100% !important;
+  height: auto !important;
+  object-fit: contain !important;
+  object-position: center !important;
   display: block;
- 
+  max-height: none !important;
+}
+/* =====================================================
+   HERO BANNER — image poori (uncropped) dikhe har screen par
+===================================================== */
+@media (max-width: 991.98px) {
+  .Customer_hero-carousel-wrapper {
+    align-items: flex-start;
+  }
+
+  .Customer_hero-image {
+    object-fit: contain !important;
+    object-position: top center !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .Customer_hero-carousel-container {
+    height: auto;
+  }
 }
 
 .Customer_carousel-dots button {
