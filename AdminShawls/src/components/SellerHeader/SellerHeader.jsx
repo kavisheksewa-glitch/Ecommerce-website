@@ -63,7 +63,7 @@ function SellerHeader() {
   };
 
   return (
-    <nav className="navbar navbar-expand-lg bg-white shadow-sm fixed-top px-4 py-3 Seller_seller-navbar">
+    <nav className="navbar navbar-expand-lg bg-white shadow-sm fixed-top px-4 py-3 Seller_seller-navbar flex-nowrap">
 
       <div className="navbar-brand d-flex align-items-center">
         <div>

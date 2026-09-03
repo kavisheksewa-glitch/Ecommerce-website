@@ -12,3 +12,37 @@
 .Seller_seller-navbar {
     background: linear-gradient(90deg, #eae6e1, #d4a373);
 }
+
+
+
+/* ================= MOBILE RESPONSIVE HEADER ================= */
+@media (max-width: 576px) {
+    .Seller_seller-navbar {
+        padding: 10px 12px !important;
+        flex-wrap: nowrap;
+    }
+
+    .Seller_seller-navbar .navbar-brand h5 {
+        font-size: 15px;
+        white-space: nowrap;
+    }
+
+    .Seller_seller-navbar .ms-auto {
+        gap: 6px !important;
+    }
+
+    .Seller_seller-navbar .btn {
+        padding: 4px 8px !important;
+        font-size: 13px;
+    }
+
+    .Seller_seller-navbar .badge {
+        font-size: 9px;
+        padding: 3px 5px;
+    }
+
+    .Seller_seller-navbar .dropdown-menu {
+        min-width: 180px;
+        font-size: 13px;
+    }
+}

@@ -108,6 +108,16 @@ body {
     font-size: 24px;
     color: inherit;
 }
+/* ================= DASHBOARD CONTENT SPACING (header ke neeche) ================= */
+.Seller_dashboard-content {
+    margin-top: 3rem;
+}
+
+@media (max-width: 576px) {
+    .Seller_dashboard-content {
+        margin-top: 2rem;
+    }
+}
 
 
 

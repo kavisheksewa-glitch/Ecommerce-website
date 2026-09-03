@@ -346,7 +346,7 @@ function SellerDashboard() {
     <div className="Seller_dashboard-page">
       <SellerHeader />
 
-      <div className="container py-5 mt-5">
+      <div className="container py-5 Seller_dashboard-content">
         <h2 className="text-center fw-bold mb-5 Seller_dashboard-title">
           <img
             src={logo}
