@@ -6377,11 +6377,130 @@ const getCart = async (req, res) => {
 
 // ==================== ORDER CONTROLLERS ====================
 
+// /**
+//  * @swagger
+//  * /api/customer/order/create:
+//  *   post:
+//  *     summary: Create a new order
+//  *     tags: [Customer Authentication & Management]
+//  *     security:
+//  *       - CustomerBearerAuth: []
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             required:
+//  *               - productId
+//  *               - productTitle
+//  *               - price
+//  *               - quantity
+//  *               - totalAmount
+//  *               - fullName
+//  *               - phone
+//  *               - address
+//  *               - paymentMethod
+//  *             properties:
+//  *               productId:
+//  *                 type: string
+//  *               productTitle:
+//  *                 type: string
+//  *               price:
+//  *                 type: number
+//  *               quantity:
+//  *                 type: number
+//  *               totalAmount:
+//  *                 type: number
+//  *               fullName:
+//  *                 type: string
+//  *               phone:
+//  *                 type: string
+//  *               address:
+//  *                 type: string
+//  *               paymentMethod:
+//  *                 type: string
+//  *     responses:
+//  *       201:
+//  *         description: Order created successfully
+//  */
+// const createOrder = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const {
+//       productId,
+//       productTitle,
+//       productImage,
+//       price,
+//       quantity,
+//       totalAmount,
+//       fullName,
+//       phone,
+//       address,
+//       paymentMethod,
+//       paymentStatus,
+//       razorpayPaymentId,
+//       sellerId,
+//     } = req.body;
+
+//     const newOrder = new Order({
+//       userId,
+//       productId,
+//       productTitle,
+//       productImage,
+//       price,
+//       quantity,
+//       totalAmount,
+//       fullName,
+//       phone,
+//       address,
+//       paymentMethod,
+//       paymentStatus: paymentStatus || "Pending",
+//       razorpayPaymentId: razorpayPaymentId || "",
+//       sellerId,
+//     });
+
+//     const savedOrder = await newOrder.save();
+
+//     try {
+//       await Notification.create({
+//         userId,
+//         productId,
+//         title: "Order Placed Successfully! 📦",
+//         message: `Your order for ${productTitle} has been placed successfully.`,
+//         type: "order",
+//       });
+//     } catch (notifyError) {
+//       console.error("Notification creation failed (order create - customer):", notifyError.message);
+//     }
+
+//     if (sellerId) {
+//       try {
+//         await SellerNotification.create({
+//           sellerId,
+//           title: "New Order Received! 🛒",
+//           message: `${fullName || "A customer"} ne "${productTitle}" ka order place kiya hai. Quantity: ${quantity || 1}.`,
+//           type: "success",
+//         });
+//       } catch (notifyError) {
+//         console.error("Notification creation failed (order create - seller):", notifyError.message);
+//       }
+//     } else {
+//       console.warn("Order create: sellerId missing, seller notification skip ho gayi.");
+//     }
+
+//     res.status(201).json({ success: true, message: "Order created successfully", order: savedOrder });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
 /**
  * @swagger
  * /api/customer/order/create:
  *   post:
  *     summary: Create a new order
+ *     description: Creates a new order for the logged-in customer, saves it to the database, and sends notifications to both the customer and the seller.
  *     tags: [Customer Authentication & Management]
  *     security:
  *       - CustomerBearerAuth: []
@@ -6404,25 +6523,63 @@ const getCart = async (req, res) => {
  *             properties:
  *               productId:
  *                 type: string
+ *                 example: "60d0fe4f5311236168a109ee"
  *               productTitle:
  *                 type: string
+ *                 example: "Kashmiri Pashmina Shawl"
+ *               productImage:
+ *                 type: string
+ *                 example: "https://example.com/images/shawl.jpg"
  *               price:
  *                 type: number
+ *                 example: 2500
  *               quantity:
- *                 type: number
+ *                 type: integer
+ *                 example: 1
  *               totalAmount:
  *                 type: number
+ *                 example: 2500
  *               fullName:
  *                 type: string
+ *                 example: "Aarav Sharma"
  *               phone:
  *                 type: string
+ *                 example: "9876543210"
  *               address:
  *                 type: string
+ *                 example: "12 Residency Road, Srinagar, J&K"
  *               paymentMethod:
  *                 type: string
+ *                 example: "Cash on Delivery"
+ *               paymentStatus:
+ *                 type: string
+ *                 example: "Pending"
+ *               razorpayPaymentId:
+ *                 type: string
+ *                 example: "pay_123456789"
+ *               sellerId:
+ *                 type: string
+ *                 example: "60d0fe4f5311236168a109aa"
  *     responses:
  *       201:
  *         description: Order created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Order created successfully"
+ *                 order:
+ *                   type: object
+ *       401:
+ *         description: Not authorized (missing or invalid token)
+ *       500:
+ *         description: Server error
  */
 const createOrder = async (req, res) => {
   try {
