@@ -9,6 +9,8 @@ body::-webkit-scrollbar {
   align-items: center;
   padding-top: 0;
   padding-bottom: 0;
+  z-index: 2100;
+  position: relative;
 }
 
 .customer_logo {
@@ -40,13 +42,6 @@ body::-webkit-scrollbar {
 @keyframes customer_shine {
   to {
     background-position: -200% center;
-  }
-}
-
-@media (max-width: 768px) {
-  .customer_logo {
-    font-size: 2.0rem;
-    letter-spacing: 0.5px;
   }
 }
 
@@ -145,39 +140,236 @@ body::-webkit-scrollbar {
   }
 }
 
-/* MOBILE DROPDOWN POSITIONING FIX */
-@media (max-width: 991px) {
-  .customer_icons {
-    margin-top: 15px;
-    justify-content: flex-end;
+.customer_header-back {
+  background-color: #eac35fe4 !important;
+  position: relative;
+  z-index: 2050;
+}
+
+/* ================= TOGGLER (hamburger / close icon) ================= */
+.customer_toggler {
+  position: relative;
+  z-index: 2100;
+  border: 1px solid rgba(74, 58, 11, 0.3) !important;
+  border-radius: 8px;
+  padding: 6px 10px !important;
+  background: rgba(255, 255, 255, 0.35);
+  transition: all 0.25s ease;
+}
+
+.customer_toggler svg {
+  font-size: 22px;
+  color: #4a3a0b;
+}
+
+.customer_toggler:focus {
+  box-shadow: none;
+}
+
+.customer_toggler:hover {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+/* =====================================================
+   FULL-SCREEN MOBILE / TABLET MENU (<992px)
+===================================================== */
+@media (max-width: 991.98px) {
+  .navbar-collapse {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    background: linear-gradient(160deg, #1b1b1b, #2a2210 70%, #1b1b1b);
+    z-index: 2000;
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 100px 24px 40px;
+    overflow-y: auto;
+
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-16px);
+    transition: opacity 0.35s ease, transform 0.35s ease, visibility 0.35s;
+  }
+
+  .navbar-collapse.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .navbar-nav {
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+    margin: 0 auto;
+  }
+
+  .navbar-nav .nav-item {
+    border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+    width: 100%;
+  }
+
+  .navbar-nav .nav-item:last-child {
+    border-bottom: none;
   }
 
   .customer_nav-link {
-    text-align: right;
-    margin: 8px 0;
+    color: #f3e7c9 !important;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    padding: 16px 0 !important;
+    margin: 0;
+    display: block;
   }
 
+  .customer_nav-link:hover {
+    color: #d4af37 !important;
+  }
+
+  /* Dropdown items (Shop / About) — accordion style, no floating absolute box */
   .customer_dropdown-menu {
-    position: absolute !important;
-    top: 100% !important;
-    right: 0 !important;
-    left: auto !important;
-    min-width: 220px !important;
-    width: max-content !important;
-    max-width: 80vw !important;
-    background: #1b1b1b !important;
-    border-radius: 8px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-    z-index: 10000 !important;
+    position: static !important;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.04) !important;
+    box-shadow: none;
+    border-radius: 10px;
+    padding: 4px 0;
+    margin: 0 0 8px 0;
+    display: none;
+  }
+
+  .customer_dropdown-menu.show {
+    display: block !important;
+    animation: customer_fadeInDown 0.25s ease;
   }
 
   .customer_dropdown-item {
-    text-align: left !important;
-    padding: 10px 18px !important;
-    color: #ffffff !important;
+    text-align: center !important;
+    color: #e8dcc0 !important;
+    font-size: 15.5px;
+    padding: 10px 16px !important;
+  }
+
+  .customer_dropdown-item:hover {
+    background: rgba(212, 175, 55, 0.15) !important;
+    color: #ffd76a !important;
+  }
+
+  /* Icons row — centered pill row below nav links */
+  .customer_icons {
+    margin-top: 30px !important;
+    justify-content: center !important;
+    gap: 22px !important;
+    padding-top: 24px;
+    border-top: 1px solid rgba(212, 175, 55, 0.15);
+    width: 100%;
+    max-width: 420px;
+  }
+
+  .customer_icons svg {
+    color: #f3e7c9;
+    font-size: 24px;
+  }
+
+  .customer_icons svg:hover {
+    color: #ffd76a;
+  }
+
+  .customer_icons .btn-outline-danger {
+    color: #ff8a8a !important;
+    border-color: #ff8a8a !important;
+    background: transparent;
+  }
+
+  .customer_icons .btn-outline-danger:hover {
+    background: #ff8a8a !important;
+    color: #1b1b1b !important;
+  }
+
+  .customer_icons a[title="Login"] svg {
+    color: #f3e7c9;
   }
 }
 
-.customer_header-back {
-  background-color: #eac35fe4 !important;
+/* ================= TABLET (768px – 991px) fine-tune ================= */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .customer_logo {
+    font-size: 2.1rem;
+  }
+
+  .navbar-collapse {
+    padding-top: 120px;
+  }
+
+  .customer_nav-link {
+    font-size: 21px;
+  }
+}
+
+/* ================= MOBILE (≤576px) fine-tune ================= */
+@media (max-width: 576px) {
+  .customer_logo {
+    font-size: 1.7rem;
+    letter-spacing: 0.5px;
+  }
+
+  .container-fluid.px-4 {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+
+  .navbar-collapse {
+    padding: 90px 18px 30px;
+  }
+
+  .customer_nav-link {
+    font-size: 18px;
+    padding: 14px 0 !important;
+  }
+
+  .customer_icons {
+    gap: 18px !important;
+  }
+
+  .customer_icons svg {
+    font-size: 21px;
+  }
+}
+
+/* ================= EXTRA SMALL (≤375px) fine-tune ================= */
+@media (max-width: 375px) {
+  .customer_logo {
+    font-size: 1.5rem;
+  }
+
+  .customer_nav-link {
+    font-size: 16.5px;
+  }
+
+  .customer_icons {
+    gap: 14px !important;
+  }
+}
+
+/* ================= LAPTOP / DESKTOP (≥992px) polish ================= */
+@media (min-width: 992px) {
+  .customer_nav-link {
+    padding: 6px 4px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .customer_logo {
+    font-size: 2.4rem;
+  }
+
+  .customer_icons svg {
+    font-size: 23px;
+  }
 }
