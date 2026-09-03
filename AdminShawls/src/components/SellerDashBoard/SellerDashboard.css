@@ -246,22 +246,22 @@ body {
 
     .Seller_card {
         border-radius: 14px !important;
-        padding: 0.9rem !important;
-        min-height: 100px;
+        padding: 0.8rem 0.6rem !important;
+        min-height: 105px;
     }
 
     .Seller_card h5 {
-        font-size: 11.5px;
+        font-size: 12px;
         margin-bottom: 4px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        line-height: 1.3;
+        white-space: normal;
         letter-spacing: 0.2px;
+        word-break: break-word;
     }
 
     .Seller_card h2 {
-        font-size: 21px;
-        margin-top: 4px;
+        font-size: 20px;
+        margin-top: 6px;
     }
 
     .Seller_dashboard-logo {
