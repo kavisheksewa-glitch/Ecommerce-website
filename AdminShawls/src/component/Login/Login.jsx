@@ -55,6 +55,15 @@ function Login() {
 
         alert(data.message || "Login Successful!");
         navigate("/customer"); // Ya jahan aapka main dashboard hai
+      // } else {
+      //   setError(data.message || "Invalid email or password!");
+      // }
+      } else if (data.notVerified) {
+        // ✅ Email verify nahi hua - verify page pe bhej do
+        setError(data.message || "Please verify your email first.");
+        navigate("/verify-email", {
+          state: { userId: data.userId, email: data.email },
+        });
       } else {
         setError(data.message || "Invalid email or password!");
       }
