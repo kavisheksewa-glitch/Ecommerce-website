@@ -90,11 +90,20 @@ function SellerDetails() {
                   <label className="fw-bold d-block mb-2">
                     Profile Image
                   </label>
-                  <img
+                  {/* <img
                     src={`https://ecommerce-website-ggui.onrender.com/${seller.profileImage}`}
                     alt="Seller Profile"
                     className="rounded-circle object-fit-cover shadow-sm ingg"
-                  />
+                  /> */}
+                  <img
+      src={
+        seller.profileImage.startsWith("http")
+          ? seller.profileImage
+          : `https://ecommerce-website-ggui.onrender.com/${seller.profileImage.replace(/\\/g, "/")}`
+      }
+      alt="Seller Profile"
+      className="rounded-circle object-fit-cover shadow-sm ingg"
+    />
                 </div>
               )}
 

@@ -446,7 +446,7 @@ function Home() {
     checkAuthAndExecute(async (token) => {
       if (!cartProductIds.includes(String(product.id))) {
         try {
-          await fetch("http://localhost:5000/api/customer/cart/add", {
+          await fetch("https://ecommerce-website-ggui.onrender.com/api/customer/cart/add", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -759,7 +759,7 @@ function Home() {
                     <div className="Customer_product-image-box card overflow-hidden position-relative">
                                                                       
                                                                       {/* ✅ Brand Logo Display */}
-                                                                      {item.brandLogo && (
+                                                                      {item.brandLogo  && (
                                                                         <div 
                                                                           className="position-absolute shadow-sm rounded-circle overflow-hidden bg-white d-flex align-items-center justify-content-center"
                                                                           style={{
