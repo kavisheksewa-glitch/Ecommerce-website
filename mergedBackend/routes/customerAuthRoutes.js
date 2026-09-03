@@ -6424,76 +6424,6 @@ const getCart = async (req, res) => {
  *       201:
  *         description: Order created successfully
  */
-// const createOrder = async (req, res) => {
-//   try {
-//     const userId = req.user.id;
-//     const {
-//       productId,
-//       productTitle,
-//       productImage,
-//       price,
-//       quantity,
-//       totalAmount,
-//       fullName,
-//       phone,
-//       address,
-//       paymentMethod,
-//       paymentStatus,
-//       razorpayPaymentId,
-//       sellerId,
-//     } = req.body;
-
-//     const newOrder = new Order({
-//       userId,
-//       productId,
-//       productTitle,
-//       productImage,
-//       price,
-//       quantity,
-//       totalAmount,
-//       fullName,
-//       phone,
-//       address,
-//       paymentMethod,
-//       paymentStatus: paymentStatus || "Pending",
-//       razorpayPaymentId: razorpayPaymentId || "",
-//       sellerId,
-//     });
-
-//     const savedOrder = await newOrder.save();
-
-//     try {
-//       await Notification.create({
-//         userId,
-//         productId,
-//         title: "Order Placed Successfully! 📦",
-//         message: `Your order for ${productTitle} has been placed successfully.`,
-//         type: "order",
-//       });
-//     } catch (notifyError) {
-//       console.error("Notification creation failed (order create - customer):", notifyError.message);
-//     }
-
-//     if (sellerId) {
-//       try {
-//         await SellerNotification.create({
-//           sellerId,
-//           title: "New Order Received! 🛒",
-//           message: `${fullName || "A customer"} ne "${productTitle}" ka order place kiya hai. Quantity: ${quantity || 1}.`,
-//           type: "success",
-//         });
-//       } catch (notifyError) {
-//         console.error("Notification creation failed (order create - seller):", notifyError.message);
-//       }
-//     } else {
-//       console.warn("Order create: sellerId missing, seller notification skip ho gayi.");
-//     }
-
-//     res.status(201).json({ success: true, message: "Order created successfully", order: savedOrder });
-//   } catch (error) {
-//     res.status(500).json({ success: false, message: error.message });
-//   }
-// };
 const createOrder = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -6513,39 +6443,6 @@ const createOrder = async (req, res) => {
       sellerId,
     } = req.body;
 
-    console.log("📦 Incoming order request:", { productId, quantity });
-
-    // ✅ Product exist karta hai ya nahi check karo
-    const product = await SellerProduct.findById(productId);
-    console.log("🔍 Product found:", product);
-
-    if (!product) {
-      return res.status(404).json({ success: false, message: "Product not found" });
-    }
-
-    // ✅ Stock available hai ya nahi check karo
-    const orderQty = quantity || 1;
-    if (product.stockQuantity < orderQty) {
-      return res.status(400).json({
-        success: false,
-        message: `Insufficient stock. Only ${product.stockQuantity} left.`,
-      });
-    }
-
-    // ✅ Atomically stock kam karo (race-condition safe)
-    const updatedProduct = await SellerProduct.findOneAndUpdate(
-      { _id: productId, stockQuantity: { $gte: orderQty } },
-      { $inc: { stockQuantity: -orderQty } },
-      { new: true }
-    );
-
-    console.log("✅ Stock updated:", updatedProduct?.stockQuantity);
-
-    if (!updatedProduct) {
-      return res.status(400).json({ success: false, message: "Stock just ran out, please try again." });
-    }
-
-    // 📦 Order save karo
     const newOrder = new Order({
       userId,
       productId,
@@ -6560,7 +6457,7 @@ const createOrder = async (req, res) => {
       paymentMethod,
       paymentStatus: paymentStatus || "Pending",
       razorpayPaymentId: razorpayPaymentId || "",
-      sellerId: sellerId || product.sellerId, // fallback: agar frontend se na aaye to product se le lo
+      sellerId,
     });
 
     const savedOrder = await newOrder.save();
@@ -6577,11 +6474,10 @@ const createOrder = async (req, res) => {
       console.error("Notification creation failed (order create - customer):", notifyError.message);
     }
 
-    const finalSellerId = sellerId || product.sellerId;
-    if (finalSellerId) {
+    if (sellerId) {
       try {
         await SellerNotification.create({
-          sellerId: finalSellerId,
+          sellerId,
           title: "New Order Received! 🛒",
           message: `${fullName || "A customer"} ne "${productTitle}" ka order place kiya hai. Quantity: ${quantity || 1}.`,
           type: "success",
@@ -6593,14 +6489,8 @@ const createOrder = async (req, res) => {
       console.warn("Order create: sellerId missing, seller notification skip ho gayi.");
     }
 
-    res.status(201).json({
-      success: true,
-      message: "Order created successfully",
-      order: savedOrder,
-      remainingStock: updatedProduct.stockQuantity,
-    });
+    res.status(201).json({ success: true, message: "Order created successfully", order: savedOrder });
   } catch (error) {
-    console.error("❌ Error in createOrder:", error.message);
     res.status(500).json({ success: false, message: error.message });
   }
 };
