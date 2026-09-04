@@ -378,7 +378,7 @@ function SellerDashboard() {
               <div className="col-6 col-lg-4 col-md-6">
                 <div className="card shadow border-0 text-center p-4 Seller_card">
                   <h5>Delivered Orders</h5>
-                  <h1 className="text-success">{stats.deliveredOrders}</h1>
+                  <h2 className="text-success">{stats.deliveredOrders}</h2>
                 </div>
               </div>
 
