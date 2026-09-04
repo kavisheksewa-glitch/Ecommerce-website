@@ -422,6 +422,8 @@ function Men() {
             }}
           />
         </div>
+
+        
       </div>
         {/* EXPANDABLE TOP FILTER PANEL */}
         {showFilterModal && (
