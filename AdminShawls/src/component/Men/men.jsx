@@ -350,27 +350,7 @@ function Men() {
         </div>
       )}
 
-      {/* SEARCH BAR */}
-      <div className="container my-3 text-center">
-        <div className="position-relative mx-auto" style={{ maxWidth: "600px" }}>
-          <span className="position-absolute top-50 start-0 translate-middle-y ps-3 text-muted">
-            <i className="bi bi-search"></i>
-          </span>
-          <input
-            type="text"
-            placeholder="Search men's shawls..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="form-control w-100 shadow-sm"
-            style={{
-              padding: "10px 15px 10px 45px",
-              borderRadius: "25px",
-              border: "1px solid #ddd",
-              backgroundColor: "#fcfbfa",
-            }}
-          />
-        </div>
-      </div>
+   
 
       <div className="Customer_luxury-title-wrapper">
         <h1 className="Customer_luxury-title text-center my-3 fw-bold fst-italic" style={{ color: "#54411d" }}>
@@ -421,6 +401,28 @@ function Men() {
           </div>
         </div>
 
+
+           {/* SEARCH BAR */}
+      <div className="container my-3 text-center">
+        <div className="position-relative mx-auto" style={{ maxWidth: "600px" }}>
+          <span className="position-absolute top-50 start-0 translate-middle-y ps-3 text-muted">
+            <i className="bi bi-search"></i>
+          </span>
+          <input
+            type="text"
+            placeholder="Search men's shawls..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="form-control w-100 shadow-sm"
+            style={{
+              padding: "10px 15px 10px 45px",
+              borderRadius: "25px",
+              border: "1px solid #ddd",
+              backgroundColor: "#fcfbfa",
+            }}
+          />
+        </div>
+      </div>
         {/* EXPANDABLE TOP FILTER PANEL */}
         {showFilterModal && (
           <div className="p-4 bg-white shadow-sm mt-3 border rounded-3 position-relative">
