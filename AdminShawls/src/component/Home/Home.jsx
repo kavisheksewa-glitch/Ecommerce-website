@@ -948,6 +948,8 @@ function Home() {
             className="btn btn-outline-dark fw-semibold"
             onClick={() => navigate("/shop/featured")}
           >
+
+
             Explore Featured Shawls
           </button>
         </div>
