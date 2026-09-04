@@ -203,3 +203,28 @@ h1 {
 .card-img-top{
   height: 300px;
 }
+
+/* EXPLORE CATEGORY BUTTONS - responsive layout */
+.Customer_explore-buttons {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Mobile only: 2 buttons per row */
+@media (max-width: 767.98px) {
+  .Customer_explore-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .Customer_explore-buttons button {
+    width: 100%;
+    white-space: normal;
+    font-size: 0.85rem;
+    padding: 10px 8px;
+  }
+}

@@ -922,7 +922,7 @@ function Home() {
         </div>
 
         {/* EXPLORE CATEGORY BUTTONS */}
-        <div className="d-flex justify-content-center gap-3 mt-4 flex-wrap">
+        <div className="Customer_explore-buttons mt-4">
           <button
             className="btn btn-outline-dark fw-semibold"
             onClick={() => navigate("/shop/womens")}
