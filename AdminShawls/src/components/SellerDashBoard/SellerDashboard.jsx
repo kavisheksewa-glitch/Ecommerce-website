@@ -347,14 +347,14 @@ function SellerDashboard() {
       <SellerHeader />
 
       <div className="container py-5 Seller_dashboard-content">
-        <h2 className="text-center fw-bold mb-5 Seller_dashboard-title">
+        <h1 className="text-center fw-bold mb-5 Seller_dashboard-title">
           <img
             src={logo}
             alt="Kavi Shawls Logo"
             className="Seller_dashboard-logo"
           />
           Kavi Shawls Seller Dashboard
-        </h2>
+        </h1>
 
         {loading ? (
           <p className="text-center">Loading your dashboard...</p>
@@ -364,42 +364,42 @@ function SellerDashboard() {
               <div className="col-6 col-lg-4 col-md-6">
                 <div className="card shadow border-0 text-center p-4 Seller_card">
                   <h5>Total Products</h5>
-                  <h2 className="text-primary">{stats.totalProducts}</h2>
+                  <h1 className="text-primary">{stats.totalProducts}</h1>
                 </div>
               </div>
 
               <div className="col-6 col-lg-4 col-md-6">
                 <div className="card shadow border-0 text-center p-4 Seller_card">
                   <h5>Pending Orders</h5>
-                  <h2 className="text-warning">{stats.pendingOrders}</h2>
+                  <h1 className="text-warning">{stats.pendingOrders}</h1>
                 </div>
               </div>
 
               <div className="col-6 col-lg-4 col-md-6">
                 <div className="card shadow border-0 text-center p-4 Seller_card">
                   <h5>Delivered Orders</h5>
-                  <h2 className="text-success">{stats.deliveredOrders}</h2>
+                  <h1 className="text-success">{stats.deliveredOrders}</h1>
                 </div>
               </div>
 
               <div className="col-6 col-lg-4 col-md-6">
                 <div className="card shadow border-0 text-center p-4 Seller_card">
                   <h5>Today's Sales</h5>
-                  <h2 className="text-danger">₹{stats.todaysSales.toLocaleString()}</h2>
+                  <h1 className="text-danger">₹{stats.todaysSales.toLocaleString()}</h1>
                 </div>
               </div>
 
               <div className="col-6 col-lg-4 col-md-6">
                 <div className="card shadow border-0 text-center p-4 Seller_card">
                   <h5>Monthly Revenue</h5>
-                  <h2 className="text-info">₹{stats.monthlyRevenue.toLocaleString()}</h2>
+                  <h1 className="text-info">₹{stats.monthlyRevenue.toLocaleString()}</h1>
                 </div>
               </div>
 
               <div className="col-6 col-lg-4 col-md-6">
                 <div className="card shadow border-0 text-center p-4 Seller_card">
                   <h5>Low Stock Products</h5>
-                  <h2 className="text-danger">{stats.lowStock}</h2>
+                  <h1 className="text-danger">{stats.lowStock}</h1>
                 </div>
               </div>
             </div>
