@@ -921,35 +921,33 @@ function Home() {
           </button>
         </div>
 
-        {/* EXPLORE CATEGORY BUTTONS */}
-        <div className="d-flex justify-content-center gap-3 mt-4 flex-wrap">
+        {/* EXPLORE CATEGORY BUTTONS — mobile pe ek hi row me scrollable */}
+        <div className="d-flex flex-nowrap gap-2 mt-4 overflow-auto pb-2">
           <button
-            className="btn btn-outline-dark fw-semibold"
+            className="btn btn-outline-dark fw-semibold text-nowrap"
             onClick={() => navigate("/shop/womens")}
           >
             Explore Women Shawls
           </button>
 
           <button
-            className="btn btn-outline-dark fw-semibold"
+            className="btn btn-outline-dark fw-semibold text-nowrap"
             onClick={() => navigate("/shop/mens")}
           >
             Explore Men Shawls
           </button>
 
           <button
-            className="btn btn-outline-dark fw-semibold"
+            className="btn btn-outline-dark fw-semibold text-nowrap"
             onClick={() => navigate("/shop/summer")}
           >
             Explore Summer Shawls
           </button>
 
           <button
-            className="btn btn-outline-dark fw-semibold"
+            className="btn btn-outline-dark fw-semibold text-nowrap"
             onClick={() => navigate("/shop/featured")}
           >
-
-
             Explore Featured Shawls
           </button>
         </div>
