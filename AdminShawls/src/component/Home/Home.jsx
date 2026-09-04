@@ -951,6 +951,9 @@ function Home() {
             Explore Featured Shawls
           </button>
         </div>
+
+
+        
       </div>
     </div>
   );
