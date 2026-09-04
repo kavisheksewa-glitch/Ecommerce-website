@@ -3,6 +3,10 @@ import { useNavigate } from "react-router-dom";
 import "./SellerHeader.css";
 import { FaBell } from "react-icons/fa";
 import logo from "../../assets/logooo.png";
+import { IoPerson } from "react-icons/io5";
+import { IoIosSettings } from "react-icons/io";
+import { IoIosLogOut } from "react-icons/io";
+import { FaHome } from "react-icons/fa";
 
 function SellerHeader() {
   const navigate = useNavigate();
@@ -72,7 +76,7 @@ function SellerHeader() {
           onClick={() => navigate("/seller-dashboard")}
           title="Dashboard"
         >
-          🏠 <span className="d-none d-md-inline">Home</span>
+      <FaHome /> <span className="d-none d-md-inline">Home</span>
         </button>
 
         <button
@@ -92,13 +96,13 @@ function SellerHeader() {
             className="btn btn-light"
             onClick={() => setShowProfile(!showProfile)}
           >
-            👤 Seller ▼
+           <IoPerson /> Seller ▼
           </button>
 
           {showProfile && (
             <div className="dropdown-menu show position-absolute end-0 mt-2 p-2">
               <div className="px-3 py-2">
-                <strong>👤 Seller</strong>
+                <strong><IoPerson /> Seller</strong>
                 <br />
                 <small className="text-muted">
                   Kavi Shawls
@@ -111,14 +115,14 @@ function SellerHeader() {
                 className="dropdown-item"
                 onClick={() => navigate("/seller-details")}
               >
-                👤 Seller Details
+                <IoPerson /> Seller Details
               </button>
 
               <button
                 className="dropdown-item"
                 onClick={() => navigate("/settings")}
               >
-                ⚙️ Settings
+                <IoIosSettings /> Settings
               </button>
 
               <button
@@ -126,7 +130,7 @@ function SellerHeader() {
                 className="dropdown-item text-danger"
                 onClick={handleLogout}
               >
-                🚪 Logout
+              <IoIosLogOut /> Logout
               </button>
             </div>
           )}
