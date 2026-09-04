@@ -1,15 +1,7 @@
-
-
-
-
-//claude office 
-
-
-
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./SellerHeader.css";
+import { FaBell } from "react-icons/fa";
 import logo from "../../assets/logooo.png";
 
 function SellerHeader() {
@@ -87,7 +79,7 @@ function SellerHeader() {
           className="btn btn-light position-relative"
           onClick={() => navigate("/notification")}
         >
-          🔔
+         <FaBell />
           {notificationCount > 0 && (
             <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
               {notificationCount}
