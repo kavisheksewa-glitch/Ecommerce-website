@@ -583,8 +583,19 @@ function ManageProducts() {
                     <>
                       <h5 className="fw-bold">{prodName}</h5>
                       <p className="text-muted mb-1 small">Category: {product.category}</p>
-                      <p className="fw-bold text-primary mb-1">₹{product.price}</p>
-
+                      {/* <p className="fw-bold text-primary mb-1">₹{product.price}</p> */}
+                    <div className="d-flex align-items-center gap-2 mb-1">
+  <span className="fw-bold text-success">
+    ₹{product.discount > 0 
+        ? Math.round(product.price - (product.price * product.discount) / 100) 
+        : product.price}
+  </span>
+  {product.discount > 0 && (
+    <span className="text-decoration-line-through text-muted small">
+      ₹{product.price}
+    </span>
+  )}
+</div>
                       <div className="d-flex justify-content-between align-items-center mb-3">
                         <span className="small">Stock: {prodStock} units</span>
                         <span className={`badge ${prodStock === 0 ? "bg-danger" : prodStock <= 5 ? "bg-warning text-dark" : "bg-success"}`}>
