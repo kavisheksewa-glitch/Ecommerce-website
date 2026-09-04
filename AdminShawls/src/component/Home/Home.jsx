@@ -1,10 +1,4 @@
-
-
 //claude evenig
-
-
-
-
 
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -65,7 +59,7 @@ function Home() {
 
   // PAGINATION STATES
   const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 8; // 4 columns ke hisab se per page 8 ya 12 products sahi rehte hain
+  const productsPerPage = 8;
 
   // Category Filter State
   const [selectedCategories, setSelectedCategories] = useState({
@@ -75,7 +69,7 @@ function Home() {
     Cotton: false,
   });
 
-  // Filter Modal / Dropdown Toggle State (Image jaisa popup/toggle filter)
+  // Filter Panel Toggle State
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   // BANNER IMAGES
@@ -83,8 +77,6 @@ function Home() {
   const extendedBanners = [...bannerImages, bannerImages[0]];
 
   // --- Authentication Check Helper ---
-  // ✅ Ab sirf "token" ke basis pe check hota hai (JWT), userId localStorage se
-  // guess nahi kiya jata — yehi cart/wishlist mismatch bug ki original wajah thi.
   const checkAuthAndExecute = (actionCallback) => {
     const token = localStorage.getItem("token");
 
@@ -141,14 +133,12 @@ function Home() {
     const fetchCartAndWishlist = async () => {
       const token = localStorage.getItem("token");
 
-      // Guest user -> koi cart/wishlist nahi, seedha khali rehne do
       if (!token) {
         setCartProductIds([]);
         setWishlistProductIds([]);
         return;
       }
 
-      // ✅ CART: sirf /api/customer/cart use karo (JWT se userId aayega)
       try {
         const res = await fetch("https://ecommerce-website-ggui.onrender.com/api/customer/cart", {
           method: "GET",
@@ -165,7 +155,6 @@ function Home() {
         console.error("Error fetching cart items:", err);
       }
 
-      // ✅ WISHLIST: /api/customer/wishlist use karo (JWT based, consistent)
       try {
         const res = await fetch("https://ecommerce-website-ggui.onrender.com/api/customer/wishlist", {
           method: "GET",
@@ -185,7 +174,6 @@ function Home() {
 
     fetchCartAndWishlist();
 
-    // Cart/wishlist update hone par (dusre component se) refresh karo
     window.addEventListener("cartUpdated", fetchCartAndWishlist);
     window.addEventListener("wishlistUpdated", fetchCartAndWishlist);
 
@@ -205,41 +193,30 @@ function Home() {
               ? `https://ecommerce-website-ggui.onrender.com/${rawImage.replace(/\\/g, "/")}`
               : "https://via.placeholder.com/150";
 
-              // ✅ seller ne jo price enter kiya wahi "original" price hai; discount hone par
-            // actual bikne wala price (finalPrice) usse kam hoga
             const basePrice = Number(p.price || 0);
             const discountPercent = Number(p.discount || 0);
             const finalPrice = discountPercent > 0
               ? Math.round(basePrice - (basePrice * discountPercent) / 100)
               : basePrice;
 
-
             return {
               id: p._id,
               title: p.productName || p.title,
               description: p.description,
-             // priceNum: Number(p.price || 0),
-              // price: `₹${p.price}`,
-              // originalPrice: p.discount
-              //   ? `₹${Math.round(p.price * (1 + p.discount / 100))}`
-              //   : "",
-              // discount: p.discount ? `${p.discount}% OFF` : null,
               priceNum: finalPrice,
               price: `₹${finalPrice}`,
               originalPrice: discountPercent > 0 ? `₹${basePrice}` : "",
               discount: discountPercent > 0 ? `${discountPercent}% OFF` : null,
               image: formattedImage,
-              // brandLogo: p.brandLogo ? (p.brandLogo.startsWith("http") ? p.brandLogo : `https://ecommerce-website-ggui.onrender.com/${p.brandLogo}`) : "",
               brandLogo: p.sellerId?.brandLogo
-  ? (p.sellerId.brandLogo.startsWith("http") ? p.sellerId.brandLogo : `https://ecommerce-website-ggui.onrender.com/${p.sellerId.brandLogo}`)
-  : "",
+                ? (p.sellerId.brandLogo.startsWith("http") ? p.sellerId.brandLogo : `https://ecommerce-website-ggui.onrender.com/${p.sellerId.brandLogo}`)
+                : "",
               stock: `Stock: ${p.stockQuantity ?? p.stock ?? 0}`,
               category: p.category || "Pashmina",
               fabric: p.fabric || p.category || "Pashmina",
               color: p.color || "N/A",
               size: p.size || "N/A",
               careInstructions: p.washCare || "N/A",
-              //  sellerId: p.sellerId || "",
               sellerId: p.sellerId?._id || p.sellerId || "",
             };
           });
@@ -335,7 +312,6 @@ function Home() {
     }
   };
 
-  // ✅ ADD TO CART — sirf /api/customer/cart/add, JWT token ke sath
   const handleAddToCart = (product) => {
     checkAuthAndExecute(async (token) => {
       try {
@@ -375,14 +351,12 @@ function Home() {
     });
   };
 
-  // ✅ WISHLIST — /api/customer/wishlist/add & /remove/:id, JWT token ke sath
   const handleToggleWishlist = (product) => {
     checkAuthAndExecute(async (token) => {
       const isWishlisted = wishlistProductIds.includes(String(product.id));
 
       try {
         if (isWishlisted) {
-          // Remove ke liye wishlist document ka _id chahiye — pehle current wishlist se dhoondo
           const res = await fetch("https://ecommerce-website-ggui.onrender.com/api/customer/wishlist", {
             headers: { "Authorization": `Bearer ${token}` },
           });
@@ -441,7 +415,6 @@ function Home() {
     });
   };
 
-  // ✅ BUY NOW — cart mein add bhi /api/customer/cart/add se, phir checkout pe navigate
   const handleBuyNow = (product) => {
     checkAuthAndExecute(async (token) => {
       if (!cartProductIds.includes(String(product.id))) {
@@ -610,7 +583,7 @@ function Home() {
         </h2>
 
         {/* TOP FILTERS & SORT BAR */}
-        <div className="bg-white p-3 rounded shadow-sm border mb-4 d-flex flex-wrap justify-content-between align-items-center gap-3 position-relative">
+        <div className="bg-white p-3 rounded shadow-sm border mb-4 d-flex flex-wrap justify-content-between align-items-center gap-3">
           <span className="text-muted small fw-semibold">
             Showing {activeProductsList.length > 0 ? indexOfFirstProduct + 1 : 0}-
             {Math.min(indexOfLastProduct, activeProductsList.length)} of {activeProductsList.length} products
@@ -618,57 +591,14 @@ function Home() {
 
           <div className="d-flex align-items-center gap-3">
             {/* Filter Toggle Button */}
-            <div className="position-relative">
-              <button
-                className="btn btn-outline-dark btn-sm px-3 py-2 d-flex align-items-center gap-2"
-                onClick={() => setIsFilterOpen(!isFilterOpen)}
-                style={{ borderRadius: "8px" }}
-              >
-                <i className="bi bi-funnel"></i> Filters {Object.values(selectedCategories).some(Boolean) || priceFilter < 5000 ? "●" : ""}
-              </button>
-
-              {isFilterOpen && (
-                <div
-                  className="position-absolute end-0 mt-2 bg-white p-3 rounded shadow border"
-                  style={{ width: "260px", zIndex: 1000 }}
-                >
-                  <div className="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
-                    <span className="fw-bold small">Filter Options</span>
-                    <span className="text-muted small" style={{ cursor: "pointer" }} onClick={handleClearAllFilters}>Clear All</span>
-                  </div>
-
-                  <div className="mb-3">
-                    <label className="fw-bold small mb-1 d-block">Categories</label>
-                    <div className="d-flex flex-column gap-1 small">
-                      {["Pashmina", "Woolen", "Silk", "Cotton"].map((cat) => (
-                        <div className="form-check" key={cat}>
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            id={`filter-${cat}`}
-                            checked={selectedCategories[cat]}
-                            onChange={() => handleCategoryChange(cat)}
-                          />
-                          <label className="form-check-label" htmlFor={`filter-${cat}`}>{cat}</label>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="mb-2">
-                    <label className="fw-bold small mb-1 d-block">Price Range: ₹{priceFilter}</label>
-                    <input
-                      type="range"
-                      className="form-range"
-                      min="500"
-                      max="5000"
-                      value={priceFilter}
-                      onChange={(e) => setPriceFilter(e.target.value)}
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
+            <button
+              className="btn btn-outline-dark btn-sm px-3 py-2 d-flex align-items-center gap-2"
+              onClick={() => setIsFilterOpen(!isFilterOpen)}
+              style={{ borderRadius: "8px" }}
+            >
+              <i className="bi bi-funnel"></i> Filters{" "}
+              {Object.values(selectedCategories).some(Boolean) || priceFilter < 5000 ? "●" : ""}
+            </button>
 
             {/* Sort Dropdown */}
             <div className="d-flex align-items-center gap-2">
@@ -685,6 +615,69 @@ function Home() {
             </div>
           </div>
         </div>
+
+        {/* FILTER PANEL — full width, page flow me niche khulta hai */}
+        {isFilterOpen && (
+          <div className="row g-3 mb-4 p-4 bg-white border rounded-4 shadow-sm position-relative">
+            <button
+              type="button"
+              className="btn-close position-absolute top-0 end-0 m-3"
+              aria-label="Close"
+              onClick={() => setIsFilterOpen(false)}
+            ></button>
+
+            <h5 className="fw-bold mb-3">Filter Options</h5>
+
+            <div className="col-md-6">
+              <label className="form-label fw-bold small text-secondary">
+                Price Range: ₹{priceFilter}
+              </label>
+              <input
+                type="range"
+                className="form-range"
+                min="500"
+                max="5000"
+                value={priceFilter}
+                onChange={(e) => setPriceFilter(e.target.value)}
+              />
+              <div className="d-flex justify-content-between text-muted small">
+                <span>₹500</span>
+                <span>₹5000</span>
+              </div>
+            </div>
+
+            <div className="col-md-6">
+              <label className="form-label fw-bold small text-secondary d-block">
+                Categories
+              </label>
+              <div className="d-flex flex-wrap gap-3 align-items-center mt-2">
+                {["Pashmina", "Woolen", "Silk", "Cotton"].map((cat) => (
+                  <div className="form-check" key={cat}>
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      id={`filter-${cat}`}
+                      checked={selectedCategories[cat]}
+                      onChange={() => handleCategoryChange(cat)}
+                    />
+                    <label className="form-check-label small" htmlFor={`filter-${cat}`}>
+                      {cat}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="col-12 text-end mt-3">
+              <button
+                className="btn btn-outline-danger btn-sm px-4"
+                onClick={handleClearAllFilters}
+              >
+                Clear Filters
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* PRODUCTS GRID */}
         <div className="row g-4">
@@ -703,11 +696,41 @@ function Home() {
                       borderRadius: "16px",
                     }}
                   >
-                    {/* <div className="Customer_product-image-box card overflow-hidden position-relative">
+                    <div className="Customer_product-image-box card overflow-hidden position-relative">
+                      {item.brandLogo && (
+                        <div
+                          className="position-absolute shadow-sm rounded-circle overflow-hidden bg-white d-flex align-items-center justify-content-center"
+                          style={{
+                            top: "10px",
+                            left: "10px",
+                            width: "50px",
+                            height: "50px",
+                            zIndex: 3,
+                            border: "1.5px solid #fff",
+                          }}
+                          title="Brand Logo"
+                        >
+                          <img
+                            src={
+                              item.brandLogo.startsWith("http")
+                                ? item.brandLogo
+                                : `https://ecommerce-website-ggui.onrender.com/${item.brandLogo}`
+                            }
+                            alt="Brand Logo"
+                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                          />
+                        </div>
+                      )}
+
                       {item.discount && (
                         <span
-                          className="badge bg-danger position-absolute top-0 start-0 m-2 px-2 py-1 shadow-sm fw-bold"
-                          style={{ zIndex: 2, fontSize: "0.75rem", borderRadius: "6px" }}
+                          className="badge bg-danger position-absolute start-0 m-2 px-2 py-1 shadow-sm fw-bold"
+                          style={{
+                            top: item.brandLogo ? "54px" : "0px",
+                            zIndex: 2,
+                            fontSize: "0.75rem",
+                            borderRadius: "6px",
+                          }}
                         >
                           {item.discount}
                         </span>
@@ -721,7 +744,7 @@ function Home() {
 
                       <button
                         className="Customer_share-btn"
-                        onClick={() => handleShare(item)}
+                        onClick={() => setShareProduct(item)}
                         title="Share Product"
                       >
                         <FaShareAlt />
@@ -752,93 +775,7 @@ function Home() {
                       >
                         <FaHeart />
                       </button>
-                    </div> */}
-
-
-
-                    <div className="Customer_product-image-box card overflow-hidden position-relative">
-                                                                      
-                                                                      {/* ✅ Brand Logo Display */}
-                                                                      {item.brandLogo  && (
-                                                                        <div 
-                                                                          className="position-absolute shadow-sm rounded-circle overflow-hidden bg-white d-flex align-items-center justify-content-center"
-                                                                          style={{
-                                                                            top: "10px",
-                                                                            left: "10px",
-                                                                            width: "50px",
-                                                                            height: "50px",
-                                                                            zIndex: 3,
-                                                                            border: "1.5px solid #fff"
-                                                                          }}
-                                                                          title="Brand Logo"
-                                                                        >
-                                                                          <img
-                                                                            src={
-                                                                              item.brandLogo.startsWith("http") 
-                                                                                ? item.brandLogo 
-                                                                                : `http://localhost:5000/${item.brandLogo}`
-                                                                            }
-                                                                            alt="Brand Logo"
-                                                                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                                                                          />
-                                                                        </div>
-                                                                      )}
-                                                                    
-                                                                      {/* Discount Badge */}
-                                                                      {item.discount && (
-                                                                        <span
-                                                                          className="badge bg-danger position-absolute start-0 m-2 px-2 py-1 shadow-sm fw-bold"
-                                                                          style={{
-                                                                            top: item.brandLogo ? "54px" : "0px", // Agar brand logo hoga toh badge thoda niche shift ho jayega
-                                                                            zIndex: 2,
-                                                                            fontSize: "0.75rem",
-                                                                            borderRadius: "6px",
-                                                                          }}
-                                                                        >
-                                                                          {item.discount}
-                                                                        </span>
-                                                                      )}
-                                                                    
-                                                                      <img
-                                                                        src={item.image}
-                                                                        className="card-img-top rounded Customer_product-image"
-                                                                        alt={item.title}
-                                                                      />
-                                                                    
-                                                                     <button
-                                                                  className="Customer_share-btn"
-                                                                  onClick={() => setShareProduct(item)}
-                                                                  title="Share Product"
-                                                                >
-                                                                  <FaShareAlt />
-                                                                </button>            
-                                                                      <button
-                                                                        className="Customer_wishlist-btn"
-                                                                        onClick={() => handleToggleWishlist(item)}
-                                                                        title="Wishlist Product"
-                                                                        style={{
-                                                                          position: "absolute",
-                                                                          top: "10px",
-                                                                          right: "50px",
-                                                                          background: "white",
-                                                                          border: "none",
-                                                                          borderRadius: "50%",
-                                                                          width: "35px",
-                                                                          height: "35px",
-                                                                          display: "flex",
-                                                                          alignItems: "center",
-                                                                          justifyContent: "center",
-                                                                          cursor: "pointer",
-                                                                          boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
-                                                                          color: isWishlisted ? "red" : "#ccc",
-                                                                          transition: "color 0.2s ease",
-                                                                          zIndex: 2,
-                                                                        }}
-                                                                      >
-                                                                        <FaHeart />
-                                                                      </button>
-                                                                      
-                                                                    </div>
+                    </div>
 
                     <div className="Customer_card-body px-2 py-3 d-flex flex-column justify-content-between">
                       <div>
@@ -986,33 +923,33 @@ function Home() {
 
         {/* EXPLORE CATEGORY BUTTONS */}
         <div className="d-flex justify-content-center gap-3 mt-4 flex-wrap">
-           <button
-             className="btn btn-outline-dark fw-semibold"
-             onClick={() => navigate("/shop/womens")}
-           >
-             Explore Women Shawls
-           </button>
+          <button
+            className="btn btn-outline-dark fw-semibold"
+            onClick={() => navigate("/shop/womens")}
+          >
+            Explore Women Shawls
+          </button>
 
-           <button
-          className="btn btn-outline-dark fw-semibold"
-             onClick={() => navigate("/shop/mens")}
-           >
-             Explore Men Shawls
-           </button>
+          <button
+            className="btn btn-outline-dark fw-semibold"
+            onClick={() => navigate("/shop/mens")}
+          >
+            Explore Men Shawls
+          </button>
 
-           <button
-             className="btn btn-outline-dark fw-semibold"
-             onClick={() => navigate("/shop/summer")}
-           >
-             Explore Summer Shawls
-           </button>
+          <button
+            className="btn btn-outline-dark fw-semibold"
+            onClick={() => navigate("/shop/summer")}
+          >
+            Explore Summer Shawls
+          </button>
 
-           <button
-             className="btn btn-outline-dark fw-semibold"
-             onClick={() => navigate("/shop/featured")}
-           >
-             Explore Featured Shawls
-           </button>
+          <button
+            className="btn btn-outline-dark fw-semibold"
+            onClick={() => navigate("/shop/featured")}
+          >
+            Explore Featured Shawls
+          </button>
         </div>
       </div>
     </div>
