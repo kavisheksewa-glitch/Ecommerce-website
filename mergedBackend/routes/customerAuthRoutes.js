@@ -8285,10 +8285,10 @@ router.put("/notifications/read/:id", protectCustomer, markSingleNotificationAsR
 router.delete("/notifications/clear", protectCustomer, clearAllNotifications);
 
 // Endpoint: GET /api/customer/profile
-router.get("/profile", verifyToken, getProfile);
+router.get("/profile", protectCustomer, getProfile);
 
 // Endpoint: PUT /api/customer/profile
-router.put("/profile", verifyToken, updateProfile);
+router.put("/profile", protectCustomer, updateProfile);
 
 module.exports = router;
 module.exports = router;
