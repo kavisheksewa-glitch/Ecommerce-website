@@ -4,7 +4,7 @@ const Customer = require("../models/Customer");
 exports.getProfile = async (req, res) => {
   try {
     // Password aur OTP fields exclude kar rahe hain security ke liye
-    const user = await Customer.findById(req.userId).select(
+    const user = await Customer.findById(req.user._id).select(
       "-password -resetOtp -resetOtpExpiry -emailVerifyOtp -emailVerifyOtpExpiry"
     );
 
@@ -29,7 +29,7 @@ exports.updateProfile = async (req, res) => {
 
     // Email update restrict rakhte hain generally
     const updatedUser = await Customer.findByIdAndUpdate(
-      req.userId,
+      req.user._id,
       {
         $set: {
           fullName,
