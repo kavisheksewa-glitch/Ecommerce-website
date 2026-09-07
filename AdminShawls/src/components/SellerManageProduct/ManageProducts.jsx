@@ -608,8 +608,8 @@ function ManageProducts() {
 
                 {editingId !== prodId && (
                   <div className="d-flex gap-2 mt-auto">
-                    <button className="btn btn-primary btn-sm flex-fill" onClick={() => handleStartEdit(product)}>Edit</button>
-                    <button className="btn btn-outline-danger btn-sm flex-fill" onClick={() => handleDelete(prodId)}>Delete</button>
+                    <button className="btn btn-success btn-sm flex-fill" onClick={() => handleStartEdit(product)}>Edit</button>
+                    <button className="btn btn-danger btn-sm flex-fill" onClick={() => handleDelete(prodId)}>Delete</button>
                   </div>
                 )}
               </div>

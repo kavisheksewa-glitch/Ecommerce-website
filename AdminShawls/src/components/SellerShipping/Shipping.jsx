@@ -331,7 +331,7 @@ function Shipping() {
                       </h5>
                       <span className={`badge px-3 py-2 ${
                         order.orderStatus === "Delivered" ? "bg-success" :
-                        order.orderStatus === "Shipped" ? "bg-primary" : "bg-warning text-dark"
+                        order.orderStatus === "Shipped" ? "btn btn-secondary" : "bg-warning text-dark"
                       }`}>
                         {order.orderStatus || "Pending"}
                       </span>
@@ -344,12 +344,12 @@ function Shipping() {
                     <p className="mb-3 text-muted small"><strong>Amount:</strong> ₹{order.totalAmount?.toLocaleString()}</p>
 
                     <div className="d-flex gap-2">
-                      <button className="Seller_btn-brown btn-sm w-100">Update</button>
+                      <button className="btn btn-success btn-sm w-100">Update</button>
                       <button
-                        className="Seller_btn-brown btn-sm w-100"
+                        className="btn btn-primary btn-sm w-100"
                         onClick={() => handleTrackClick(order)}
                       >
-                        Track / Send ID
+                        Track ID
                       </button>
                     </div>
                   </div>

@@ -365,6 +365,21 @@ function Women() {
         </div>
       )}
 
+
+      <div className="Customer_luxury-title-wrapper">
+        <h1
+          className="Customer_luxury-title text-center my-4 fw-bold fst-italic"
+          style={{ color: "#54411d" }}
+        >
+          WOMEN'S SHAWLS
+        </h1>
+      </div>
+
+      <img
+        src={image11}
+        alt="Kavi Shawls Banner"
+        className="Customer_hero2-image w-100 mb-4"
+      />
       <div className="container my-3 text-center">
         <div className="position-relative mx-auto" style={{ maxWidth: "600px" }}>
           <span
@@ -389,21 +404,6 @@ function Women() {
           />
         </div>
       </div>
-
-      <div className="Customer_luxury-title-wrapper">
-        <h1
-          className="Customer_luxury-title text-center my-4 fw-bold fst-italic"
-          style={{ color: "#54411d" }}
-        >
-          WOMEN'S SHAWLS
-        </h1>
-      </div>
-
-      <img
-        src={image11}
-        alt="Kavi Shawls Banner"
-        className="Customer_hero2-image w-100 mb-4"
-      />
 
       <div className="container my-3">
         <div className="d-flex flex-wrap justify-content-between align-items-center bg-white p-3 rounded-4 shadow-sm gap-3 border">

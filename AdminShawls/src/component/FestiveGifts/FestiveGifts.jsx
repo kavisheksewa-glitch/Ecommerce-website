@@ -83,15 +83,12 @@ function FestiveGifts() {
           const dbProducts = res.data
             .filter((p) => p.category === "FestiveGift Shawls")
             .map((p) => {
-             // const numericPrice = Number(p.price) || 0;
-             // ✅ seller ne jo price enter kiya wahi "original" price hai; discount hone par
-              // actual bikne wala price (finalPrice) usse kam hoga
               const basePrice = Number(p.price) || 0;
               const discountPercent = Number(p.discount || 0);
               const finalPrice = discountPercent > 0
                 ? Math.round(basePrice - (basePrice * discountPercent) / 100)
-                : basePrice; 
-             return {
+                : basePrice;
+              return {
                 id: p._id,
                 title: p.productName,
                 description: p.description,
@@ -99,10 +96,8 @@ function FestiveGifts() {
                 price: `₹${finalPrice}`,
                 originalPrice: discountPercent > 0 ? `₹${basePrice}` : "",
                 discount: discountPercent > 0 ? `${discountPercent}% OFF` : null,
-                //image: `https://ecommerce-website-ggui.onrender.com/${p.productImage}`,
-                image: p.productImage?.startsWith("http") ? p.productImage : `https://ecommerce-website-ggui.onrender.com/${p.productImage}`, // ✅ SAHI CODE
-                //brandLogo: p.brandLogo ? (p.brandLogo.startsWith("http") ? p.brandLogo : `https://ecommerce-website-ggui.onrender.com/${p.brandLogo}`) : "",
-                brandLogo: p.sellerId?.brandLogo ? (p.sellerId.brandLogo.startsWith("http") ? p.sellerId.brandLogo : `https://ecommerce-website-ggui.onrender.com/${p.sellerId.brandLogo}`): "",stock: `Stock: ${p.stockQuantity}`,
+                image: p.productImage?.startsWith("http") ? p.productImage : `https://ecommerce-website-ggui.onrender.com/${p.productImage}`,
+                brandLogo: p.sellerId?.brandLogo ? (p.sellerId.brandLogo.startsWith("http") ? p.sellerId.brandLogo : `https://ecommerce-website-ggui.onrender.com/${p.sellerId.brandLogo}`) : "",
                 stock: `Stock: ${p.stockQuantity}`,
                 fabric: p.fabric || "N/A",
                 color: p.color || "N/A",
@@ -110,8 +105,8 @@ function FestiveGifts() {
                 careInstructions: p.washCare || "N/A",
                 rating: 5,
                 reviews: 14,
-                //  sellerId: p.sellerId || "",
-                sellerId: p.sellerId?._id || p.sellerId || "",           };
+                sellerId: p.sellerId?._id || p.sellerId || "",
+              };
             });
 
           const formattedStaticShawls = FestiveShawls.map(item => ({
@@ -308,6 +303,195 @@ function FestiveGifts() {
     <div className="Customer_container1 bg-light pb-5">
       <ToastContainer />
 
+      {/* Responsive, professional card & button styling (matches Featuredcoll theme) */}
+      <style>{`
+        .Customer_festive-banner {
+          border-radius: 16px;
+        }
+        .Customer_festive-banner h1 {
+          text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+        }
+        .Customer_card {
+          padding: 10px !important;
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .Customer_card:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1) !important;
+        }
+        .Customer_product-image-box {
+          aspect-ratio: 1 / 1;
+          width: 100%;
+        }
+        .Customer_product-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        .Customer_brand-logo-box {
+          position: absolute;
+          top: 10px;
+          left: 10px;
+          width: 50px;
+          height: 50px;
+          z-index: 3;
+        }
+        .Customer_discount-badge {
+          font-size: 0.75rem;
+        }
+        .Customer_share-btn {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          width: 35px;
+          height: 35px;
+          background: white;
+          border: none;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+          color: #333;
+          z-index: 2;
+          transition: color 0.2s ease, transform 0.15s ease;
+        }
+        .Customer_share-btn:hover {
+          color: #dfa00b;
+          transform: scale(1.08);
+        }
+        .Customer_wishlist-btn {
+          position: absolute;
+          top: 10px;
+          right: 50px;
+          width: 35px;
+          height: 35px;
+        }
+        .Customer_card-title {
+          font-size: 0.9rem;
+          margin-bottom: 4px !important;
+        }
+        .Customer_card-desc {
+          font-size: 0.78rem;
+          min-height: 2.2em;
+          margin-bottom: 8px !important;
+        }
+        .Customer_rating-row {
+          font-size: 0.75rem;
+        }
+        .Customer_price-row {
+          margin-bottom: 10px !important;
+          flex-wrap: wrap;
+          row-gap: 4px;
+        }
+        .Customer_price-main {
+          font-size: 0.9rem;
+        }
+        .Customer_price-original {
+          font-size: 0.72rem;
+        }
+        .Customer_stock-badge {
+          font-size: 0.65rem !important;
+        }
+        .Customer_card-btn {
+          font-size: clamp(0.68rem, 2.4vw, 0.85rem);
+          padding: 6px 8px;
+          letter-spacing: 0.2px;
+          white-space: nowrap;
+          line-height: 1.3;
+        }
+        .Customer_buy-now-btn {
+          font-size: clamp(0.72rem, 2.4vw, 0.9rem);
+          padding: 7px 8px;
+        }
+
+        @media (max-width: 575.98px) {
+          .Customer_festive-banner {
+            min-height: 260px !important;
+            padding: 20px !important;
+            text-align: center;
+            justify-content: center !important;
+          }
+          .Customer_festive-banner h1 {
+            font-size: 1.5rem;
+          }
+          .Customer_festive-banner p {
+            font-size: 0.8rem;
+          }
+          .Customer_card {
+            padding: 7px !important;
+            border-radius: 12px !important;
+          }
+          .Customer_brand-logo-box {
+            width: 22px;
+            height: 22px;
+            top: 6px;
+            left: 6px;
+          }
+          .Customer_discount-badge {
+            font-size: 0.6rem;
+            padding: 2px 5px !important;
+          }
+          .Customer_wishlist-btn {
+            width: 20px;
+            height: 20px;
+            top: 6px;
+            right: 28px;
+            font-size: 10px;
+          }
+          .Customer_share-btn {
+            width: 20px;
+            height: 20px;
+            top: 6px;
+            right: 6px;
+            font-size: 10px;
+          }
+          .Customer_card-body {
+            padding: 8px 4px !important;
+          }
+          .Customer_card-title {
+            font-size: 0.78rem;
+            line-height: 1.25;
+          }
+          .Customer_card-desc {
+            display: none;
+          }
+          .Customer_price-row {
+            margin-bottom: 6px !important;
+          }
+          .Customer_price-main {
+            font-size: 0.8rem;
+          }
+          .Customer_price-original {
+            font-size: 0.62rem;
+          }
+          .Customer_stock-badge {
+            font-size: 0.56rem !important;
+            padding: 2px 5px !important;
+          }
+          .Customer_card-btn {
+            font-size: 0.66rem;
+            padding: 5px 3px;
+            letter-spacing: 0.1px;
+          }
+          .Customer_buy-now-btn {
+            font-size: 0.7rem;
+            padding: 6px 3px;
+          }
+          .Customer_card-actions {
+            gap: 6px !important;
+          }
+          .Customer_card-actions .d-flex.gap-1 {
+            gap: 5px !important;
+          }
+          /* Star ratings shrink on mobile to save space */
+          .Customer_rating-row {
+            font-size: 0.62rem !important;
+          }
+        }
+      `}</style>
+
       {shareProduct && (
         <div className="Customer_share-overlay" style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", background: "rgba(0,0,0,0.5)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center" }}>
           <div className="Customer_share-modal bg-white p-4 rounded shadow text-center" style={{ width: "320px" }}>
@@ -325,22 +509,6 @@ function FestiveGifts() {
         </div>
       )}
 
-      <div className="container my-3 text-center">
-        <div className="position-relative mx-auto" style={{ maxWidth: "600px" }}>
-          <span className="position-absolute top-50 start-0 translate-middle-y ps-3 text-muted" style={{ pointerEvents: "none" }}>
-            <i className="bi bi-search"></i>
-          </span>
-          <input
-            type="text"
-            placeholder="Search festive shawls..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="form-control w-100 shadow-sm"
-            style={{ padding: "12px 15px 12px 45px", borderRadius: "30px", border: "1px solid #ccc", fontSize: "0.95rem" }}
-          />
-        </div>
-      </div>
-
       <div className="mb-4">
         <div
           className="p-4 p-md-5 text-white rounded position-relative overflow-hidden d-flex align-items-center justify-content-between shadow-sm Customer_festive-banner"
@@ -355,6 +523,22 @@ function FestiveGifts() {
               Explore Collection
             </button>
           </div>
+        </div>
+      </div>
+
+      <div className="container my-3 text-center">
+        <div className="position-relative mx-auto" style={{ maxWidth: "600px" }}>
+          <span className="position-absolute top-50 start-0 translate-middle-y ps-3 text-muted" style={{ pointerEvents: "none" }}>
+            <i className="bi bi-search"></i>
+          </span>
+          <input
+            type="text"
+            placeholder="Search festive shawls..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="form-control w-100 shadow-sm"
+            style={{ padding: "12px 15px 12px 45px", borderRadius: "30px", border: "1px solid #ccc", fontSize: "0.95rem" }}
+          />
         </div>
       </div>
 
@@ -439,19 +623,55 @@ function FestiveGifts() {
                   const isWishlisted = wishlistProductIds.includes(productIdStr);
 
                   return (
-                    <div className="col-12 col-sm-6 col-md-4" key={productIdStr}>
+                    <div className="col-6 col-sm-6 col-md-4" key={productIdStr}>
                       <div className="Customer_card card h-100 border-0 shadow-sm d-flex flex-column justify-content-between p-2 position-relative" style={{ backgroundColor: "#fff", borderRadius: "12px" }}>
 
-                        {/* <div className="Customer_product-image-box overflow-hidden position-relative">
+                        <div className="Customer_product-image-box card overflow-hidden position-relative">
+
+                          {/* ✅ Brand Logo Display */}
+                          {item.brandLogo && (
+                            <div
+                              className="Customer_brand-logo-box shadow-sm rounded-circle overflow-hidden bg-white d-flex align-items-center justify-content-center"
+                              style={{ border: "1.5px solid #fff" }}
+                              title="Brand Logo"
+                            >
+                              <img
+                                src={
+                                  item.brandLogo.startsWith("http")
+                                    ? item.brandLogo
+                                    : `https://ecommerce-website-ggui.onrender.com/${item.brandLogo}`
+                                }
+                                alt="Brand Logo"
+                                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                              />
+                            </div>
+                          )}
+
+                          {/* Discount Badge */}
                           {item.discount && (
-                            <span className="badge bg-danger position-absolute top-0 start-0 m-2 px-2 py-1 shadow-sm fw-bold" style={{ zIndex: 2, fontSize: "0.7rem", borderRadius: "4px" }}>
+                            <span
+                              className={`Customer_discount-badge${item.brandLogo ? " Customer_has-logo" : ""} badge bg-danger position-absolute start-0 m-2 px-2 py-1 shadow-sm fw-bold`}
+                              style={{
+                                top: item.brandLogo ? "54px" : "0px",
+                                zIndex: 2,
+                                borderRadius: "6px",
+                              }}
+                            >
                               {item.discount}
                             </span>
                           )}
 
-                          <img src={item.image} className="card-img-top rounded Customer_product-image" alt={item.title} style={{ height: "220px", objectFit: "cover" }} />
+                          <img
+                            src={item.image}
+                            className="card-img-top rounded Customer_product-image"
+                            alt={item.title}
+                          />
 
-                          <button className="Customer_share-btn" onClick={() => setShareProduct(item)} title="Share Product">
+                          <button
+                            className="Customer_share-btn"
+                            onClick={() => setShareProduct(item)}
+                            title="Share Product"
+                          >
                             <FaShareAlt />
                           </button>
 
@@ -460,14 +680,9 @@ function FestiveGifts() {
                             onClick={() => handleToggleWishlist(item)}
                             title="Wishlist Product"
                             style={{
-                              position: "absolute",
-                              top: "10px",
-                              right: "50px",
                               background: "white",
                               border: "none",
                               borderRadius: "50%",
-                              width: "35px",
-                              height: "35px",
                               display: "flex",
                               alignItems: "center",
                               justifyContent: "center",
@@ -480,124 +695,41 @@ function FestiveGifts() {
                           >
                             <FaHeart />
                           </button>
-                        </div> */}
-          <div className="Customer_product-image-box card overflow-hidden position-relative">
-                                                        
-                                                        {/* ✅ Brand Logo Display */}
-                                                        {item.brandLogo && (
-                                                          <div 
-                                                            className="position-absolute shadow-sm rounded-circle overflow-hidden bg-white d-flex align-items-center justify-content-center"
-                                                            style={{
-                                                              top: "10px",
-                                                              left: "10px",
-                                                              width: "50px",
-                                                              height: "50px",
-                                                              zIndex: 3,
-                                                              border: "1.5px solid #fff"
-                                                            }}
-                                                            title="Brand Logo"
-                                                          >
-                                                            <img
-                                                              src={
-                                                                item.brandLogo.startsWith("http") 
-                                                                  ? item.brandLogo 
-                                                                  : `https://ecommerce-website-ggui.onrender.com/${item.brandLogo}`
-                                                              }
-                                                              alt="Brand Logo"
-                                                              style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                                                            />
-                                                          </div>
-                                                        )}
-                                                      
-                                                        {/* Discount Badge */}
-                                                        {item.discount && (
-                                                          <span
-                                                            className="badge bg-danger position-absolute start-0 m-2 px-2 py-1 shadow-sm fw-bold"
-                                                            style={{
-                                                              top: item.brandLogo ? "54px" : "0px", // Agar brand logo hoga toh badge thoda niche shift ho jayega
-                                                              zIndex: 2,
-                                                              fontSize: "0.75rem",
-                                                              borderRadius: "6px",
-                                                            }}
-                                                          >
-                                                            {item.discount}
-                                                          </span>
-                                                        )}
-                                                      
-                                                        <img
-                                                          src={item.image}
-                                                          className="card-img-top rounded Customer_product-image"
-                                                          alt={item.title}
-                                                        />
-                                                      
-                                                       <button
-                                                        className="Customer_share-btn"
-                                                        onClick={() => setShareProduct(item)}
-                                                        title="Share Product"
-                                                      >
-                                                        <FaShareAlt />
-                                                      </button>
-                                                      
-                                                        <button
-                                                          className="Customer_wishlist-btn"
-                                                          onClick={() => handleToggleWishlist(item)}
-                                                          title="Wishlist Product"
-                                                          style={{
-                                                            position: "absolute",
-                                                            top: "10px",
-                                                            right: "50px",
-                                                            background: "white",
-                                                            border: "none",
-                                                            borderRadius: "50%",
-                                                            width: "35px",
-                                                            height: "35px",
-                                                            display: "flex",
-                                                            alignItems: "center",
-                                                            justifyContent: "center",
-                                                            cursor: "pointer",
-                                                            boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
-                                                            color: isWishlisted ? "red" : "#ccc",
-                                                            transition: "color 0.2s ease",
-                                                            zIndex: 2,
-                                                          }}
-                                                        >
-                                                          <FaHeart />
-                                                        </button>
-                                                        
-                                                      </div>                  
 
-                        <div className="card-body px-2 py-2 d-flex flex-column justify-content-between">
+                        </div>
+
+                        <div className="Customer_card-body card-body px-2 py-2 d-flex flex-column justify-content-between">
                           <div>
-                            <h6 className="fw-bold mb-1 text-dark" style={{ fontSize: "0.9rem" }}>{item.title}</h6>
-                            <div className="text-warning small mb-1" style={{ fontSize: "0.75rem" }}>
+                            <h6 className="Customer_card-title fw-bold mb-1 text-dark">{item.title}</h6>
+                            <div className="Customer_rating-row text-warning small mb-1">
                               {[...Array(item.rating || 5)].map((_, i) => (<FaStar key={i} />))}
                               <span className="text-muted ms-1">({item.reviews || 12})</span>
                             </div>
-                            <p className="text-muted small mb-2" style={{ fontSize: "0.78rem", display: "-webkit-box", WebkitLineClamp: "2", WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                            <p className="Customer_card-desc text-muted small mb-2" style={{ display: "-webkit-box", WebkitLineClamp: "2", WebkitBoxOrient: "vertical", overflow: "hidden" }}>
                               {item.description}
                             </p>
-                            <div className="d-flex align-items-center gap-2 mb-2">
-                              <span className="fw-bold fs-6 text-success">{item.price}</span>
-                              {item.originalPrice && <span className="text-decoration-line-through text-muted small" style={{ fontSize: "0.75rem" }}>{item.originalPrice}</span>}
+                            <div className="Customer_price-row d-flex align-items-center gap-2 mb-2">
+                              <span className="Customer_price-main fw-bold text-success">{item.price}</span>
+                              {item.originalPrice && <span className="Customer_price-original text-decoration-line-through text-muted">{item.originalPrice}</span>}
                             </div>
                           </div>
 
-                          <div className="d-flex flex-column gap-1 mt-auto">
+                          <div className="Customer_card-actions d-flex flex-column gap-1 mt-auto">
                             <div className="d-flex gap-1">
-                              <button onClick={() => navigate(`/product/${item.id}`, { state: { product: item } })} className="btn btn-outline-dark btn-sm w-50 fw-semibold" style={{ fontSize: "0.75rem", borderRadius: "6px" }}>
+                              <button onClick={() => navigate(`/product/${item.id}`, { state: { product: item } })} className="Customer_card-btn btn btn-outline-dark w-50 fw-semibold" style={{ borderRadius: "6px" }}>
                                 View Details
                               </button>
                               {isInCart ? (
-                                <button onClick={() => navigate("/cart")} className="btn btn-sm w-50 fw-semibold text-white" style={{ fontSize: "0.75rem", backgroundColor: "#2b8a3e", border: "none", borderRadius: "6px" }}>
+                                <button onClick={() => navigate("/cart")} className="Customer_card-btn btn w-50 fw-semibold text-white" style={{ backgroundColor: "#2b8a3e", border: "none", borderRadius: "6px" }}>
                                   Go to Cart
                                 </button>
                               ) : (
-                                <button onClick={() => handleAddToCart(item)} className="btn btn-dark btn-sm w-50 fw-semibold text-white" style={{ fontSize: "0.75rem", backgroundColor: "#20af33", border: "none", borderRadius: "6px" }}>
+                                <button onClick={() => handleAddToCart(item)} className="Customer_card-btn btn btn-dark w-50 fw-semibold text-white" style={{ backgroundColor: "#20af33", border: "none", borderRadius: "6px" }}>
                                   Add to Cart
                                 </button>
                               )}
                             </div>
-                            <button onClick={() => handleBuyNow(item)} className="btn btn-sm w-100 fw-bold text-white border-0 shadow-sm" style={{ fontSize: "0.8rem", background: "linear-gradient(135deg, #d6bd69 0%, #dfa00b 100%)", borderRadius: "6px" }}>
+                            <button onClick={() => handleBuyNow(item)} className="Customer_card-btn Customer_buy-now-btn btn w-100 fw-bold text-white border-0 shadow-sm" style={{ background: "linear-gradient(135deg, #d6bd69 0%, #dfa00b 100%)", borderRadius: "6px" }}>
                               ⚡ Buy Now
                             </button>
                           </div>

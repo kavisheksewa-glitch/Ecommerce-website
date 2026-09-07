@@ -1,7 +1,3 @@
-
-
-
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -101,10 +97,8 @@ function LuxuryGiftSets() {
               price: `₹${finalPrice}`,
               originalPrice: discountPercent > 0 ? `₹${basePrice}` : "",
               discount: discountPercent > 0 ? `${discountPercent}% OFF` : null,
-              //image: `https://ecommerce-website-ggui.onrender.com/${p.productImage}`,
-              image: p.productImage?.startsWith("http") ? p.productImage : `https://ecommerce-website-ggui.onrender.com/${p.productImage}`, // ✅ SAHI CODE
-              // brandLogo: p.brandLogo ? (p.brandLogo.startsWith("http") ? p.brandLogo : `https://ecommerce-website-ggui.onrender.com/${p.brandLogo}`) : "",
-              brandLogo: p.sellerId?.brandLogo ? (p.sellerId.brandLogo.startsWith("http") ? p.sellerId.brandLogo : `https://ecommerce-website-ggui.onrender.com/${p.sellerId.brandLogo}`): "",stock: `Stock: ${p.stockQuantity}`,
+              image: p.productImage?.startsWith("http") ? p.productImage : `https://ecommerce-website-ggui.onrender.com/${p.productImage}`,
+              brandLogo: p.sellerId?.brandLogo ? (p.sellerId.brandLogo.startsWith("http") ? p.sellerId.brandLogo : `https://ecommerce-website-ggui.onrender.com/${p.sellerId.brandLogo}`): "",
               stock: `Stock: ${p.stockQuantity}`,
               fabric: p.fabric || "N/A",
               color: p.color || "N/A",
@@ -112,7 +106,6 @@ function LuxuryGiftSets() {
               careInstructions: p.washCare || "N/A",
               rating: 5,
               reviews: 18,
-              //  sellerId: p.sellerId || "",
                sellerId: p.sellerId?._id || p.sellerId || "",
             };
              });
@@ -305,6 +298,40 @@ function LuxuryGiftSets() {
     <div className="Customer_container1 bg-light pb-5">
       <ToastContainer />
 
+      {/* Local responsive tuning for elements not covered by Featuredcol.css (rating row, banner, 2-col mobile) */}
+      <style>{`
+        .Customer_luxury-banner {
+          border-radius: 16px;
+        }
+        .Customer_luxury-banner h1 {
+          text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+        }
+        .Customer_rating-row {
+          font-size: 0.75rem;
+        }
+
+        @media (max-width: 575.98px) {
+          .Customer_luxury-banner {
+            min-height: 260px !important;
+            padding: 20px !important;
+            text-align: center;
+            justify-content: center !important;
+          }
+          .Customer_luxury-banner h1 {
+            font-size: 1.5rem;
+          }
+          .Customer_luxury-banner p {
+            font-size: 0.8rem;
+          }
+          .Customer_rating-row {
+            font-size: 0.62rem !important;
+          }
+          .card-body {
+            padding: 8px 4px !important;
+          }
+        }
+      `}</style>
+
       {shareProduct && (
         <div className="Customer_share-overlay" style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", background: "rgba(0,0,0,0.5)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center" }}>
           <div className="Customer_share-modal bg-white p-4 rounded shadow text-center" style={{ width: "320px" }}>
@@ -321,6 +348,28 @@ function LuxuryGiftSets() {
           </div>
         </div>
       )}
+
+      <div className="mb-4">
+        <div
+          className="p-4 p-md-5 text-white rounded position-relative overflow-hidden d-flex align-items-center justify-content-between shadow-sm Customer_luxury-banner"
+          style={{
+            backgroundImage: `url(${luxuryBgImage})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            minHeight: "360px"
+          }}
+        >
+          <div style={{ maxWidth: "600px", zIndex: 2 }}>
+            <h1 className="fw-bold display-6 fst-italic" style={{ color: "#f3e5ab" }}>Luxury Gift Sets</h1>
+            <p className="text-light opacity-95 small mb-3">
+              Exclusive gift boxes with premium packaging designed for your special loved ones. Give the ultimate experience of sophistication and warmth.
+            </p>
+            <button onClick={() => navigate("/customer")} className="btn btn-sm px-4 py-2 fw-bold shadow-sm" style={{ backgroundColor: "#f3e5ab", color: "#064e3b", borderRadius: "6px" }}>
+              Explore Collection
+            </button>
+          </div>
+        </div>
+      </div>
 
       <div className="container my-3 text-center">
         <div className="position-relative mx-auto" style={{ maxWidth: "600px" }}>
@@ -344,28 +393,6 @@ function LuxuryGiftSets() {
               fontSize: "0.95rem",
             }}
           />
-        </div>
-      </div>
-
-      <div className="mb-4">
-        <div
-          className="p-4 p-md-5 text-white rounded position-relative overflow-hidden d-flex align-items-center justify-content-between shadow-sm Customer_luxury-banner"
-          style={{
-            backgroundImage: `url(${luxuryBgImage})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            minHeight: "360px"
-          }}
-        >
-          <div style={{ maxWidth: "600px", zIndex: 2 }}>
-            <h1 className="fw-bold display-6 fst-italic" style={{ color: "#f3e5ab" }}>Luxury Gift Sets</h1>
-            <p className="text-light opacity-95 small mb-3">
-              Exclusive gift boxes with premium packaging designed for your special loved ones. Give the ultimate experience of sophistication and warmth.
-            </p>
-            <button onClick={() => navigate("/customer")} className="btn btn-sm px-4 py-2 fw-bold shadow-sm" style={{ backgroundColor: "#f3e5ab", color: "#064e3b", borderRadius: "6px" }}>
-              Explore Collection
-            </button>
-          </div>
         </div>
       </div>
 
@@ -440,19 +467,55 @@ function LuxuryGiftSets() {
                   const isWishlisted = wishlistProductIds.includes(productIdStr);
 
                   return (
-                    <div className="col-12 col-sm-6 col-md-4" key={productIdStr}>
+                    <div className="col-6 col-sm-6 col-md-4" key={productIdStr}>
                       <div className="Customer_card card h-100 border-0 shadow-sm d-flex flex-column justify-content-between p-2 position-relative" style={{ backgroundColor: "#fff", borderRadius: "12px" }}>
 
-                        {/* <div className="Customer_product-image-box overflow-hidden position-relative">
+                        <div className="Customer_product-image-box card overflow-hidden position-relative">
+
+                          {/* ✅ Brand Logo Display */}
+                          {item.brandLogo && (
+                            <div
+                              className="Customer_brand-logo-box position-absolute shadow-sm rounded-circle overflow-hidden bg-white d-flex align-items-center justify-content-center"
+                              style={{ border: "1.5px solid #fff" }}
+                              title="Brand Logo"
+                            >
+                              <img
+                                src={
+                                  item.brandLogo.startsWith("http")
+                                    ? item.brandLogo
+                                    : `https://ecommerce-website-ggui.onrender.com/${item.brandLogo}`
+                                }
+                                alt="Brand Logo"
+                                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                              />
+                            </div>
+                          )}
+
+                          {/* Discount Badge */}
                           {item.discount && (
-                            <span className="badge bg-danger position-absolute top-0 start-0 m-2 px-2 py-1 shadow-sm fw-bold" style={{ zIndex: 2, fontSize: "0.7rem", borderRadius: "4px" }}>
+                            <span
+                              className={`Customer_discount-badge${item.brandLogo ? " Customer_has-logo" : ""} badge bg-danger position-absolute start-0 m-2 px-2 py-1 shadow-sm fw-bold`}
+                              style={{
+                                top: item.brandLogo ? "54px" : "0px",
+                                zIndex: 2,
+                                borderRadius: "6px",
+                              }}
+                            >
                               {item.discount}
                             </span>
                           )}
 
-                          <img src={item.image} className="card-img-top rounded Customer_product-image" alt={item.title} style={{ height: "220px", objectFit: "cover" }} />
+                          <img
+                            src={item.image}
+                            className="card-img-top rounded Customer_product-image"
+                            alt={item.title}
+                          />
 
-                          <button className="Customer_share-btn" onClick={() => setShareProduct(item)} title="Share Product">
+                          <button
+                            className="Customer_share-btn"
+                            onClick={() => setShareProduct(item)}
+                            title="Share Product"
+                          >
                             <FaShareAlt />
                           </button>
 
@@ -461,14 +524,9 @@ function LuxuryGiftSets() {
                             onClick={() => handleToggleWishlist(item)}
                             title="Wishlist Product"
                             style={{
-                              position: "absolute",
-                              top: "10px",
-                              right: "50px",
                               background: "white",
                               border: "none",
                               borderRadius: "50%",
-                              width: "35px",
-                              height: "35px",
                               display: "flex",
                               alignItems: "center",
                               justifyContent: "center",
@@ -481,127 +539,41 @@ function LuxuryGiftSets() {
                           >
                             <FaHeart />
                           </button>
-                        </div> */}
 
+                        </div>
 
-
-                            <div className="Customer_product-image-box card overflow-hidden position-relative">
-                                                                          
-                                                                          {/* ✅ Brand Logo Display */}
-                                                                          {item.brandLogo && (
-                                                                            <div 
-                                                                              className="position-absolute shadow-sm rounded-circle overflow-hidden bg-white d-flex align-items-center justify-content-center"
-                                                                              style={{
-                                                                                top: "10px",
-                                                                                left: "10px",
-                                                                                width: "50px",
-                                                                                height: "50px",
-                                                                                zIndex: 3,
-                                                                                border: "1.5px solid #fff"
-                                                                              }}
-                                                                              title="Brand Logo"
-                                                                            >
-                                                                              <img
-                                                                                src={
-                                                                                  item.brandLogo.startsWith("http") 
-                                                                                    ? item.brandLogo 
-                                                                                    : `https://ecommerce-website-ggui.onrender.com/${item.brandLogo}`
-                                                                                }
-                                                                                alt="Brand Logo"
-                                                                                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                                                                              />
-                                                                            </div>
-                                                                          )}
-                                                                        
-                                                                          {/* Discount Badge */}
-                                                                          {item.discount && (
-                                                                            <span
-                                                                              className="badge bg-danger position-absolute start-0 m-2 px-2 py-1 shadow-sm fw-bold"
-                                                                              style={{
-                                                                                top: item.brandLogo ? "54px" : "0px", // Agar brand logo hoga toh badge thoda niche shift ho jayega
-                                                                                zIndex: 2,
-                                                                                fontSize: "0.75rem",
-                                                                                borderRadius: "6px",
-                                                                              }}
-                                                                            >
-                                                                              {item.discount}
-                                                                            </span>
-                                                                          )}
-                                                                        
-                                                                          <img
-                                                                            src={item.image}
-                                                                            className="card-img-top rounded Customer_product-image"
-                                                                            alt={item.title}
-                                                                          />
-                                                                        
-                                                                         <button
-                                                                          className="Customer_share-btn"
-                                                                          onClick={() => setShareProduct(item)}
-                                                                          title="Share Product"
-                                                                        >
-                                                                          <FaShareAlt />
-                                                                        </button>
-                                                                        
-                                                                          <button
-                                                                            className="Customer_wishlist-btn"
-                                                                            onClick={() => handleToggleWishlist(item)}
-                                                                            title="Wishlist Product"
-                                                                            style={{
-                                                                              position: "absolute",
-                                                                              top: "10px",
-                                                                              right: "50px",
-                                                                              background: "white",
-                                                                              border: "none",
-                                                                              borderRadius: "50%",
-                                                                              width: "35px",
-                                                                              height: "35px",
-                                                                              display: "flex",
-                                                                              alignItems: "center",
-                                                                              justifyContent: "center",
-                                                                              cursor: "pointer",
-                                                                              boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
-                                                                              color: isWishlisted ? "red" : "#ccc",
-                                                                              transition: "color 0.2s ease",
-                                                                              zIndex: 2,
-                                                                            }}
-                                                                          >
-                                                                            <FaHeart />
-                                                                          </button>
-                                                                          
-                                                                        </div>
-
-                        <div className="card-body px-2 py-2 d-flex flex-column justify-content-between">
+                        <div className="Customer_card-body card-body px-2 py-2 d-flex flex-column justify-content-between">
                           <div>
-                            <h6 className="fw-bold mb-1 text-dark" style={{ fontSize: "0.9rem" }}>{item.title}</h6>
-                            <div className="text-warning small mb-1" style={{ fontSize: "0.75rem" }}>
+                            <h6 className="Customer_card-title fw-bold mb-1 text-dark">{item.title}</h6>
+                            <div className="Customer_rating-row text-warning small mb-1">
                               {[...Array(item.rating || 5)].map((_, i) => (<FaStar key={i} />))}
                               <span className="text-muted ms-1">({item.reviews || 16})</span>
                             </div>
-                            <p className="text-muted small mb-2" style={{ fontSize: "0.78rem", display: "-webkit-box", WebkitLineClamp: "2", WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                            <p className="Customer_card-desc text-muted small mb-2" style={{ display: "-webkit-box", WebkitLineClamp: "2", WebkitBoxOrient: "vertical", overflow: "hidden" }}>
                               {item.description}
                             </p>
-                            <div className="d-flex align-items-center gap-2 mb-2">
-                              <span className="fw-bold fs-6 text-success">{item.price}</span>
-                              {item.originalPrice && <span className="text-decoration-line-through text-muted small" style={{ fontSize: "0.75rem" }}>{item.originalPrice}</span>}
+                            <div className="Customer_price-row d-flex align-items-center gap-2 mb-2">
+                              <span className="Customer_price-main fw-bold text-success">{item.price}</span>
+                              {item.originalPrice && <span className="Customer_price-original text-decoration-line-through text-muted">{item.originalPrice}</span>}
                             </div>
                           </div>
 
-                          <div className="d-flex flex-column gap-1 mt-auto">
+                          <div className="Customer_card-actions d-flex flex-column gap-1 mt-auto">
                             <div className="d-flex gap-1">
-                              <button onClick={() => navigate(`/product/${item.id}`, { state: { product: item } })} className="btn btn-outline-dark btn-sm w-50 fw-semibold" style={{ fontSize: "0.75rem", borderRadius: "6px" }}>
+                              <button onClick={() => navigate(`/product/${item.id}`, { state: { product: item } })} className="Customer_card-btn btn btn-outline-dark w-50 fw-semibold" style={{ borderRadius: "6px" }}>
                                 View Details
                               </button>
                               {isInCart ? (
-                                <button onClick={() => navigate("/cart")} className="btn btn-sm w-50 fw-semibold text-white" style={{ fontSize: "0.75rem", backgroundColor: "#2b8a3e", border: "none", borderRadius: "6px" }}>
+                                <button onClick={() => navigate("/cart")} className="Customer_card-btn btn w-50 fw-semibold text-white" style={{ backgroundColor: "#2b8a3e", border: "none", borderRadius: "6px" }}>
                                   Go to Cart
                                 </button>
                               ) : (
-                                <button onClick={() => handleAddToCart(item)} className="btn btn-dark btn-sm w-50 fw-semibold text-white" style={{ fontSize: "0.75rem", backgroundColor: "#064e3b", border: "none", borderRadius: "6px" }}>
+                                <button onClick={() => handleAddToCart(item)} className="Customer_card-btn btn btn-dark w-50 fw-semibold text-white" style={{ backgroundColor: "#064e3b", border: "none", borderRadius: "6px" }}>
                                   Add to Cart
                                 </button>
                               )}
                             </div>
-                            <button onClick={() => handleBuyNow(item)} className="btn btn-sm w-100 fw-bold text-white border-0 shadow-sm" style={{ fontSize: "0.8rem", background: "linear-gradient(135deg, #d6bd69 0%, #dfa00b 100%)", borderRadius: "6px" }}>
+                            <button onClick={() => handleBuyNow(item)} className="Customer_card-btn Customer_buy-now-btn btn w-100 fw-bold text-white border-0 shadow-sm" style={{ background: "linear-gradient(135deg, #d6bd69 0%, #dfa00b 100%)", borderRadius: "6px" }}>
                               ⚡ Buy Now
                             </button>
                           </div>

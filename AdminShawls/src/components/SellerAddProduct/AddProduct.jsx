@@ -165,7 +165,7 @@ function AddProduct() {
                   <input type="number" name="stockQuantity" className="form-control add-product-input" placeholder="50" required onChange={handleChange} />
                 </div>
 
-                <button type="submit" className="btn btn-primary w-100 py-2 add-product-submit-btn">
+                <button type="submit" className="btn btn-success w-100 py-2 ">
                   Add Product
                 </button>
               </form>

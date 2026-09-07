@@ -49,7 +49,7 @@ const Footer = () => {
 
     
 
-        <div className="customer_footer-col">
+        {/* <div className="customer_footer-col">
       <h4>Newsletter</h4>
       <p className="customer_newsletter-text">Subscribe for exclusive luxury updates and offers.</p>
       <div className="customer_newsletter-form">
@@ -62,8 +62,8 @@ const Footer = () => {
           {isSubscribed ? "Unsubscribe" : "Subscribe"}
         </button>
       </div>
-    </div>
-      </div>
+    </div>*/}
+      </div> 
 
       {/* Bottom Copyright Bar */}
       <div className="customer_footer-bottom">

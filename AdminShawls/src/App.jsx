@@ -39,7 +39,9 @@ import Contact from "./component/Contact/Contact";
 import Notifications from "./component/Notifications/Notifications";
 import Checkout from "./component/CheckOut/Checkout";
 import ProductDetail from "./component/ProductDetails/ProductDetail";
-
+import SupportDesk from "./component/support/SupportDesk";  
+import OrderHistory from "./component/orderHistory/OrderHistory";
+import Profile from "./component/Profile/Profile";
 // Admin Pages
 import AdminLogin from "./pages/AdminLoginPage/AdminLogin";
 import AdminDashboard from "./pages/AdminDashBoard/AdminDashboard";
@@ -250,6 +252,9 @@ function AppContent() {
               />
             }
           />
+          <Route path="/support" element={<SupportDesk />} />
+          <Route path="/order-history" element={<OrderHistory />} />
+          <Route path="/profile" element={<Profile />} />
         </Route>
       </Routes>
     </>

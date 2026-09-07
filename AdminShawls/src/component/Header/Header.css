@@ -45,16 +45,42 @@ body::-webkit-scrollbar {
   }
 }
 
+/* ================= NAV LINKS (DARK & BOLD FOR LAPTOP/DESKTOP) ================= */
 .customer_nav-link {
-  font-size: 17px;
-  margin: 0 10px;
-  color: #222 !important;
-  font-weight: 600;
-  transition: 0.3s;
+  font-size: 17px !important;
+  margin: 0 4px !important;
+  color: #000000 !important; /* Pure Dark Black Color */
+  font-weight: 700 !important; /* Bold Text */
+  padding: 8px 16px !important;
+  border-radius: 8px;
+  border: 1.5px solid transparent;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: transparent !important;
+  display: inline-flex;
+  align-items: center;
 }
 
-.customer_nav-link:hover {
-  color: #d4af37 !important;
+.nav-icon-truck {
+  color: #000000 !important;
+  font-size: 18px;
+  transition: color 0.25s ease;
+}
+
+/* 🌟 LAPTOP/DESKTOP HOVER STATE: Box Highlight Effect */
+@media (min-width: 992px) {
+  .customer_nav-link:hover,
+  .customer_nav-link:focus {
+    color: #ffffff !important; /* Text turns white on dark background */
+    background-color: #1b1b1b !important; /* Dark Box Highlight */
+    border-color: #d4af37 !important; /* Gold Border Accent */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    transform: translateY(-2px);
+  }
+
+  .customer_nav-link:hover .nav-icon-truck,
+  .customer_nav-link:focus .nav-icon-truck {
+    color: #d4af37 !important; /* Golden icon on hover */
+  }
 }
 
 /* DESKTOP DROPDOWN */
@@ -76,7 +102,8 @@ body::-webkit-scrollbar {
 }
 
 .customer_dropdown-item {
-  color: white !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
   padding: 8px 16px;
   display: block;
   width: 100%;
@@ -86,7 +113,7 @@ body::-webkit-scrollbar {
 
 .customer_dropdown-item:hover {
   background: #d4af37 !important;
-  color: black !important;
+  color: #000000 !important;
 }
 
 .customer_custom-navbar {
@@ -98,46 +125,16 @@ body::-webkit-scrollbar {
   z-index: 1000;
 }
 
-.customer_custom-navbar::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -120%;
-  width: 20%;
-  height: 100%;
-  background: linear-gradient(
-    120deg,
-    transparent,
-    rgba(255, 215, 0, 0.35),
-    transparent
-  );
-}
-
 .customer_icons svg {
-  color: #4a3a0b;
+  color: #000000 !important; /* Bold icons on header */
   font-size: 22px;
   cursor: pointer;
   transition: 0.3s;
 }
 
 .customer_icons svg:hover {
-  color: #000;
+  color: #4a3a0b !important;
   transform: scale(1.15);
-}
-
-.customer_search-dropdown-section {
-  animation: customer_fadeInDown 0.3s ease-in-out;
-}
-
-@keyframes customer_fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 .customer_header-back {
@@ -146,7 +143,7 @@ body::-webkit-scrollbar {
   z-index: 2050;
 }
 
-/* ================= TOGGLER (hamburger / close icon) ================= */
+/* ================= TOGGLER (Mobile Hamburger) ================= */
 .customer_toggler {
   position: relative;
   z-index: 2100;
@@ -159,38 +156,33 @@ body::-webkit-scrollbar {
 
 .customer_toggler svg {
   font-size: 22px;
-  color: #4a3a0b;
+  color: #000000 !important;
 }
 
 .customer_toggler:focus {
   box-shadow: none;
 }
 
-.customer_toggler:hover {
-  background: rgba(255, 255, 255, 0.6);
-}
-
 /* =====================================================
-   FULL-SCREEN MOBILE / TABLET MENU (<992px)
-   — colors original hi hain (#eac35fe4 background, #222 text),
-     bas ab poori screen cover karta hai
+   MOBILE MENU OVERRIDE (<992px)
 ===================================================== */
 @media (max-width: 991.98px) {
-  .navbar-collapse {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    height: 100dvh;
-    background-color: #eac35fe4;
-    z-index: 2000;
+  .navbar-collapse.customer_mobile_collapse {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    background-color: #eac35fe4 !important;
+    background: #eac35fe4 !important;
+    z-index: 2000 !important;
     display: flex !important;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 90px 24px 40px;
-    overflow-y: auto;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    padding: 90px 24px 40px !important;
+    overflow-y: auto !important;
 
     opacity: 0;
     visibility: hidden;
@@ -198,10 +190,10 @@ body::-webkit-scrollbar {
     transition: opacity 0.35s ease, transform 0.35s ease, visibility 0.35s;
   }
 
-  .navbar-collapse.show {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
+  .navbar-collapse.customer_mobile_collapse.show {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(0) !important;
   }
 
   .navbar-nav {
@@ -209,118 +201,66 @@ body::-webkit-scrollbar {
     max-width: 420px;
     text-align: left;
     margin: 0 auto;
-}
+  }
 
   .navbar-nav .nav-item {
     border-bottom: 1px solid rgba(74, 58, 11, 0.15);
     width: 100%;
+    margin-bottom: 4px;
   }
 
   .navbar-nav .nav-item:last-child {
     border-bottom: none;
   }
 
-  .navbar-collapse .customer_nav-link,
-.navbar-collapse .nav-link.customer_nav-link {
-    color: #222 !important;
-    font-size: 20px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    padding: 16px 4px !important;
-    margin: 0;
-    display: block;
-    text-align: left;
-}
-
-  .navbar-collapse .customer_nav-link:hover {
-    color: #6b4e00 !important;
+  .customer_nav-link {
+    color: #000000 !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    padding: 12px 8px !important;
+    margin: 2px 0 !important;
+    display: flex !important;
+    width: 100% !important;
+    background-color: transparent !important;
+    border: none !important;
   }
 
-  /* Dropdown items (Shop / About) — original dark bg + white text, ab static block me */
-  .navbar-collapse .customer_dropdown-menu {
+  .customer_dropdown-menu {
     position: static !important;
-    width: 100%;
+    width: 100% !important;
     background: #1b1b1b !important;
-    box-shadow: none;
-    border-radius: 10px;
-    padding: 4px 0;
-    margin: 0 0 8px 0;
+    box-shadow: none !important;
+    border-radius: 8px !important;
+    padding: 4px 0 !important;
+    margin: 4px 0 8px 0 !important;
     display: none;
   }
 
-  .navbar-collapse .customer_dropdown-menu.show {
+  .customer_dropdown-menu.show {
     display: block !important;
-    animation: customer_fadeInDown 0.25s ease;
   }
 
-  .navbar-collapse .customer_dropdown-item {
-    text-align: left !important;
-    color: white !important;
-    font-size: 15.5px;
+  .customer_dropdown-item {
+    color: #ffffff !important;
+    font-size: 15px !important;
     padding: 10px 16px !important;
-}
-
-  .navbar-collapse .customer_dropdown-item:hover {
-    background: #d4af37 !important;
-    color: black !important;
   }
 
-  /* Icons row — centered pill row below nav links */
-  .navbar-collapse .customer_icons {
-    margin-top: 30px !important;
+  .customer_icons {
+    margin-top: 24px !important;
     justify-content: center !important;
     gap: 22px !important;
-    padding-top: 24px;
+    padding-top: 20px;
     border-top: 1px solid rgba(74, 58, 11, 0.2);
     width: 100%;
     max-width: 420px;
   }
-
-  .navbar-collapse .customer_icons svg {
-    color: #4a3a0b !important;
-    font-size: 24px;
-  }
-
-  .navbar-collapse .customer_icons svg:hover {
-    color: #000 !important;
-  }
-
-  .navbar-collapse .customer_icons .btn-outline-danger {
-    color: #c0392b !important;
-    border-color: #c0392b !important;
-    background: transparent;
-  }
-
-  .navbar-collapse .customer_icons .btn-outline-danger:hover {
-    background: #c0392b !important;
-    color: #fff !important;
-  }
-
-  .navbar-collapse .customer_icons a[title="Login"] svg {
-    color: #4a3a0b !important;
-  }
 }
 
-/* ================= TABLET (768px – 991px) fine-tune ================= */
-@media (min-width: 768px) and (max-width: 991.98px) {
-  .customer_logo {
-    font-size: 2.1rem;
-  }
-
-  .navbar-collapse {
-    padding-top: 120px;
-  }
-
-  .navbar-collapse .customer_nav-link {
-    font-size: 21px;
-  }
-}
-
-/* ================= MOBILE (≤576px) fine-tune ================= */
+/* ================= RESPONSIVE FINE-TUNING ================= */
 @media (max-width: 576px) {
   .customer_logo {
     font-size: 1.7rem;
-    letter-spacing: 0.5px;
   }
 
   .container-fluid.px-4 {
@@ -328,52 +268,7 @@ body::-webkit-scrollbar {
     padding-right: 14px !important;
   }
 
-  .navbar-collapse {
-    padding: 90px 18px 30px;
-  }
-
-  .navbar-collapse .customer_nav-link {
-    font-size: 18px;
-    padding: 14px 0 !important;
-  }
-
-  .navbar-collapse .customer_icons {
-    gap: 18px !important;
-  }
-
-  .navbar-collapse .customer_icons svg {
-    font-size: 21px;
-  }
-}
-
-/* ================= EXTRA SMALL (≤375px) fine-tune ================= */
-@media (max-width: 375px) {
-  .customer_logo {
-    font-size: 1.5rem;
-  }
-
-  .navbar-collapse .customer_nav-link {
-    font-size: 16.5px;
-  }
-
-  .navbar-collapse .customer_icons {
-    gap: 14px !important;
-  }
-}
-
-/* ================= LAPTOP / DESKTOP (≥992px) polish ================= */
-@media (min-width: 992px) {
-  .customer_nav-link {
-    padding: 6px 4px;
-  }
-}
-
-@media (min-width: 1200px) {
-  .customer_logo {
-    font-size: 2.4rem;
-  }
-
-  .customer_icons svg {
-    font-size: 23px;
+  .navbar-collapse.customer_mobile_collapse {
+    padding: 85px 18px 30px !important;
   }
 }

@@ -1,9 +1,4 @@
-
-
 //claude evening
-
-
-
 
 import React, { useState, useEffect } from "react";
 import image111 from "../../assets/spring.png";
@@ -111,15 +106,14 @@ function Springsummer() {
                 rawPrice: finalPrice || 0,
               originalPrice: discountPercent > 0 ? `₹${basePrice}` : "",
               discount: discountPercent > 0 ? `${discountPercent}% OFF` : null,
-              image: p.productImage?.startsWith("http") ? p.productImage : `https://ecommerce-website-ggui.onrender.com/${p.productImage}`, // ✅ SAHI CODE
-             // brandLogo: p.brandLogo ? (p.brandLogo.startsWith("http") ? p.brandLogo : `https://ecommerce-website-ggui.onrender.com/${p.brandLogo}`) : "",
-               brandLogo: p.sellerId?.brandLogo ? (p.sellerId.brandLogo.startsWith("http") ? p.sellerId.brandLogo : `https://ecommerce-website-ggui.onrender.com/${p.sellerId.brandLogo}`): "",stock: `Stock: ${p.stockQuantity}`,
+              image: p.productImage?.startsWith("http") ? p.productImage : `https://ecommerce-website-ggui.onrender.com/${p.productImage}`,
+               brandLogo: p.sellerId?.brandLogo ? (p.sellerId.brandLogo.startsWith("http") ? p.sellerId.brandLogo : `https://ecommerce-website-ggui.onrender.com/${p.sellerId.brandLogo}`): "",
+              stock: `Stock: ${p.stockQuantity}`,
               fabric: p.fabric || "N/A",
               color: p.color || "N/A",
               size: p.size || "N/A",
               careInstructions: p.washCare || "N/A",
               createdAt: p.createdAt ? new Date(p.createdAt).getTime() : index,
-               //sellerId: p.sellerId || "",
                sellerId: p.sellerId?._id || p.sellerId || "",
             };
           });
@@ -231,7 +225,7 @@ function Springsummer() {
             discount: product.discount || "",
             image: product.image,
             quantity: 1,
-            sellerId: product.sellerId, // ✅ FIX: this was missing, causing the add-to-cart failure
+            sellerId: product.sellerId,
           }),
         });
   
@@ -332,7 +326,7 @@ function Springsummer() {
               discount: product.discount || "",
               image: product.image,
               quantity: 1,
-              sellerId: p.sellerId || "",
+              sellerId: product.sellerId || "",
             }),
           });
           window.dispatchEvent(new Event("cartUpdated"));
@@ -359,6 +353,148 @@ function Springsummer() {
   return (
     <div className="Customer_container1">
       <ToastContainer />
+
+      {/* Responsive, professional card & button styling — 2 per row on mobile */}
+      <style>{`
+        .Customer_card {
+          padding: 10px !important;
+        }
+        .Customer_product-image-box {
+          aspect-ratio: 1 / 1;
+          width: 100%;
+        }
+        .Customer_product-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        .Customer_brand-logo-box {
+          position: absolute;
+          top: 10px;
+          left: 10px;
+          width: 50px;
+          height: 50px;
+          z-index: 3;
+        }
+        .Customer_discount-badge {
+          font-size: 0.75rem;
+          top: 0px;
+        }
+        .Customer_discount-badge.Customer_has-logo {
+          top: 54px;
+        }
+        .Customer_wishlist-btn {
+          position: absolute;
+          top: 10px;
+          right: 50px;
+          width: 35px;
+          height: 35px;
+        }
+        .Customer_card-title {
+          font-size: 0.9rem;
+          margin-bottom: 4px !important;
+        }
+        .Customer_card-desc {
+          font-size: 0.78rem;
+          min-height: 2.2em;
+          margin-bottom: 8px !important;
+        }
+        .Customer_price-row {
+          margin-bottom: 10px !important;
+          flex-wrap: wrap;
+          row-gap: 4px;
+        }
+        .Customer_price-main {
+          font-size: 0.9rem;
+        }
+        .Customer_price-original {
+          font-size: 0.72rem;
+        }
+        .Customer_stock-badge {
+          font-size: 0.65rem !important;
+        }
+        .Customer_card-btn {
+          font-size: clamp(0.68rem, 2.4vw, 0.85rem);
+          padding: 6px 8px;
+          letter-spacing: 0.2px;
+          white-space: nowrap;
+          line-height: 1.3;
+        }
+        .Customer_buy-now-btn {
+          font-size: clamp(0.72rem, 2.4vw, 0.9rem);
+          padding: 7px 8px;
+        }
+
+        @media (max-width: 575.98px) {
+          .Customer_card {
+            padding: 7px !important;
+            border-radius: 12px !important;
+          }
+          .Customer_brand-logo-box {
+            width: 22px;
+            height: 22px;
+            top: 6px;
+            left: 6px;
+          }
+          .Customer_discount-badge {
+            font-size: 0.6rem;
+            padding: 2px 5px !important;
+            top: 0px;
+          }
+          .Customer_discount-badge.Customer_has-logo {
+            top: 30px;
+          }
+          .Customer_wishlist-btn {
+            width: 20px;
+            height: 20px;
+            top: 6px;
+            right: 28px;
+            font-size: 10px;
+          }
+          .Customer_share-btn {
+            width: 20px;
+            height: 20px;
+            top: 6px !important;
+            right: 6px !important;
+            font-size: 10px;
+          }
+          .Customer_card-body {
+            padding: 8px 4px !important;
+          }
+          .Customer_card-title {
+            font-size: 0.78rem;
+            line-height: 1.25;
+          }
+          .Customer_card-desc {
+            display: none;
+          }
+          .Customer_price-main {
+            font-size: 0.82rem;
+          }
+          .Customer_price-original {
+            font-size: 0.65rem;
+          }
+          .Customer_stock-badge {
+            font-size: 0.56rem !important;
+            padding: 2px 5px !important;
+          }
+          .Customer_card-btn {
+            font-size: 0.68rem;
+            padding: 5px 4px;
+            letter-spacing: 0.1px;
+          }
+          .Customer_buy-now-btn {
+            font-size: 0.72rem;
+            padding: 6px 4px;
+          }
+          .Customer_card-actions {
+            gap: 6px !important;
+          }
+          .Customer_card-actions .d-flex.gap-2 {
+            gap: 6px !important;
+          }
+        }
+      `}</style>
 
       {shareProduct && (
         <div className="Customer_share-overlay">
@@ -406,7 +542,21 @@ function Springsummer() {
         </div>
       )}
 
-      <div className="container my-3 text-center">
+      <div className="Customer_luxury-title-wrapper">
+        <h1
+          className="Customer_luxury-title text-center my-4 fw-bold fst-italic"
+          style={{ color: "#54411d" }}
+        >
+          SPRING SUMMER SHAWLS
+        </h1>
+      </div>
+
+      <img
+        src={image111}
+        alt="Kavi Shawls Banner"
+        className="Customer_hero-image w-100 mb-4"
+      />
+          <div className="container my-3 text-center">
         <div className="position-relative mx-auto" style={{ maxWidth: "600px" }}>
           <span
             className="position-absolute top-50 start-0 translate-middle-y ps-3 text-muted"
@@ -430,22 +580,6 @@ function Springsummer() {
           />
         </div>
       </div>
-
-      <div className="Customer_luxury-title-wrapper">
-        <h1
-          className="Customer_luxury-title text-center my-4 fw-bold fst-italic"
-          style={{ color: "#54411d" }}
-        >
-          SPRING SUMMER SHAWLS
-        </h1>
-      </div>
-
-      <img
-        src={image111}
-        alt="Kavi Shawls Banner"
-        className="Customer_hero-image w-100 mb-4"
-      />
-
       <div className="container my-3">
         <div className="d-flex flex-wrap justify-content-between align-items-center bg-white p-3 rounded-4 shadow-sm gap-3 border">
           <div className="text-muted small fw-semibold">
@@ -560,7 +694,7 @@ function Springsummer() {
       </div>
 
       <div className="container my-4">
-        <div className="row g-4">
+        <div className="row g-2 g-md-4">
           {currentProducts.length > 0 ? (
             currentProducts.map((item) => {
               const productIdStr = String(item.id);
@@ -569,20 +703,40 @@ function Springsummer() {
 
               return (
                 <div
-                  className="col-12 col-sm-6 col-md-4 col-lg-3"
+                  className="col-6 col-sm-6 col-md-4 col-lg-3"
                   key={productIdStr}
                 >
                   <div
                     className="Customer_card card h-100 border-0 shadow-sm d-flex flex-column justify-content-between p-2 position-relative"
                     style={{ backgroundColor: "#e4c893", borderRadius: "16px" }}
                   >
-                    {/* <div className="Customer_product-image-box overflow-hidden position-relative">
+                    <div className="Customer_product-image-box card overflow-hidden position-relative">
+
+                      {/* ✅ Brand Logo Display */}
+                      {item.brandLogo && (
+                        <div
+                          className="Customer_brand-logo-box shadow-sm rounded-circle overflow-hidden bg-white d-flex align-items-center justify-content-center"
+                          style={{ border: "1.5px solid #fff" }}
+                          title="Brand Logo"
+                        >
+                          <img
+                            src={
+                              item.brandLogo.startsWith("http")
+                                ? item.brandLogo
+                                : `https://ecommerce-website-ggui.onrender.com/${item.brandLogo}`
+                            }
+                            alt="Brand Logo"
+                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                          />
+                        </div>
+                      )}
+
+                      {/* Discount Badge */}
                       {item.discount && (
                         <span
-                          className="badge bg-danger position-absolute top-0 start-0 m-2 px-2 py-1 shadow-sm fw-bold"
+                          className={`Customer_discount-badge${item.brandLogo ? " Customer_has-logo" : ""} badge bg-danger position-absolute start-0 m-2 px-2 py-1 shadow-sm fw-bold`}
                           style={{
                             zIndex: 2,
-                            fontSize: "0.75rem",
                             borderRadius: "6px",
                           }}
                         >
@@ -598,7 +752,7 @@ function Springsummer() {
 
                       <button
                         className="Customer_share-btn"
-                        onClick={() => handleShare(item)}
+                        onClick={() => setShareProduct(item)}
                         title="Share Product"
                       >
                         <FaShareAlt />
@@ -609,14 +763,9 @@ function Springsummer() {
                         onClick={() => handleToggleWishlist(item)}
                         title="Wishlist Product"
                         style={{
-                          position: "absolute",
-                          top: "10px",
-                          right: "50px",
                           background: "white",
                           border: "none",
                           borderRadius: "50%",
-                          width: "35px",
-                          height: "35px",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
@@ -629,108 +778,20 @@ function Springsummer() {
                       >
                         <FaHeart />
                       </button>
-                    </div> */}
 
-                    <div className="Customer_product-image-box card overflow-hidden position-relative">
-                                              
-                                              {/* ✅ Brand Logo Display */}
-                                              {item.brandLogo && (
-                                                <div 
-                                                  className="position-absolute shadow-sm rounded-circle overflow-hidden bg-white d-flex align-items-center justify-content-center"
-                                                  style={{
-                                                    top: "10px",
-                                                    left: "10px",
-                                                    width: "50px",
-                                                    height: "50px",
-                                                    zIndex: 3,
-                                                    border: "1.5px solid #fff"
-                                                  }}
-                                                  title="Brand Logo"
-                                                >
-                                                  <img
-                                                    src={
-                                                      item.brandLogo.startsWith("http") 
-                                                        ? item.brandLogo 
-                                                        : `https://ecommerce-website-ggui.onrender.com/${item.brandLogo}`
-                                                    }
-                                                    alt="Brand Logo"
-                                                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                                                  />
-                                                </div>
-                                              )}
-                                            
-                                              {/* Discount Badge */}
-                                              {item.discount && (
-                                                <span
-                                                  className="badge bg-danger position-absolute start-0 m-2 px-2 py-1 shadow-sm fw-bold"
-                                                  style={{
-                                                    top: item.brandLogo ? "54px" : "0px", // Agar brand logo hoga toh badge thoda niche shift ho jayega
-                                                    zIndex: 2,
-                                                    fontSize: "0.75rem",
-                                                    borderRadius: "6px",
-                                                  }}
-                                                >
-                                                  {item.discount}
-                                                </span>
-                                              )}
-                                            
-                                              <img
-                                                src={item.image}
-                                                className="card-img-top rounded Customer_product-image"
-                                                alt={item.title}
-                                              />
-                                            
-                                              <button
-                                              className="Customer_share-btn"
-                                              onClick={() => setShareProduct(item)}
-                                              title="Share Product"
-                                            >
-                                              <FaShareAlt />
-                                            </button>
-                                            
-                                              <button
-                                                className="Customer_wishlist-btn"
-                                                onClick={() => handleToggleWishlist(item)}
-                                                title="Wishlist Product"
-                                                style={{
-                                                  position: "absolute",
-                                                  top: "10px",
-                                                  right: "50px",
-                                                  background: "white",
-                                                  border: "none",
-                                                  borderRadius: "50%",
-                                                  width: "35px",
-                                                  height: "35px",
-                                                  display: "flex",
-                                                  alignItems: "center",
-                                                  justifyContent: "center",
-                                                  cursor: "pointer",
-                                                  boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
-                                                  color: isWishlisted ? "red" : "#ccc",
-                                                  transition: "color 0.2s ease",
-                                                  zIndex: 2,
-                                                }}
-                                              >
-                                                <FaHeart />
-                                              </button>
-                                              
-                                            </div>
+                    </div>
 
-                    <div className="card-body px-2 py-3 d-flex flex-column justify-content-between">
+                    <div className="Customer_card-body card-body px-2 py-3 d-flex flex-column justify-content-between">
                       <div>
                         <h6
-                          className="fw-bold mb-1 text-dark"
-                          style={{ fontSize: "0.95rem", lineHeight: "1.3" }}
+                          className="Customer_card-title fw-bold mb-1 text-dark"
                         >
                           {item.title}
                         </h6>
 
                         <p
-                          className="text-muted small mb-2"
+                          className="Customer_card-desc text-muted small mb-2"
                           style={{
-                            fontSize: "0.82rem",
-                            lineHeight: "1.4",
-                            minHeight: "2.6em",
                             display: "-webkit-box",
                             WebkitLineClamp: "2",
                             WebkitBoxOrient: "vertical",
@@ -740,16 +801,15 @@ function Springsummer() {
                           {item.description}
                         </p>
 
-                        <div className="d-flex justify-content-between align-items-center mb-3">
+                        <div className="Customer_price-row d-flex justify-content-between align-items-center mb-3">
                           <div className="d-flex align-items-center gap-2">
-                            <span className="fw-bold fs-6 text-success">
+                            <span className="Customer_price-main fw-bold text-success">
                               {item.price}
                             </span>
 
                             {item.originalPrice && (
                               <span
-                                className="text-decoration-line-through text-muted"
-                                style={{ fontSize: "0.8rem" }}
+                                className="Customer_price-original text-decoration-line-through text-muted"
                               >
                                 {item.originalPrice}
                               </span>
@@ -757,15 +817,14 @@ function Springsummer() {
                           </div>
 
                           <span
-                            className="badge bg-white text-secondary border fw-normal"
-                            style={{ fontSize: "0.7rem" }}
+                            className="Customer_stock-badge badge bg-white text-secondary border fw-normal"
                           >
                             {item.stock}
                           </span>
                         </div>
                       </div>
 
-                      <div className="d-flex flex-column gap-2 mt-auto">
+                      <div className="Customer_card-actions d-flex flex-column gap-2 mt-auto">
                         <div className="d-flex gap-2">
                           <button
                             onClick={() =>
@@ -773,7 +832,7 @@ function Springsummer() {
                                 state: { product: item },
                               })
                             }
-                            className="btn btn-outline-dark btn-sm w-50 fw-semibold"
+                            className="Customer_card-btn btn btn-outline-dark w-50 fw-semibold"
                             style={{ borderRadius: "8px" }}
                           >
                             View
@@ -782,7 +841,7 @@ function Springsummer() {
                           {isInCart ? (
                             <button
                               onClick={() => navigate("/cart")}
-                              className="btn btn-sm w-50 fw-semibold text-white"
+                              className="Customer_card-btn btn w-50 fw-semibold text-white"
                               style={{
                                 backgroundColor: "#2b8a3e",
                                 border: "none",
@@ -794,7 +853,7 @@ function Springsummer() {
                           ) : (
                             <button
                               onClick={() => handleAddToCart(item)}
-                              className="btn btn-dark btn-sm w-50 fw-semibold text-white"
+                              className="Customer_card-btn btn btn-dark w-50 fw-semibold text-white"
                               style={{
                                 backgroundColor: "#166228",
                                 border: "none",
@@ -808,7 +867,7 @@ function Springsummer() {
 
                         <button
                           onClick={() => handleBuyNow(item)}
-                          className="btn btn-sm w-100 fw-bold text-white border-0 shadow-sm"
+                          className="Customer_card-btn Customer_buy-now-btn btn w-100 fw-bold text-white border-0 shadow-sm"
                           style={{
                             background:
                               "linear-gradient(135deg, #d6bd69 0%, #dfa00b 100%)",

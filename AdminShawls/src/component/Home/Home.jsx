@@ -1,5 +1,3 @@
-//claude evenig
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Home.css";
@@ -454,6 +452,148 @@ function Home() {
     <div>
       <ToastContainer />
 
+      {/* Responsive, professional card & button styling */}
+      <style>{`
+        .Customer_card {
+          padding: 10px !important;
+        }
+        .Customer_product-image-box {
+          aspect-ratio: 1 / 1;
+          width: 100%;
+        }
+        .Customer_product-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        .Customer_brand-logo-box {
+          position: absolute;
+          top: 10px;
+          left: 10px;
+          width: 50px;
+          height: 50px;
+          z-index: 3;
+        }
+        .Customer_discount-badge {
+          font-size: 0.75rem;
+          top: 0px;
+        }
+        .Customer_discount-badge.Customer_has-logo {
+          top: 54px;
+        }
+        .Customer_wishlist-btn {
+          position: absolute;
+          top: 10px;
+          right: 50px;
+          width: 35px;
+          height: 35px;
+        }
+        .Customer_card-title {
+          font-size: 0.86rem;
+          margin-bottom: 4px !important;
+        }
+        .Customer_card-desc {
+          font-size: 0.74rem;
+          min-height: 2.2em;
+          margin-bottom: 8px !important;
+        }
+        .Customer_price-row {
+          margin-bottom: 10px !important;
+          flex-wrap: wrap;
+          row-gap: 4px;
+        }
+        .Customer_price-main {
+          font-size: 0.9rem;
+        }
+        .Customer_price-original {
+          font-size: 0.72rem;
+        }
+        .Customer_stock-badge {
+          font-size: 0.62rem !important;
+        }
+        .Customer_card-btn {
+          font-size: clamp(0.68rem, 2.4vw, 0.85rem);
+          padding: 6px 8px;
+          letter-spacing: 0.2px;
+          white-space: nowrap;
+          line-height: 1.3;
+        }
+        .Customer_buy-now-btn {
+          font-size: clamp(0.72rem, 2.4vw, 0.9rem);
+          padding: 7px 8px;
+        }
+
+        @media (max-width: 575.98px) {
+          .Customer_card {
+            padding: 7px !important;
+            border-radius: 12px !important;
+          }
+          .Customer_brand-logo-box {
+            width: 22px;
+            height: 22px;
+            top: 6px;
+            left: 6px;
+          }
+          .Customer_discount-badge {
+            font-size: 0.6rem;
+            padding: 2px 5px !important;
+            top: 0px;
+          }
+          .Customer_discount-badge.Customer_has-logo {
+            top: 30px;
+          }
+          .Customer_wishlist-btn {
+            width: 20px;
+            height: 20px;
+            top: 6px;
+            right: 28px;
+            font-size: 10px;
+          }
+          .Customer_share-btn {
+            width: 20px;
+            height: 20px;
+            top: 6px !important;
+            right: 6px !important;
+            font-size: 10px;
+          }
+          .Customer_card-body {
+            padding: 8px 4px !important;
+          }
+          .Customer_card-title {
+            font-size: 0.78rem;
+            line-height: 1.25;
+          }
+          .Customer_card-desc {
+            display: none;
+          }
+          .Customer_price-main {
+            font-size: 0.82rem;
+          }
+          .Customer_price-original {
+            font-size: 0.65rem;
+          }
+          .Customer_stock-badge {
+            font-size: 0.56rem !important;
+            padding: 2px 5px !important;
+          }
+          .Customer_card-btn {
+            font-size: 0.68rem;
+            padding: 5px 4px;
+            letter-spacing: 0.1px;
+          }
+          .Customer_buy-now-btn {
+            font-size: 0.72rem;
+            padding: 6px 4px;
+          }
+          .Customer_card-actions {
+            gap: 6px !important;
+          }
+          .Customer_card-actions .d-flex.gap-2 {
+            gap: 6px !important;
+          }
+        }
+      `}</style>
+
       {/* COOKIE CONSENT */}
       {showCookieBanner && (
         <div
@@ -551,7 +691,12 @@ function Home() {
           })}
         </div>
       </div>
-
+ <h2
+          className="Customer_luxury-title text-center fw-bold mb-4 fst-italic"
+          style={{ color: "#9d6a0cc4", paddingTop: "40px" }}
+        >
+          Our Featured Shawls
+        </h2>
       <div className="container my-4 text-center">
         <div className="position-relative mx-auto" style={{ maxWidth: "600px" }}>
           <span className="position-absolute top-50 start-0 translate-middle-y ps-3 text-muted" style={{ pointerEvents: "none" }}>
@@ -575,12 +720,7 @@ function Home() {
 
       {/* MAIN PRODUCTS SECTION */}
       <div className="container my-5">
-        <h2
-          className="Customer_luxury-title text-center fw-bold mb-4 fst-italic"
-          style={{ color: "#9d6a0cc4" }}
-        >
-          Our Featured Shawls
-        </h2>
+       
 
         {/* TOP FILTERS & SORT BAR */}
         <div className="bg-white p-3 rounded shadow-sm border mb-4 d-flex flex-wrap justify-content-between align-items-center gap-3">
@@ -680,7 +820,8 @@ function Home() {
         )}
 
         {/* PRODUCTS GRID */}
-        <div className="row g-4">
+        {/* g-2 on mobile (tighter gap so 2 cards fit comfortably), g-4 from md upward */}
+        <div className="row g-2 g-md-4">
           {currentProducts.length > 0 ? (
             currentProducts.map((item) => {
               const productIdStr = String(item.id);
@@ -688,7 +829,11 @@ function Home() {
               const isWishlisted = wishlistProductIds.includes(productIdStr);
 
               return (
-                <div className="col-12 col-sm-6 col-md-4 col-lg-3" key={productIdStr}>
+                // col-6  -> 2 per row on mobile (xs, <576px)
+                // col-sm-6 -> 2 per row on small tablets (>=576px)
+                // col-md-4 -> 3 per row on tablets/small desktop (>=768px)
+                // col-lg-3 -> 4 per row on large desktop (>=992px)
+                <div className="col-6 col-sm-6 col-md-4 col-lg-3" key={productIdStr}>
                   <div
                     className="Customer_card h-100 border-0 shadow-sm d-flex flex-column justify-content-between p-2 position-relative"
                     style={{
@@ -699,15 +844,8 @@ function Home() {
                     <div className="Customer_product-image-box card overflow-hidden position-relative">
                       {item.brandLogo && (
                         <div
-                          className="position-absolute shadow-sm rounded-circle overflow-hidden bg-white d-flex align-items-center justify-content-center"
-                          style={{
-                            top: "10px",
-                            left: "10px",
-                            width: "50px",
-                            height: "50px",
-                            zIndex: 3,
-                            border: "1.5px solid #fff",
-                          }}
+                          className="Customer_brand-logo-box shadow-sm rounded-circle overflow-hidden bg-white d-flex align-items-center justify-content-center"
+                          style={{ border: "1.5px solid #fff" }}
                           title="Brand Logo"
                         >
                           <img
@@ -724,11 +862,9 @@ function Home() {
 
                       {item.discount && (
                         <span
-                          className="badge bg-danger position-absolute start-0 m-2 px-2 py-1 shadow-sm fw-bold"
+                          className={`Customer_discount-badge${item.brandLogo ? " Customer_has-logo" : ""} badge bg-danger position-absolute start-0 m-2 px-2 py-1 shadow-sm fw-bold`}
                           style={{
-                            top: item.brandLogo ? "54px" : "0px",
                             zIndex: 2,
-                            fontSize: "0.75rem",
                             borderRadius: "6px",
                           }}
                         >
@@ -755,14 +891,9 @@ function Home() {
                         onClick={() => handleToggleWishlist(item)}
                         title="Wishlist Product"
                         style={{
-                          position: "absolute",
-                          top: "10px",
-                          right: "50px",
                           background: "white",
                           border: "none",
                           borderRadius: "50%",
-                          width: "35px",
-                          height: "35px",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
@@ -780,28 +911,25 @@ function Home() {
                     <div className="Customer_card-body px-2 py-3 d-flex flex-column justify-content-between">
                       <div>
                         <h6
-                          className="fw-bold mb-1 text-dark"
-                          style={{ fontSize: "0.95rem", lineHeight: "1.3" }}
+                          className="Customer_card-title fw-bold mb-1 text-dark"
                         >
                           {item.title}
                         </h6>
 
                         <p
-                          className="text-muted small mb-2 Customer_text-truncate-2"
-                          style={{ fontSize: "0.82rem", lineHeight: "1.4", minHeight: "2.6em" }}
+                          className="Customer_card-desc text-muted small mb-2 Customer_text-truncate-2"
                         >
                           {item.description}
                         </p>
 
-                        <div className="d-flex justify-content-between align-items-center mb-3">
+                        <div className="Customer_price-row d-flex justify-content-between align-items-center mb-3">
                           <div className="d-flex align-items-center gap-2">
-                            <span className="fw-bold fs-6 text-success">
+                            <span className="Customer_price-main fw-bold text-success">
                               {item.price}
                             </span>
                             {item.originalPrice && (
                               <span
-                                className="text-decoration-line-through text-muted"
-                                style={{ fontSize: "0.8rem" }}
+                                className="Customer_price-original text-decoration-line-through text-muted"
                               >
                                 {item.originalPrice}
                               </span>
@@ -809,21 +937,20 @@ function Home() {
                           </div>
 
                           <span
-                            className="badge bg-white text-secondary border fw-normal"
-                            style={{ fontSize: "0.7rem" }}
+                            className="Customer_stock-badge badge bg-white text-secondary border fw-normal"
                           >
                             {item.stock}
                           </span>
                         </div>
                       </div>
 
-                      <div className="d-flex flex-column gap-2 mt-auto">
+                      <div className="Customer_card-actions d-flex flex-column gap-2 mt-auto">
                         <div className="d-flex gap-2">
                           <button
                             onClick={() =>
                               navigate(`/product/${item.id}`, { state: { product: item } })
                             }
-                            className="btn btn-outline-dark btn-sm w-50 fw-semibold"
+                            className="Customer_card-btn btn btn-outline-dark w-50 fw-semibold"
                             style={{ borderRadius: "8px" }}
                           >
                             View
@@ -832,15 +959,15 @@ function Home() {
                           {isInCart ? (
                             <button
                               onClick={() => navigate("/cart")}
-                              className="btn btn-sm w-50 fw-semibold text-white"
+                              className="Customer_card-btn btn w-50 fw-semibold text-white"
                               style={{ backgroundColor: "#2b8a3e", border: "none", borderRadius: "8px" }}
                             >
-                              Go to Cart ➔
+                              Go to Cart
                             </button>
                           ) : (
                             <button
                               onClick={() => handleAddToCart(item)}
-                              className="btn btn-dark btn-sm w-50 fw-semibold text-white"
+                              className="Customer_card-btn btn btn-dark w-50 fw-semibold text-white"
                               style={{ backgroundColor: "#166228", border: "none", borderRadius: "8px" }}
                             >
                               Add to Cart
@@ -850,13 +977,13 @@ function Home() {
 
                         <button
                           onClick={() => handleBuyNow(item)}
-                          className="btn btn-sm w-100 fw-bold text-white border-0 shadow-sm"
+                          className="Customer_card-btn Customer_buy-now-btn btn w-100 fw-bold text-white border-0 shadow-sm"
                           style={{
                             background: "linear-gradient(135deg, #d6bd69 0%, #dfa00b 100%)",
                             borderRadius: "8px",
                           }}
                         >
-                          ⚡ Buy Now
+                          Buy Now
                         </button>
                       </div>
                     </div>

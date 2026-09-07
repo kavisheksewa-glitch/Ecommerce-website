@@ -8284,4 +8284,11 @@ router.put("/notifications/read", protectCustomer, markNotificationsAsRead);
 router.put("/notifications/read/:id", protectCustomer, markSingleNotificationAsRead);
 router.delete("/notifications/clear", protectCustomer, clearAllNotifications);
 
+// Endpoint: GET /api/customer/profile
+router.get("/profile", verifyToken, getProfile);
+
+// Endpoint: PUT /api/customer/profile
+router.put("/profile", verifyToken, updateProfile);
+
+module.exports = router;
 module.exports = router;

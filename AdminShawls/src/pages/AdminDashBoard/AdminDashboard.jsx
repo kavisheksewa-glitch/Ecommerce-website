@@ -1,14 +1,3 @@
-
-
-
-
-// new1
-
-
-
-
-
-
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { 
@@ -77,7 +66,7 @@ function AdminDashboard() {
     { name: "Designer", value: 10 },
   ];
 
-  const COLORS = ["#064e3b", "#10b981", "#f59e0b", "#ef4444"];
+  const COLORS = ["#059669", "#34D399", "#F59E0B", "#EF4444"];
 
   // Search filter logic for real recent orders
   const filteredOrders = recentOrders.filter((order) => {
@@ -94,14 +83,19 @@ function AdminDashboard() {
   };
 
   return (
-    <div className="container-fluid" style={{ backgroundColor: "#f0fdf4", minHeight: "100vh", overflowX: "hidden" }}>
+    <div className="container-fluid" style={{ backgroundColor: "#ECFDF5", minHeight: "100vh", overflowX: "hidden" }}>
       <div className="row">
         
-        {/* Mobile Navbar Header */}
-        <div className="col-12 d-md-none d-flex justify-content-between align-items-center p-3 text-white shadow-sm" style={{ backgroundColor: "#064e3b" }}>
+        {/* Mobile & Tablet Navbar Header */}
+        <div className="col-12 d-md-none d-flex justify-content-between align-items-center p-3 text-white shadow-sm" style={{ background: "linear-gradient(135deg, #065f46 0%, #059669 50%, #34d399 100%)" }}>
           <div className="d-flex align-items-center gap-2">
-            <img src={logoImage} alt="Logo" style={{ maxHeight: "35px", width: "auto", objectFit: "contain" }} />
-            <span className="fw-bold small">ADMIN PANEL</span>
+            <div 
+              className="bg-white d-flex align-items-center justify-content-center shadow-sm" 
+              style={{ width: "42px", height: "42px", borderRadius: "50%", padding: "4px", overflow: "hidden" }}
+            >
+              <img src={logoImage} alt="Logo" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+            </div>
+            <span className="fw-bold small text-white">ADMIN</span>
           </div>
           <button 
             className="btn btn-outline-light btn-sm border-0" 
@@ -114,20 +108,32 @@ function AdminDashboard() {
         {/* Sidebar for Desktop & Mobile Toggle */}
         <nav 
           className={`col-md-3 col-lg-2 d-md-block sidebar text-white min-vh-100 p-3 shadow-sm ${showSidebar ? "d-block" : "d-none d-md-block"}`} 
-          style={{ backgroundColor: "#064e3b", position: "fixed", top: 0, bottom: 0, left: 0, zIndex: 1050, transition: "0.3s ease" }}
+          style={{ background: "linear-gradient(180deg, #065f46 0%, #059669 60%, #047857 100%)", position: "fixed", top: 0, bottom: 0, left: 0, zIndex: 1050, transition: "0.3s ease" }}
         >
           <div className="d-flex justify-content-end d-md-none mb-2">
             <button className="btn btn-sm text-white fw-bold" onClick={() => setShowSidebar(false)}>✕ Close</button>
           </div>
 
-          <div className="text-center py-3 border-bottom border-success mb-3">
-            <img src={logoImage} alt="Kavi Shawls Logo" style={{ maxHeight: "100px", width: "auto", objectFit: "contain" }} />
+          <div className="text-center py-3 mb-3 border-bottom" style={{ borderColor: "rgba(255, 255, 255, 0.2)" }}>
+            {/* Desktop pe normal box, mobile/tablet pe circle layout */}
+            <div 
+              className="bg-white shadow-sm mx-auto d-flex align-items-center justify-content-center" 
+              style={{ 
+                width: "75px", 
+                height: "75px", 
+                borderRadius: "50%", 
+                padding: "6px",
+                overflow: "hidden" 
+              }}
+            >
+              <img src={logoImage} alt="Kavi Shawls Logo" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+            </div>
             <span className="d-block mt-2 fw-bold text-light small tracking-wider">ADMIN PANEL</span>
           </div>
 
           <ul className="nav flex-column gap-2 mt-2">
             <li className="nav-item">
-              <Link to="/admin/dashboard" className="nav-link text-white active rounded py-2 px-3 shadow-sm" style={{ backgroundColor: "#047857" }}>
+              <Link to="/admin/dashboard" className="nav-link text-white active rounded py-2 px-3 shadow-sm" style={{ backgroundColor: "rgba(255, 255, 255, 0.2)" }}>
                 📊 Dashboard
               </Link>
             </li>
@@ -150,7 +156,7 @@ function AdminDashboard() {
               <button 
                 onClick={handleLogout} 
                 className="btn btn-light w-100 btn-sm d-flex align-items-center justify-content-center gap-2 fw-bold py-2 shadow-sm"
-                style={{ color: "#064e3b" }}
+                style={{ color: "#059669" }}
               >
                 <FaSignOutAlt /> Logout
               </button>
@@ -162,14 +168,14 @@ function AdminDashboard() {
         <main className="col-md-9 ms-sm-auto col-lg-10 px-3 px-md-4 py-4" style={{ marginLeft: "auto" }}>
           
           <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-3 mb-4 border-bottom gap-3">
-            <h1 className="h4 h-md-3 fw-bold m-0" style={{ color: "#064e3b" }}>Dashboard Overview</h1>
+            <h1 className="h4 h-md-3 fw-bold m-0" style={{ color: "#059669" }}>Dashboard Overview</h1>
           </div>
 
           {/* Stats Cards */}
           <div className="row g-3 mb-4">
             {stats.map((item, index) => (
               <div className="col-12 col-sm-6 col-md-3" key={index}>
-                <div className="card text-white shadow-sm border-0 rounded-4" style={{ backgroundColor: "#064e3b" }}>
+                <div className="card text-white shadow-sm border-0 rounded-4" style={{ background: "linear-gradient(135deg, #059669 0%, #10b981 100%)" }}>
                   <div className="card-body py-4">
                     <div className="d-flex justify-content-between align-items-center mb-2">
                       <h6 className="card-title text-light opacity-75 small m-0">{item.title}</h6>
@@ -192,7 +198,7 @@ function AdminDashboard() {
           <div className="row g-4 mb-4">
             <div className="col-lg-8">
               <div className="card border-0 shadow-sm p-4 bg-white rounded-4">
-                <h5 className="fw-bold mb-3" style={{ color: "#064e3b" }}>Weekly Sales Analytics (₹)</h5>
+                <h5 className="fw-bold mb-3" style={{ color: "#059669" }}>Weekly Sales Analytics (₹)</h5>
                 <div style={{ width: "100%", height: "300px" }}>
                   <ResponsiveContainer>
                     <BarChart data={salesData}>
@@ -200,7 +206,7 @@ function AdminDashboard() {
                       <XAxis dataKey="name" />
                       <YAxis />
                       <Tooltip />
-                      <Bar dataKey="sales" fill="#064e3b" radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="sales" fill="#059669" radius={[4, 4, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -209,7 +215,7 @@ function AdminDashboard() {
 
             <div className="col-lg-4">
               <div className="card border-0 shadow-sm p-4 bg-white rounded-4">
-                <h5 className="fw-bold mb-3" style={{ color: "#064e3b" }}>Top Categories</h5>
+                <h5 className="fw-bold mb-3" style={{ color: "#059669" }}>Top Categories</h5>
                 <div style={{ width: "100%", height: "300px" }}>
                   <ResponsiveContainer>
                     <PieChart>
@@ -239,7 +245,7 @@ function AdminDashboard() {
           {/* Recent Orders Section */}
           <div className="card shadow-sm border-0 rounded-4 p-2 p-md-3 bg-white">
             <div className="d-flex justify-content-between align-items-center mb-3 px-2 pt-2">
-              <h5 className="fw-bold m-0 fs-6 fs-md-5" style={{ color: "#064e3b" }}>Recent Orders</h5>
+              <h5 className="fw-bold m-0 fs-6 fs-md-5" style={{ color: "#059669" }}>Recent Orders</h5>
               <Link to="/admin/orders" className="btn btn-sm btn-outline-secondary border-0 fw-semibold text-decoration-none">View All</Link>
             </div>
 
@@ -263,10 +269,10 @@ function AdminDashboard() {
                   ) : filteredOrders.length > 0 ? (
                     filteredOrders.slice(0, 7).map((order) => (
                       <tr key={order._id}>
-                        <td className="fw-semibold" style={{ color: "#064e3b" }}>{order._id.slice(-6)}</td>
+                        <td className="fw-semibold" style={{ color: "#059669" }}>{order._id.slice(-6)}</td>
                         <td>{order.fullName}</td>
                         <td className="text-muted">{order.productTitle}</td>
-                        <td className="fw-bold" style={{ color: "#064e3b" }}>₹{order.totalAmount}</td>
+                        <td className="fw-bold" style={{ color: "#059669" }}>₹{order.totalAmount}</td>
                         <td>
                           <span className={`badge px-2 py-1 ${
                             order.orderStatus === "Delivered" ? "bg-success" :
@@ -277,7 +283,7 @@ function AdminDashboard() {
                           </span>
                         </td>
                         <td>
-                          <Link to="/admin/orders" className="btn btn-sm btn-light border" style={{ color: "#064e3b" }}>
+                          <Link to="/admin/orders" className="btn btn-sm btn-light border" style={{ color: "#059669" }}>
                             <FaEye />
                           </Link>
                         </td>

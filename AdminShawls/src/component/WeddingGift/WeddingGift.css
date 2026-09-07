@@ -1,58 +1,470 @@
-/* Container & Layout Styling */
-.Customer_container1 {
-  min-height: 100vh;
-}
+/* =====================================================
+   WEDDING GIFTS - DESKTOP
+   ===================================================== */
 
-/* Wedding Banner Styling */
-.Customer_wedding-banner {
-  background-size: cover;
-  background-position: center;
-}
-
-/* Product Card & Hover Effects */
 .Customer_card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: 0.3s ease;
 }
 
 .Customer_card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15) !important;
+  transform: translateY(-3px);
 }
 
-/* Product Image Zoom Effect */
 .Customer_product-image-box {
-  border-radius: 8px;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: #f8f8f8;
 }
 
 .Customer_product-image {
-  transition: transform 0.5s ease;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
-.Customer_card:hover .Customer_product-image {
-  transform: scale(1.05);
+/* Brand Logo */
+.Customer_brand-logo-box {
+  top: 10px;
+  left: 10px;
+  width: 50px;
+  height: 50px;
+  z-index: 3;
+  border: 1.5px solid #fff;
 }
 
-/* Share Button on Image */
+.Customer_brand-logo-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Discount */
+.Customer_discount-badge {
+  top: 54px;
+  left: 8px;
+  z-index: 4;
+  font-size: 0.75rem;
+  border-radius: 6px;
+  padding: 5px 8px;
+}
+
+/* Share Button */
 .Customer_share-btn {
   position: absolute;
   top: 10px;
   right: 10px;
-  background: white;
-  border: none;
-  border-radius: 50%;
+
   width: 35px;
   height: 35px;
+
+  border: none;
+  border-radius: 50%;
+
+  background: #fff;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   cursor: pointer;
+
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  color: #333;
-  transition: background 0.2s ease, color 0.2s ease;
-  z-index: 2;
+
+  font-size: 15px;
+
+  z-index: 5;
 }
 
-.Customer_share-btn:hover {
-  background: #333;
-  color: white;
+/* Wishlist */
+.Customer_wishlist-btn {
+  position: absolute;
+  top: 10px;
+  right: 50px;
+
+  width: 35px;
+  height: 35px;
+
+  border: none;
+  border-radius: 50%;
+
+  background: #fff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+
+  color: #ccc;
+
+  font-size: 15px;
+
+  z-index: 5;
+}
+
+.Customer_wishlist-btn:hover {
+  color: red;
+}
+
+/* Card Body */
+.Customer_card-body {
+  padding: 10px 8px !important;
+}
+
+.Customer_card-title {
+  font-size: 0.9rem;
+  line-height: 1.3;
+}
+
+.Customer_rating {
+  font-size: 0.75rem;
+}
+
+.Customer_card-desc {
+  font-size: 0.78rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.Customer_price-row {
+  gap: 8px;
+}
+
+.Customer_price-main {
+  font-size: 1rem;
+}
+
+.Customer_price-original {
+  font-size: 0.75rem;
+}
+
+/* Buttons */
+.Customer_card-actions {
+  gap: 5px !important;
+}
+
+.Customer_card-btn {
+  font-size: 0.75rem;
+  border-radius: 6px !important;
+}
+
+.Customer_cart-btn {
+  background-color: #2b8323 !important;
+  border: none !important;
+}
+
+.Customer_buy-now-btn {
+  font-size: 0.8rem;
+  background: linear-gradient(
+    135deg,
+    #d6bd69 0%,
+    #dfa00b 100%
+  );
+  border-radius: 6px;
+}
+
+/* =====================================================
+   MOBILE VIEW
+   ===================================================== */
+
+@media (max-width: 575.98px) {
+
+  /* Main container */
+  .Customer_container1 {
+    overflow-x: hidden;
+  }
+
+  /* ================= BANNER ================= */
+
+  .Customer_wedding-banner {
+    min-height: 250px !important;
+    margin-left: 6px;
+    margin-right: 6px;
+    border-radius: 10px !important;
+
+    background-position: center;
+  }
+
+  .Customer_wedding-banner > div {
+    max-width: 90% !important;
+  }
+
+  .Customer_wedding-banner h1 {
+    font-size: 1.45rem !important;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+
+  .Customer_wedding-banner p {
+    font-size: 0.72rem !important;
+    line-height: 1.35;
+    margin-bottom: 10px !important;
+  }
+
+  .Customer_wedding-banner button {
+    font-size: 0.7rem !important;
+    padding: 6px 12px !important;
+  }
+
+  /* ================= SEARCH ================= */
+
+  .Customer_wedding-search {
+    padding: 9px 10px 9px 38px !important;
+    font-size: 0.78rem !important;
+    height: 40px;
+  }
+
+  /* ================= FILTER ================= */
+
+  .Customer_mobile-filter-btn {
+    background-color: #06080e !important;
+    font-size: 0.78rem;
+    border-radius: 6px;
+  }
+
+  .Customer_filter-box {
+    padding: 12px !important;
+    margin-bottom: 12px;
+  }
+
+  .Customer_filter-box label,
+  .Customer_filter-box span {
+    font-size: 0.75rem;
+  }
+
+  /* ================= SORT ================= */
+
+  .Customer_sort-box {
+    padding: 7px 9px !important;
+    margin-bottom: 10px !important;
+  }
+
+  .Customer_sort-box span {
+    font-size: 0.65rem !important;
+  }
+
+  .Customer_sort-box select {
+    font-size: 0.65rem !important;
+    padding: 4px 25px 4px 6px;
+  }
+
+  /* ================= PRODUCT GRID ================= */
+
+  .Customer_card {
+    padding: 7px !important;
+    border-radius: 12px !important;
+  }
+
+  .Customer_product-image-box {
+    aspect-ratio: 1 / 1;
+    border-radius: 8px !important;
+  }
+
+  .Customer_product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* ================= BRAND LOGO ================= */
+
+  .Customer_brand-logo-box {
+    width: 22px;
+    height: 22px;
+
+    top: 6px;
+    left: 6px;
+
+    border-width: 1px;
+  }
+
+  /* ================= DISCOUNT ================= */
+
+  .Customer_discount-badge {
+    top: 32px;
+    left: 5px;
+
+    font-size: 0.55rem !important;
+
+    padding: 2px 5px !important;
+
+    border-radius: 4px;
+  }
+
+  /* ================= SHARE ================= */
+
+  .Customer_share-btn {
+    width: 20px;
+    height: 20px;
+
+    top: 6px;
+    right: 6px;
+
+    font-size: 9px;
+
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  /* ================= WISHLIST ================= */
+
+  .Customer_wishlist-btn {
+    width: 20px;
+    height: 20px;
+
+    top: 6px;
+    right: 30px;
+
+    font-size: 9px;
+
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  /* ================= CARD BODY ================= */
+
+  .Customer_card-body {
+    padding: 7px 3px !important;
+  }
+
+  .Customer_card-title {
+    font-size: 0.72rem !important;
+    line-height: 1.25;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+
+    overflow: hidden;
+
+    min-height: 30px;
+  }
+
+  /* ================= RATING ================= */
+
+  .Customer_rating {
+    font-size: 0.58rem !important;
+    margin-bottom: 3px !important;
+  }
+
+  .Customer_rating .text-muted {
+    font-size: 0.58rem !important;
+  }
+
+  /* ================= DESCRIPTION ================= */
+
+  .Customer_card-desc {
+    display: none !important;
+  }
+
+  /* ================= PRICE ================= */
+
+  .Customer_price-row {
+    gap: 4px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .Customer_price-main {
+    font-size: 0.78rem !important;
+  }
+
+  .Customer_price-original {
+    font-size: 0.58rem !important;
+  }
+
+  /* ================= BUTTONS ================= */
+
+  .Customer_card-actions {
+    gap: 5px !important;
+  }
+
+  .Customer_card-btn {
+    font-size: 0.58rem !important;
+    padding: 5px 2px !important;
+    line-height: 1.2;
+  }
+
+  .Customer_buy-now-btn {
+    font-size: 0.62rem !important;
+    padding: 6px 3px !important;
+    line-height: 1.2;
+  }
+
+  /* ================= FEATURES ================= */
+
+  .Customer_features-container {
+    margin-top: 25px !important;
+    margin-bottom: 25px !important;
+  }
+
+  .Customer_features-box {
+    padding: 12px 8px !important;
+
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+
+    gap: 12px 6px !important;
+  }
+
+  .Customer_feature-item {
+    gap: 5px !important;
+    justify-content: flex-start;
+  }
+
+  .Customer_feature-item svg {
+    font-size: 1.1rem !important;
+    flex-shrink: 0;
+  }
+
+  .Customer_feature-item h6 {
+    font-size: 0.58rem !important;
+    line-height: 1.2;
+  }
+
+  .Customer_feature-item small {
+    font-size: 0.5rem !important;
+    line-height: 1.2;
+  }
+}
+
+/* =====================================================
+   VERY SMALL MOBILE
+   ===================================================== */
+
+@media (max-width: 380px) {
+
+  .Customer_card {
+    padding: 5px !important;
+  }
+
+  .Customer_card-title {
+    font-size: 0.68rem !important;
+  }
+
+  .Customer_card-btn {
+    font-size: 0.53rem !important;
+  }
+
+  .Customer_buy-now-btn {
+    font-size: 0.58rem !important;
+  }
+
+  .Customer_price-main {
+    font-size: 0.72rem !important;
+  }
+
+  .Customer_price-original {
+    font-size: 0.52rem !important;
+  }
+
+  .Customer_wedding-banner h1 {
+    font-size: 1.25rem !important;
+  }
+
 }
