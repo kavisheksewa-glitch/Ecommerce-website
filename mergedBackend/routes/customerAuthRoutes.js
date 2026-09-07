@@ -6943,7 +6943,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { protectCustomer } = require("../middleware/customerMiddleware");
 const sendOtpEmail = require("../utils/SendEmail");
-
+const { getProfile, updateProfile } = require("../controllers/profileController");
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_key_here";
 
 /**
