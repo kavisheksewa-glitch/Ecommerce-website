@@ -1,11 +1,5 @@
 
 
-
-//claude evening
-
-
-
-
 import React, { useState, useEffect } from "react";
 import { Routes, Route, useNavigate, useLocation, Outlet } from "react-router-dom";
 import ScrollToTop from "./component/ScrollTop/ScrollToTop";

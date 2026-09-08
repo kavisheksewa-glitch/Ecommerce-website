@@ -1,3 +1,4 @@
+
 const express = require("express");
 const router = express.Router();
 const Customer = require("../models/Customer");
@@ -1310,8 +1311,6 @@ const clearAllNotifications = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
-
-// ==================== PROFILE CONTROLLERS ====================
 
 /**
  * @swagger

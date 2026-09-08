@@ -1,13 +1,5 @@
 
 
-//1 september 2026 morning
-
-
-
-
-
-
-
 import React, { useState } from "react";
 import "./AddProduct.css";
 import logo from "../../assets/logooo.png";
