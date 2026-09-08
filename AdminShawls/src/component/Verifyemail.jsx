@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-
+import {useEffect} from 'react';
 const API_BASE = "https://ecommerce-website-ggui.onrender.com/api/customer";
 
 function VerifyEmail() {
