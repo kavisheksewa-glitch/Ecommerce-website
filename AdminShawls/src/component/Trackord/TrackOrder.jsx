@@ -1,7 +1,4 @@
 
-//2 sept 2026 morning
-
-
 
 
 import React, { useState, useEffect } from "react";

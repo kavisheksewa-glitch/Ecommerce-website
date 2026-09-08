@@ -1,9 +1,4 @@
 
-
-//claude forget password
-
-
-
 import React, { useState } from "react";
 
 // Apne backend base URL ke hisaab se badal lena (agar proxy setup hai to sirf "/api" bhi chalega)

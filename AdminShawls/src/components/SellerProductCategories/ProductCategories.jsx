@@ -1,10 +1,6 @@
 
 
 
-//2 sept 2026 moring
-
-
-
 
 import React, { useState, useEffect } from "react";
 import axios from "axios";

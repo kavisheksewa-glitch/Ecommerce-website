@@ -1,7 +1,4 @@
 
-//1 september 2026 morning
-
-
 
 
 import "./SellerSignup.css";
