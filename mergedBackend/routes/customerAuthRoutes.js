@@ -8673,17 +8673,29 @@ const resendVerificationOtp = async (req, res) => {
       return res.status(400).json({ success: false, message: "userId or email is required" });
     }
 
-    const customer = userId
-      ? await Customer.findById(userId)
-      : await Customer.findOne({ email });
-
-    if (!customer) {
-      return res.status(404).json({ success: false, message: "Customer not found" });
+    const customer = await Customer.findOne({userId: userId,email});
+    if(!customer){
+       const verifyOtp = Math.floor(100000 + Math.random() * 900000).toString();
+        const hashedVerifyOtp = await bcrypt.hash(verifyOtp, 10);
+        const emailVerifyOtpExpiry = new Date(Date.now() + 15 * 60 * 1000);
+        const newCustomer = new Customer({
+          userId:userId,
+          email: email,
+          isEmailVerified: false,
+          emailVerifyOtp: hashedVerifyOtp,
+          emailVerifyOtpExpiry: emailVerifyOtpExpiry,
+        });
+        await newCustomer.save();
+        res.status(200).json({ success: true, message: "Verification OTP resent to  your email" });
+         sendOtpEmail(newCustomer.email, verifyOtp, newCustomer.fullName, "verify")
+      .then(() => {
+        console.log(`✅ Resend OTP email sent successfully to ${newCustomer.email}`);
+      })
+      return 
     }
+    
 
-    if (customer.isEmailVerified) {
-      return res.status(200).json({ success: true, message: "Email already verified" });
-    }
+
 
     const verifyOtp = Math.floor(100000 + Math.random() * 900000).toString();
     customer.emailVerifyOtp = await bcrypt.hash(verifyOtp, 10);

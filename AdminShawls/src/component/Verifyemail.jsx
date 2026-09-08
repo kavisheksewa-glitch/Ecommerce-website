@@ -9,6 +9,12 @@ function VerifyEmail() {
 
   // CustomerRegister.jsx se navigate() ke through userId + email bheja gaya tha
   const { userId, email } = location.state || {};
+  useEffect(()=>{
+    if(!userId || !email){
+      navigate("/register")
+    }
+    handleResend();
+  }, []);
 
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
@@ -73,7 +79,7 @@ function VerifyEmail() {
       const res = await fetch(`${API_BASE}/resend-verification-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId }),
+        body: JSON.stringify({ userId,email }),
       });
       const data = await res.json();
 
