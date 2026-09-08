@@ -519,7 +519,7 @@ function Women() {
       </div>
 
       <div className="container my-4">
-        <div className="row g-4">
+        <div className="row g-2 g-md-4">
           {currentProducts.length > 0 ? (
             currentProducts.map((item) => {
               const productIdStr = String(item.id);
@@ -527,20 +527,36 @@ function Women() {
               const isWishlisted = wishlistProductIds.includes(productIdStr);
 
               return (
-                <div className="col-12 col-sm-6 col-md-4 col-lg-3" key={productIdStr}>
+                <div className="col-6 col-sm-6 col-md-4 col-lg-3" key={productIdStr}>
                   <div
-                    className="card h-100 border-0 shadow-sm d-flex flex-column justify-content-between p-2 position-relative"
+                    className="card h-100 border-0 shadow-sm d-flex flex-column justify-content-between position-relative overflow-hidden"
                     style={{ backgroundColor: "#e4c893", borderRadius: "16px" }}
                   >
-                    {/* <div className="Customer_product-image-box card overflow-hidden position-relative">
+                    <div className="Customer_product-image-box position-relative">
+
+                      {/* ✅ Brand Logo Display */}
+                      {item.brandLogo && (
+                        <div
+                          className="Customer_brand-logo-box position-absolute shadow-sm rounded-circle overflow-hidden bg-white d-flex align-items-center justify-content-center"
+                          title="Brand Logo"
+                        >
+                          <img
+                            src={
+                              item.brandLogo.startsWith("http")
+                                ? item.brandLogo
+                                : `https://ecommerce-website-ggui.onrender.com/${item.brandLogo}`
+                            }
+                            alt="Brand Logo"
+                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                          />
+                        </div>
+                      )}
+
+                      {/* Discount Badge */}
                       {item.discount && (
                         <span
-                          className="badge bg-danger position-absolute top-0 start-0 m-2 px-2 py-1 shadow-sm fw-bold"
-                          style={{
-                            zIndex: 2,
-                            fontSize: "0.75rem",
-                            borderRadius: "6px",
-                          }}
+                          className={`Customer_discount-badge${item.brandLogo ? " Customer_has-logo" : ""} badge bg-danger position-absolute start-0 m-2 px-2 py-1 shadow-sm fw-bold`}
+                          style={{ zIndex: 2, borderRadius: "6px" }}
                         >
                           {item.discount}
                         </span>
@@ -554,7 +570,7 @@ function Women() {
 
                       <button
                         className="Customer_share-btn"
-                        onClick={() => handleShare(item)}
+                        onClick={() => setShareProduct(item)}
                         title="Share Product"
                       >
                         <FaShareAlt />
@@ -565,14 +581,9 @@ function Women() {
                         onClick={() => handleToggleWishlist(item)}
                         title="Wishlist Product"
                         style={{
-                          position: "absolute",
-                          top: "10px",
-                          right: "50px",
                           background: "white",
                           border: "none",
                           borderRadius: "50%",
-                          width: "35px",
-                          height: "35px",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
@@ -585,96 +596,10 @@ function Women() {
                       >
                         <FaHeart />
                       </button>
-                    </div> */}
 
-                          <div className="Customer_product-image-box card overflow-hidden position-relative">
-  
-  {/* ✅ Brand Logo Display */}
-  {item.brandLogo && (
-    <div 
-      className="position-absolute shadow-sm rounded-circle overflow-hidden bg-white d-flex align-items-center justify-content-center"
-      style={{
-        top: "10px",
-        left: "10px",
-        width: "50px",
-        height: "50px",
-        zIndex: 3,
-        border: "1.5px solid #fff"
-      }}
-      title="Brand Logo"
-    >
-      <img
-        src={
-          item.brandLogo.startsWith("http") 
-            ? item.brandLogo 
-            : `https://ecommerce-website-ggui.onrender.com/${item.brandLogo}`
-        }
-        alt="Brand Logo"
-        style={{ width: "100%", height: "100%", objectFit: "cover" }}
-      />
-    </div>
-  )}
+                    </div>
 
-  {/* Discount Badge */}
-  {item.discount && (
-    <span
-      className="badge bg-danger position-absolute start-0 m-2 px-2 py-1 shadow-sm fw-bold"
-      style={{
-        top: item.brandLogo ? "54px" : "0px", // Agar brand logo hoga toh badge thoda niche shift ho jayega
-        zIndex: 2,
-        fontSize: "0.75rem",
-        borderRadius: "6px",
-      }}
-    >
-      {item.discount}
-    </span>
-  )}
-
-  <img
-    src={item.image}
-    className="card-img-top rounded Customer_product-image"
-    alt={item.title}
-  />
-
-  <button
-  className="Customer_share-btn"
-  onClick={() => setShareProduct(item)}
-  title="Share Product"
->
-  <FaShareAlt />
-</button>
-
-  <button
-    className="Customer_wishlist-btn"
-    onClick={() => handleToggleWishlist(item)}
-    title="Wishlist Product"
-    style={{
-      position: "absolute",
-      top: "10px",
-      right: "50px",
-      background: "white",
-      border: "none",
-      borderRadius: "50%",
-      width: "35px",
-      height: "35px",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      cursor: "pointer",
-      boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
-      color: isWishlisted ? "red" : "#ccc",
-      transition: "color 0.2s ease",
-      zIndex: 2,
-    }}
-  >
-    <FaHeart />
-  </button>
-  
-</div>
-
-
-
-                    <div className="card-body px-2 py-3 d-flex flex-column justify-content-between">
+                    <div className="card-body px-3 py-3 d-flex flex-column justify-content-between">
                       <div>
                         <h6
                           className="fw-bold mb-1 text-dark"

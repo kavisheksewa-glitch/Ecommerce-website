@@ -93,7 +93,7 @@ console.log("Profile fetch response:", data);
     const token = localStorage.getItem("token");
 
     try {
-      const res = await fetch("https://ecommerce-website-ggui.onrender.com/api/customer/profile", {
+      const res = await fetch("https://ecommerce-website-ggui.onrender.com/api/customer/profile/update", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

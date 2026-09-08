@@ -1,162 +1,270 @@
-/* --- Animated Luxury Title --- */
-.Customer_luxury-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 2.2rem;
-  font-weight: 700;
-  font-style: italic;
-  text-transform: uppercase;
-  letter-spacing: 4px;
-  margin: 0;
-  
-  background: linear-gradient(90deg, 
-    #b38728 0%,    
-    #f6dd79 30%,   
-    #b4aa3e 50%,   
-    #e7d693 70%,   
-    #855d08 100%   
-  );
-  background-size: 200% auto;
-  
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-  
-  animation: shine 3s linear infinite;
+/* ===================== BASE CONTAINER ===================== */
+.Customer_container1 {
+  background-color: #fdfbf7;
+  min-height: 100vh;
+  padding-bottom: 40px;
 }
 
-@keyframes shine {
-  to {
-    background-position: -200% center;
-  }
-}
-.Customer_card {
-  border: none;
-  border-radius: 18px;
-  overflow: hidden;
-  transition: all 0.3s ease-in-out;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-}
-
-.Customer_card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 25px rgba(212, 175, 55, 0.3);
-}
-
-/* --- Product Share Button Styling (Screenshot match) --- */
-.Customer_product-image-box {
-  position: relative;
-  width: 100%;
-  height: 220px;
-  border-radius: 12px;
-  overflow: hidden;
-  z-index: 1;
-}
-.Customer_product-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-.Customer_card:hover .Customer_product-image {
-  transform: scale(1.1);
-}
-
-.Customer_share-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: #ffffff;
-  border: none;
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
+/* ===================== TITLE ===================== */
+.Customer_luxury-title-wrapper {
   display: flex;
-  align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-  z-index: 3;
-  color: #333;
-  transition: all 0.2s ease;
+  align-items: center;
 }
 
-.Customer_share-btn:hover {
-  background: #f8f9fa;
-  color: #8a5a2b;
-  transform: scale(1.05);
+.Customer_luxury-title {
+  letter-spacing: 2px;
+  font-size: 2rem;
 }
 
-/* --- Share Modal Styling --- */
+/* ===================== HERO BANNER ===================== */
+.Customer_hero2-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 420px;
+  object-fit: cover;
+}
+
+/* ===================== SHARE MODAL / OVERLAY ===================== */
 .Customer_share-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.55);
   display: flex;
-  justify-content: center;
   align-items: center;
-  z-index: 1000;
+  justify-content: center;
+  z-index: 1050;
+  padding: 16px;
 }
 
 .Customer_share-modal {
   background: #fff;
-  padding: 25px;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 350px;
+  border-radius: 16px;
+  padding: 24px 22px;
+  width: 100%;
+  max-width: 340px;
   text-align: center;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
 }
 
 .Customer_share-icons {
   display: flex;
   justify-content: center;
   gap: 12px;
-  margin: 20px 0;
+  margin: 16px 0 20px;
+  flex-wrap: wrap;
 }
 
 .Customer_copy-btn {
-  background: #f1f1f1;
-  border: none;
-  padding: 8px 15px;
-  border-radius: 6px;
-  font-weight: 600;
   width: 100%;
+  border: 1px solid #54411d;
+  background: #fff;
+  color: #54411d;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 8px;
   margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.Customer_copy-btn:hover {
+  background: #54411d;
+  color: #fff;
 }
 
 .Customer_close-btn {
-  background: #d4af37;
-  color: #ffffff;
-  border: none;
-  padding: 10px;
-  border-radius: 10px;
-  font-weight: 600;
   width: 100%;
+  border: none;
+  background: #f1ecdf;
+  color: #54411d;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 8px;
   cursor: pointer;
   transition: background 0.2s ease;
 }
 
 .Customer_close-btn:hover {
-  background: #b8962d;
+  background: #e4c893;
 }
 
-/* --- Mobile Responsive --- */
-@media (max-width: 768px) {
+/* ===================== PRODUCT IMAGE BOX ===================== */
+.Customer_product-image-box {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  overflow: hidden;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+}
+
+.Customer_product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.Customer_product-image-box:hover .Customer_product-image {
+  transform: scale(1.05);
+}
+
+/* ===================== BRAND LOGO BOX (on card) ===================== */
+.Customer_brand-logo-box {
+  top: 10px;
+  left: 10px;
+  width: 50px;
+  height: 50px;
+  z-index: 3;
+  border: 1.5px solid #fff;
+}
+
+/* ===================== DISCOUNT BADGE (on card) ===================== */
+.Customer_discount-badge {
+  font-size: 0.75rem;
+  top: 0px;
+}
+
+.Customer_discount-badge.Customer_has-logo {
+  top: 54px;
+}
+
+/* ===================== SHARE BUTTON (on card) ===================== */
+.Customer_share-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 35px;
+  height: 35px;
+  background: #fff;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #54411d;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 2;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.Customer_share-btn:hover {
+  color: #dfa00b;
+  transform: scale(1.08);
+}
+
+/* ===================== WISHLIST BUTTON (on card) ===================== */
+.Customer_wishlist-btn {
+  position: absolute;
+  top: 10px;
+  right: 50px;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+/* ===================== PRODUCT CARD (Bootstrap `.card` used directly) ===================== */
+.Customer_container1 .card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.Customer_container1 .card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* ===================== PAGINATION ACTIVE STATE ===================== */
+.Customer_container1 .pagination .page-link {
+  color: #54411d;
+}
+
+/* ===================== RESPONSIVE — MOBILE ===================== */
+@media (max-width: 575.98px) {
   .Customer_luxury-title {
-    font-size: 1.5rem;
-    letter-spacing: 2px;
+    font-size: 1.4rem;
+    letter-spacing: 1px;
+  }
+
+  .Customer_hero2-image {
+    max-height: 200px;
+  }
+
+  .Customer_product-image-box {
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+  }
+
+  .Customer_brand-logo-box {
+    width: 22px;
+    height: 22px;
+    top: 6px;
+    left: 6px;
+  }
+
+  .Customer_discount-badge {
+    font-size: 0.6rem;
+    padding: 2px 5px !important;
+    top: 0px;
+  }
+
+  .Customer_discount-badge.Customer_has-logo {
+    top: 30px;
+  }
+
+  .Customer_share-btn {
+    width: 26px;
+    height: 26px;
+    top: 6px;
+    right: 6px;
+    font-size: 11px;
+  }
+
+  .Customer_wishlist-btn {
+    width: 26px;
+    height: 26px;
+    top: 6px;
+    right: 36px;
+    font-size: 11px;
+  }
+
+  .Customer_container1 .card {
+    border-radius: 12px !important;
+  }
+
+  .Customer_container1 .card-body {
+    padding: 8px 10px !important;
+  }
+
+  .Customer_container1 h6 {
+    font-size: 0.8rem !important;
+  }
+
+  .Customer_container1 .btn-sm {
+    font-size: 0.7rem;
+    padding: 5px 6px;
+  }
+
+  .Customer_share-modal {
+    padding: 18px 16px;
   }
 }
-  
-.Customer_hero2-image {
-  width: 350px;
-  height: 400px;
-  object-fit: cover;
-  object-position: top;
+
+/* ===================== RESPONSIVE — TABLET ===================== */
+@media (min-width: 576px) and (max-width: 991.98px) {
+  .Customer_hero2-image {
+    max-height: 320px;
+  }
 }
