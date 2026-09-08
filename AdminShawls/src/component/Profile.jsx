@@ -30,6 +30,7 @@ function Profile() {
           },
         });
         const data = await response.json();
+        console.log("Profile fetch response:", data);
         if (response.ok && data.success) {
           setFormData({
             name: data.customer.name || "",

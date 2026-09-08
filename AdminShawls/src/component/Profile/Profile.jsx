@@ -54,19 +54,19 @@ function Profile() {
       });
 
       const data = await res.json();
-
-      if (data.success && data.user) {
+console.log("Profile fetch response:", data);
+      if (data.success && data.customer) {
         setFormData({
-          fullName: data.user.fullName || "",
-          email: data.user.email || "",
-          mobile: data.user.mobile || "",
-          dob: data.user.dob ? data.user.dob.split("T")[0] : "", // Formatting YYYY-MM-DD
-          houseNo: data.user.houseNo || "",
-          street: data.user.street || "",
-          city: data.user.city || "",
-          state: data.user.state || "",
-          pincode: data.user.pincode || "",
-          country: data.user.country || "India",
+          fullName: data.customer.name || "",
+          email: data.customer.email || "",
+          mobile: data.customer.phone || "",
+          dob: data.customer.dob ? data.customer.dob.split("T")[0] : "", // Formatting YYYY-MM-DD
+          houseNo: data.customer.houseNo || "",
+          street: data.customer.street || "",
+          city: data.customer.city || "",
+          state: data.customer.state || "",
+          pincode: data.customer.pincode || "",
+          country: data.customer.country || "India",
         });
       } else {
         setMessage({ type: "danger", text: data.message || "Failed to fetch profile." });

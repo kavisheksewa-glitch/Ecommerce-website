@@ -1341,6 +1341,7 @@ const getCustomerProfile = async (req, res) => {
     res.status(200).json({
       success: true,
       customer: {
+        dob:customer.dob,
         name: customer.fullName,
         email: customer.email,
         phone: customer.mobile,
