@@ -8673,7 +8673,7 @@ const resendVerificationOtp = async (req, res) => {
       return res.status(400).json({ success: false, message: "userId or email is required" });
     }
 
-    const customer = await Customer.findOne({userId: userId,email});
+    const customer = await Customer.findOne({_id: userId,email});
     if(!customer){
        res.status(404).json({ success: false, message: "Customer not found" });
       return 
