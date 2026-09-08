@@ -253,7 +253,7 @@ function AppContent() {
             }
           />
           <Route path="/support" element={<SupportDesk />} />
-          <Route path="/order-history" element={<OrderHistory />} />
+          <Route path="/orders" element={<OrderHistory />} />
           <Route path="/profile" element={<Profile />} />
         </Route>
       </Routes>
