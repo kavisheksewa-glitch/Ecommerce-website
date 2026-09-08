@@ -1,8 +1,8 @@
 .ingg{
     /* width: 350px;
   height: 50px; */
-  height: 50px;
-  width: 400px;
+  height: 10px;
+  width: 300px;
   object-fit: cover;
-  border-radius: 50%;
+  border-radius: 20%;
 }
