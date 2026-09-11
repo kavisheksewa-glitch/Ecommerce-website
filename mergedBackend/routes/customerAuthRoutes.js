@@ -14,7 +14,7 @@ const SellerNotification = require("../models/SellerNotification");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { protectCustomer } = require("../middleware/customerMiddleware");
-const sendOtpEmail = require("../utils/SendEmail");
+const transporter = require("../utils/SendEmail");
 
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_key_here";
 
@@ -144,17 +144,22 @@ const registerCustomer = async (req, res) => {
       userId: savedCustomer._id,
       isEmailVerified: false,
     });
-
-    // ✅ Email background mein bhejo (response ke baad, fire-and-forget)
-    sendOtpEmail(savedCustomer.email, verifyOtp, savedCustomer.fullName, "verify")
-      .then(() => {
-        console.log(`✅ Verification OTP email sent successfully to ${savedCustomer.email}`);
-      })
-      .catch((emailError) => {
-        // ✅ Poora error object log karo, sirf .message nahi — taaki asli
-        // wajah pata chal sake (auth fail, connection timeout, DNS, etc.)
-        console.error(`❌ Verification email failed to send to ${savedCustomer.email}:`, emailError);
-      });
+    
+    let info =await transporter.sendMail({
+    from: EMAIL_USER,
+    to: savedCustomer.email,
+    subject: "Password Reset OTP – Admin Account",
+    text: `
+Hello ${savedCustomer.fullName},
+We received a request to reset the password for your admin account.
+Your 6-digit verification OTP is:
+${verifyOtp}
+This OTP is valid for 5 minutes. Please do not share this OTP with anyone.
+If you did not request a password reset, you can safely ignore this email.
+Regards,
+Support Team
+    `,
+  });
 
     // ✅ Notification bhi background mein
     Notification.create({
@@ -471,12 +476,7 @@ const forgotPassword = async (req, res) => {
     });
 
     sendOtpEmail(customer.email, otp, customer.fullName, "reset")
-      .then(() => {
-        console.log(`✅ Reset OTP email sent successfully to ${customer.email}`);
-      })
-      .catch((emailError) => {
-        console.error(`❌ Reset password email failed to send to ${customer.email}:`, emailError);
-      });
+     
   } catch (error) {
     console.error("Error in forgotPassword:", error);
     res.status(500).json({ success: false, message: error.message || "Server error, please try again." });

@@ -526,7 +526,6 @@ function Header() {
     };
   }, [isMobileMenuOpen]);
 
-  // ✅ Helper: close the full-screen mobile menu (used by every clickable item)
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
     setActiveDropdown(null);
@@ -540,6 +539,36 @@ function Header() {
 
   return (
     <div className="customer_header-back border-bottom sticky-top z-3">
+
+      {/* ✅ Corrected Colors: Using original #eac35fe4 to match Header.css Gold Theme */}
+      <style>{`
+        @media (max-width: 991.98px) {
+          .customer_mobile_collapse.show {
+            background-color: #eac35fe4 !important;
+            opacity: 1 !important;
+          }
+        }
+
+        .customer_user-settings-wrap {
+          position: relative !important;
+        }
+
+        .customer_user-settings-wrap .customer_dropdown-menu {
+          position: absolute !important;
+          top: calc(100% + 8px) !important;
+          right: 0 !important;
+          left: auto !important;
+          transform: none !important;
+          margin: 0 !important;
+          z-index: 2000 !important;
+          display: none;
+        }
+
+        .customer_user-settings-wrap .customer_dropdown-menu.show {
+          display: block !important;
+        }
+      `}</style>
+
       <nav className="navbar navbar-expand-lg navbar-light customer_custom-navbar shadow-sm py-2">
         <div className="container-fluid px-4">
           <Link className="navbar-brand d-flex align-items-center customer_navbar-brand" to="/" onClick={closeMobileMenu}>
@@ -699,7 +728,7 @@ function Header() {
               {/* ✅ SETTINGS & USER DROPDOWN SECTION */}
               {isLoggedIn ? (
                 <div 
-                  className="position-relative dropdown"
+                  className="position-relative dropdown customer_user-settings-wrap"
                   onMouseEnter={() => handleMouseEnter("userSettings")}
                   onMouseLeave={handleMouseLeave}
                 >
@@ -713,12 +742,7 @@ function Header() {
 
                   <ul 
                     className={`dropdown-menu customer_dropdown-menu shadow ${activeDropdown === "userSettings" ? "show" : ""}`}
-                    style={{ 
-                      right: 0, 
-                      left: "auto", 
-                      minWidth: "180px",
-                      position: "absolute" 
-                    }}
+                    style={{ minWidth: "180px" }}
                   >
                     <li>
                       <Link 

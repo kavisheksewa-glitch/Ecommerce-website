@@ -1,9 +1,29 @@
 import React, { useState } from "react";
-import { FaHeadset, FaPaperPlane, FaQuestionCircle, FaEnvelope, FaPhoneAlt } from "react-icons/fa";
+import { FaHeadset, FaPaperPlane, FaQuestionCircle, FaEnvelope, FaPhoneAlt, FaChevronDown } from "react-icons/fa";
 
 function SupportDesk() {
   const [ticket, setTicket] = useState({ subject: "", category: "General", message: "" });
   const [submitted, setSubmitted] = useState(false);
+
+  // ✅ Kis FAQ ka answer khula hai, uska index yahan store hota hai (null = sab band)
+  const [openFaq, setOpenFaq] = useState(null);
+
+  const faqs = [
+    {
+      question: "How can I track my order?",
+      answer:
+        'You can track your order status using the "Track Order" link in the navbar or from your Order History section.',
+    },
+    {
+      question: "What is the return policy?",
+      answer:
+        "We offer a 7-day hassle-free return and exchange policy from the date of delivery.",
+    },
+  ];
+
+  const toggleFaq = (index) => {
+    setOpenFaq((prev) => (prev === index ? null : index));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -103,32 +123,45 @@ function SupportDesk() {
             <h5 className="fw-bold mb-3 d-flex align-items-center gap-2">
               <FaQuestionCircle /> Quick FAQs
             </h5>
-            <div className="accordion accordion-flush" id="faqAccordion">
-              <div className="accordion-item">
-                <h2 className="accordion-header">
-                  <button className="accordion-button collapsed px-0 fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
-                    How can I track my order?
-                  </button>
-                </h2>
-                <div id="faq1" className="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                  <div className="accordion-body px-0 text-muted small">
-                    You can track your order status using the "Track Order" link in the navbar or from your Order History section.
-                  </div>
-                </div>
-              </div>
 
-              <div className="accordion-item">
-                <h2 className="accordion-header">
-                  <button className="accordion-button collapsed px-0 fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
-                    What is the return policy?
-                  </button>
-                </h2>
-                <div id="faq2" className="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                  <div className="accordion-body px-0 text-muted small">
-                    We offer a 7-day hassle-free return and exchange policy from the date of delivery.
+            {/* ✅ Ab Bootstrap JS collapse pe depend nahi karta, React state se open/close hota hai */}
+            <div>
+              {faqs.map((faq, index) => {
+                const isOpen = openFaq === index;
+                return (
+                  <div
+                    key={index}
+                    className="border rounded mb-2"
+                    style={{ overflow: "hidden" }}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => toggleFaq(index)}
+                      className="btn w-100 d-flex justify-content-between align-items-center px-3 py-2 fw-semibold text-start bg-white"
+                      style={{
+                        border: "none",
+                        borderRadius: 0,
+                      }}
+                    >
+                      <span>{faq.question}</span>
+                      <FaChevronDown
+                        style={{
+                          transition: "transform 0.2s ease",
+                          transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
+                          flexShrink: 0,
+                          marginLeft: "8px",
+                        }}
+                      />
+                    </button>
+
+                    {isOpen && (
+                      <div className="px-3 pb-3 text-muted small">
+                        {faq.answer}
+                      </div>
+                    )}
                   </div>
-                </div>
-              </div>
+                );
+              })}
             </div>
           </div>
         </div>

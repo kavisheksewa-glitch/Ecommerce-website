@@ -401,9 +401,12 @@ const Admin = require("./models/Admin");
 
 const swaggerUi = require("swagger-ui-express");
 const swaggerJsdoc = require("swagger-jsdoc");
+const { connectSMTP } = require("./utils/SendEmail");
+// ... app.listen se pehle ya baad mein:
 
 dotenv.config();
 connectDB();
+connectSMTP();
 
 const app = express();
 

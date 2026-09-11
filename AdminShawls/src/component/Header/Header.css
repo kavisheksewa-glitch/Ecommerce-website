@@ -272,3 +272,38 @@ body::-webkit-scrollbar {
     padding: 85px 18px 30px !important;
   }
 }
+/* Mobile Screen ke liye Icons Expand Fix */
+@media (max-width: 991.98px) {
+  /* Icons Container ko poori width do */
+  .customer_icons {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: space-around !important; /* Screen par equally expand karega */
+    align-items: center !important;
+    margin-top: 15px !important;
+    padding: 10px 0 !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.1) !important; /* Clean separator line */
+  }
+
+  /* Har Icon Link Box ko expand karo */
+  .customer_icons > a,
+  .customer_icons > div {
+    flex: 1 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 10px 0 !important;
+  }
+
+  /* Icons Ka Size Thoda Bada Karo */
+  .customer_icons svg {
+    font-size: 24px !important;
+  }
+
+  /* Mobile Badges Position Adjustment */
+  .customer_icons .badge {
+    top: -2px !important;
+    right: 18% !important; /* Expand hone par badge icon ke upar sahi align rahega */
+    font-size: 10px !important;
+  }
+}
