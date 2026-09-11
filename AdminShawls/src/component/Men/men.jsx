@@ -304,11 +304,15 @@ function Men() {
     });
   };
 
+  const handleShare = (product) => {
+    setShareProduct(product);
+  };
+
   return (
     <div className="Customer_container1">
       <ToastContainer />
 
-      {/* Responsive, professional card & button styling — 2 per row on mobile */}
+      {/* Responsive, professional card & button styling — same structure/feature as Home.jsx */}
       <style>{`
         .Customer_card {
           padding: 10px !important;
@@ -331,27 +335,38 @@ function Men() {
           z-index: 3;
         }
         .Customer_discount-badge {
-          font-size: 0.75rem;
-          top: 0px;
-        }
-        .Customer_discount-badge.Customer_has-logo {
-          top: 54px;
+          font-size: 0.72rem;
+          padding: 4px 8px;
         }
         .Customer_wishlist-btn {
           position: absolute;
           top: 10px;
-          right: 50px;
+          right: 10px;
           width: 35px;
           height: 35px;
         }
         .Customer_card-title {
-          font-size: 0.9rem;
+          font-size: 0.86rem;
           margin-bottom: 4px !important;
         }
         .Customer_card-desc {
-          font-size: 0.78rem;
+          font-size: 0.74rem;
           min-height: 2.2em;
-          margin-bottom: 8px !important;
+        }
+        .Customer_share-btn-flat {
+          flex-shrink: 0;
+          border: none;
+          background: transparent;
+          padding: 2px;
+          color: #6b4e14;
+          font-size: 15px;
+          line-height: 1;
+          cursor: pointer;
+          transition: color 0.2s ease, transform 0.2s ease;
+        }
+        .Customer_share-btn-flat:hover {
+          color: #b8860b;
+          transform: scale(1.15);
         }
         .Customer_price-row {
           margin-bottom: 10px !important;
@@ -363,9 +378,6 @@ function Men() {
         }
         .Customer_price-original {
           font-size: 0.72rem;
-        }
-        .Customer_stock-badge {
-          font-size: 0.65rem !important;
         }
         .Customer_card-btn {
           font-size: clamp(0.68rem, 2.4vw, 0.85rem);
@@ -379,38 +391,47 @@ function Men() {
           padding: 7px 8px;
         }
 
+        /* TABLET */
+        @media (max-width: 767.98px) and (min-width: 576px) {
+          .Customer_brand-logo-box {
+            width: 42px;
+            height: 42px;
+          }
+          .Customer_wishlist-btn {
+            width: 34px;
+            height: 34px;
+            font-size: 15px;
+          }
+          .Customer_share-btn-flat {
+            font-size: 17px;
+          }
+        }
+
+        /* MOBILE */
         @media (max-width: 575.98px) {
           .Customer_card {
             padding: 7px !important;
             border-radius: 12px !important;
           }
           .Customer_brand-logo-box {
-            width: 22px;
-            height: 22px;
+            width: 34px;
+            height: 34px;
             top: 6px;
             left: 6px;
           }
           .Customer_discount-badge {
-            font-size: 0.6rem;
-            padding: 2px 5px !important;
-            top: 0px;
-          }
-          .Customer_discount-badge.Customer_has-logo {
-            top: 30px;
+            font-size: 0.62rem;
+            padding: 3px 6px !important;
           }
           .Customer_wishlist-btn {
-            width: 20px;
-            height: 20px;
+            width: 30px;
+            height: 30px;
             top: 6px;
-            right: 28px;
-            font-size: 10px;
+            right: 6px;
+            font-size: 14px;
           }
-          .Customer_share-btn {
-            width: 20px;
-            height: 20px;
-            top: 6px !important;
-            right: 6px !important;
-            font-size: 10px;
+          .Customer_share-btn-flat {
+            font-size: 16px;
           }
           .Customer_card-body {
             padding: 8px 4px !important;
@@ -420,17 +441,14 @@ function Men() {
             line-height: 1.25;
           }
           .Customer_card-desc {
-            display: none;
+            font-size: 0.68rem;
+            min-height: 1.8em;
           }
           .Customer_price-main {
             font-size: 0.82rem;
           }
           .Customer_price-original {
             font-size: 0.65rem;
-          }
-          .Customer_stock-badge {
-            font-size: 0.56rem !important;
-            padding: 2px 5px !important;
           }
           .Customer_card-btn {
             font-size: 0.68rem;
@@ -442,9 +460,6 @@ function Men() {
             padding: 6px 4px;
           }
           .Customer_card-actions {
-            gap: 6px !important;
-          }
-          .Customer_card-actions .d-flex.gap-2 {
             gap: 6px !important;
           }
         }
@@ -601,7 +616,7 @@ function Men() {
         )}
       </div>
 
-      {/* --- PRODUCTS GRID --- */}
+      {/* --- PRODUCTS GRID (same card structure/feature as Home.jsx) --- */}
       <div className="container my-3">
         <div className="row g-2 g-md-4">
           {currentProducts.length > 0 ? (
@@ -613,12 +628,17 @@ function Men() {
               return (
                 <div className="col-6 col-sm-6 col-md-4 col-lg-3" key={productIdStr}>
                   <div
-                    className="Customer_card card h-100 border-0 shadow-sm d-flex flex-column justify-content-between p-2 position-relative"
-                    style={{ backgroundColor: "#e4c893", borderRadius: "16px" }}
+                    className="Customer_card h-100 border-0 shadow-sm d-flex flex-column justify-content-between p-2 position-relative"
+                    style={{
+                      backgroundColor: "#e4c893",
+                      borderRadius: "16px",
+                      cursor: "pointer",
+                    }}
+                    onClick={() =>
+                      navigate(`/product/${item.id}`, { state: { product: item } })
+                    }
                   >
                     <div className="Customer_product-image-box card overflow-hidden position-relative">
-
-                      {/* ✅ Brand Logo Display */}
                       {item.brandLogo && (
                         <div
                           className="Customer_brand-logo-box shadow-sm rounded-circle overflow-hidden bg-white d-flex align-items-center justify-content-center"
@@ -637,19 +657,6 @@ function Men() {
                         </div>
                       )}
 
-                      {/* Discount Badge */}
-                      {item.discount && (
-                        <span
-                          className={`Customer_discount-badge${item.brandLogo ? " Customer_has-logo" : ""} badge bg-danger position-absolute start-0 m-2 px-2 py-1 shadow-sm fw-bold`}
-                          style={{
-                            zIndex: 2,
-                            borderRadius: "6px",
-                          }}
-                        >
-                          {item.discount}
-                        </span>
-                      )}
-
                       <img
                         src={item.image}
                         className="card-img-top rounded Customer_product-image"
@@ -657,16 +664,11 @@ function Men() {
                       />
 
                       <button
-                        className="Customer_share-btn"
-                        onClick={() => setShareProduct(item)}
-                        title="Share Product"
-                      >
-                        <FaShareAlt />
-                      </button>
-
-                      <button
                         className="Customer_wishlist-btn"
-                        onClick={() => handleToggleWishlist(item)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleToggleWishlist(item);
+                        }}
                         title="Wishlist Product"
                         style={{
                           background: "white",
@@ -684,68 +686,90 @@ function Men() {
                       >
                         <FaHeart />
                       </button>
-
                     </div>
 
-                    <div className="Customer_card-body card-body px-2 py-3 d-flex flex-column justify-content-between">
+                    <div className="Customer_card-body px-2 py-3 d-flex flex-column justify-content-between">
                       <div>
-                        <h6 className="Customer_card-title fw-bold mb-1 text-dark">
-                          {item.title}
-                        </h6>
-                        <p className="Customer_card-desc text-muted small mb-2" style={{ display: "-webkit-box", WebkitLineClamp: "2", WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                        <div className="d-flex justify-content-between align-items-start gap-2 mb-1">
+                          <h6 className="Customer_card-title fw-bold mb-0 text-dark">
+                            {item.title}
+                          </h6>
+
+                          <button
+                            className="Customer_share-btn-flat"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleShare(item);
+                            }}
+                            title="Share Product"
+                          >
+                            <FaShareAlt />
+                          </button>
+                        </div>
+
+                        <p className="Customer_card-desc text-muted small mb-2 Customer_text-truncate-2">
                           {item.description}
                         </p>
 
-                        <div className="Customer_price-row d-flex justify-content-between align-items-center mb-3">
-                          <div className="d-flex align-items-center gap-2">
-                            <span className="Customer_price-main fw-bold text-success">{item.price}</span>
+                        <div className="Customer_price-row d-flex align-items-center mb-3">
+                          <div className="d-flex align-items-center gap-2 flex-wrap">
+                            <span className="Customer_price-main fw-bold text-success">
+                              {item.price}
+                            </span>
                             {item.originalPrice && (
                               <span className="Customer_price-original text-decoration-line-through text-muted">
                                 {item.originalPrice}
                               </span>
                             )}
+                            {item.discount && (
+                              <span
+                                className="Customer_discount-badge badge bg-danger fw-bold"
+                                style={{ borderRadius: "6px" }}
+                              >
+                                {item.discount}
+                              </span>
+                            )}
                           </div>
-                          <span className="Customer_stock-badge badge bg-white text-secondary border fw-normal">
-                            {item.stock}
-                          </span>
                         </div>
                       </div>
 
                       <div className="Customer_card-actions d-flex flex-column gap-2 mt-auto">
-                        <div className="d-flex gap-2">
+                        {isInCart ? (
                           <button
-                            onClick={() => navigate(`/product/${item.id}`, { state: { product: item } })}
-                            className="Customer_card-btn btn btn-outline-dark w-50 fw-semibold"
-                            style={{ borderRadius: "8px" }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate("/cart");
+                            }}
+                            className="Customer_card-btn btn w-100 fw-semibold text-white"
+                            style={{ backgroundColor: "#2b8a3e", border: "none", borderRadius: "8px" }}
                           >
-                            View
+                            Go to Cart
                           </button>
-
-                          {isInCart ? (
-                            <button
-                              onClick={() => navigate("/cart")}
-                              className="Customer_card-btn btn w-50 fw-semibold text-white"
-                              style={{ backgroundColor: "#2b8a3e", border: "none", borderRadius: "8px" }}
-                            >
-                              Go to Cart ➔
-                            </button>
-                          ) : (
-                            <button
-                              onClick={() => handleAddToCart(item)}
-                              className="Customer_card-btn btn btn-dark w-50 fw-semibold text-white"
-                              style={{ backgroundColor: "#166228", border: "none", borderRadius: "8px" }}
-                            >
-                              Add to Cart
-                            </button>
-                          )}
-                        </div>
+                        ) : (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleAddToCart(item);
+                            }}
+                            className="Customer_card-btn btn btn-dark w-100 fw-semibold text-white"
+                            style={{ backgroundColor: "#166228", border: "none", borderRadius: "8px" }}
+                          >
+                            Add to Cart
+                          </button>
+                        )}
 
                         <button
-                          onClick={() => handleBuyNow(item)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleBuyNow(item);
+                          }}
                           className="Customer_card-btn Customer_buy-now-btn btn w-100 fw-bold text-white border-0 shadow-sm"
-                          style={{ background: "linear-gradient(135deg, #d6bd69 0%, #dfa00b 100%)", borderRadius: "8px" }}
+                          style={{
+                            background: "linear-gradient(135deg, #d6bd69 0%, #dfa00b 100%)",
+                            borderRadius: "8px",
+                          }}
                         >
-                          ⚡ Buy Now
+                          Buy Now
                         </button>
                       </div>
                     </div>

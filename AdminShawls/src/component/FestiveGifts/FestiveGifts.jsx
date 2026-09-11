@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -299,11 +297,15 @@ function FestiveGifts() {
     });
   };
 
+  const handleShare = (product) => {
+    setShareProduct(product);
+  };
+
   return (
     <div className="Customer_container1 bg-light pb-5">
       <ToastContainer />
 
-      {/* Responsive, professional card & button styling (matches Featuredcoll theme) */}
+      {/* Responsive, professional card & button styling — same structure/feature as Home.jsx */}
       <style>{`
         .Customer_festive-banner {
           border-radius: 16px;
@@ -337,34 +339,13 @@ function FestiveGifts() {
           z-index: 3;
         }
         .Customer_discount-badge {
-          font-size: 0.75rem;
-        }
-        .Customer_share-btn {
-          position: absolute;
-          top: 10px;
-          right: 10px;
-          width: 35px;
-          height: 35px;
-          background: white;
-          border: none;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-          color: #333;
-          z-index: 2;
-          transition: color 0.2s ease, transform 0.15s ease;
-        }
-        .Customer_share-btn:hover {
-          color: #dfa00b;
-          transform: scale(1.08);
+          font-size: 0.72rem;
+          padding: 4px 8px;
         }
         .Customer_wishlist-btn {
           position: absolute;
           top: 10px;
-          right: 50px;
+          right: 10px;
           width: 35px;
           height: 35px;
         }
@@ -380,6 +361,21 @@ function FestiveGifts() {
         .Customer_rating-row {
           font-size: 0.75rem;
         }
+        .Customer_share-btn-flat {
+          flex-shrink: 0;
+          border: none;
+          background: transparent;
+          padding: 2px;
+          color: #6b4e14;
+          font-size: 15px;
+          line-height: 1;
+          cursor: pointer;
+          transition: color 0.2s ease, transform 0.2s ease;
+        }
+        .Customer_share-btn-flat:hover {
+          color: #b8860b;
+          transform: scale(1.15);
+        }
         .Customer_price-row {
           margin-bottom: 10px !important;
           flex-wrap: wrap;
@@ -390,9 +386,6 @@ function FestiveGifts() {
         }
         .Customer_price-original {
           font-size: 0.72rem;
-        }
-        .Customer_stock-badge {
-          font-size: 0.65rem !important;
         }
         .Customer_card-btn {
           font-size: clamp(0.68rem, 2.4vw, 0.85rem);
@@ -434,18 +427,14 @@ function FestiveGifts() {
             padding: 2px 5px !important;
           }
           .Customer_wishlist-btn {
-            width: 20px;
-            height: 20px;
-            top: 6px;
-            right: 28px;
-            font-size: 10px;
-          }
-          .Customer_share-btn {
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
             top: 6px;
             right: 6px;
-            font-size: 10px;
+            font-size: 11px;
+          }
+          .Customer_share-btn-flat {
+            font-size: 16px;
           }
           .Customer_card-body {
             padding: 8px 4px !important;
@@ -466,10 +455,6 @@ function FestiveGifts() {
           .Customer_price-original {
             font-size: 0.62rem;
           }
-          .Customer_stock-badge {
-            font-size: 0.56rem !important;
-            padding: 2px 5px !important;
-          }
           .Customer_card-btn {
             font-size: 0.66rem;
             padding: 5px 3px;
@@ -481,9 +466,6 @@ function FestiveGifts() {
           }
           .Customer_card-actions {
             gap: 6px !important;
-          }
-          .Customer_card-actions .d-flex.gap-1 {
-            gap: 5px !important;
           }
           /* Star ratings shrink on mobile to save space */
           .Customer_rating-row {
@@ -624,7 +606,11 @@ function FestiveGifts() {
 
                   return (
                     <div className="col-6 col-sm-6 col-md-4" key={productIdStr}>
-                      <div className="Customer_card card h-100 border-0 shadow-sm d-flex flex-column justify-content-between p-2 position-relative" style={{ backgroundColor: "#fff", borderRadius: "12px" }}>
+                      <div
+                        className="Customer_card h-100 border-0 shadow-sm d-flex flex-column justify-content-between p-2 position-relative"
+                        style={{ backgroundColor: "#fff", borderRadius: "12px", cursor: "pointer" }}
+                        onClick={() => navigate(`/product/${item.id}`, { state: { product: item } })}
+                      >
 
                         <div className="Customer_product-image-box card overflow-hidden position-relative">
 
@@ -647,20 +633,6 @@ function FestiveGifts() {
                             </div>
                           )}
 
-                          {/* Discount Badge */}
-                          {item.discount && (
-                            <span
-                              className={`Customer_discount-badge${item.brandLogo ? " Customer_has-logo" : ""} badge bg-danger position-absolute start-0 m-2 px-2 py-1 shadow-sm fw-bold`}
-                              style={{
-                                top: item.brandLogo ? "54px" : "0px",
-                                zIndex: 2,
-                                borderRadius: "6px",
-                              }}
-                            >
-                              {item.discount}
-                            </span>
-                          )}
-
                           <img
                             src={item.image}
                             className="card-img-top rounded Customer_product-image"
@@ -668,16 +640,11 @@ function FestiveGifts() {
                           />
 
                           <button
-                            className="Customer_share-btn"
-                            onClick={() => setShareProduct(item)}
-                            title="Share Product"
-                          >
-                            <FaShareAlt />
-                          </button>
-
-                          <button
                             className="Customer_wishlist-btn"
-                            onClick={() => handleToggleWishlist(item)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleToggleWishlist(item);
+                            }}
                             title="Wishlist Product"
                             style={{
                               background: "white",
@@ -700,7 +667,19 @@ function FestiveGifts() {
 
                         <div className="Customer_card-body card-body px-2 py-2 d-flex flex-column justify-content-between">
                           <div>
-                            <h6 className="Customer_card-title fw-bold mb-1 text-dark">{item.title}</h6>
+                            <div className="d-flex justify-content-between align-items-start gap-2 mb-1">
+                              <h6 className="Customer_card-title fw-bold mb-0 text-dark">{item.title}</h6>
+                              <button
+                                className="Customer_share-btn-flat"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleShare(item);
+                                }}
+                                title="Share Product"
+                              >
+                                <FaShareAlt />
+                              </button>
+                            </div>
                             <div className="Customer_rating-row text-warning small mb-1">
                               {[...Array(item.rating || 5)].map((_, i) => (<FaStar key={i} />))}
                               <span className="text-muted ms-1">({item.reviews || 12})</span>
@@ -711,26 +690,47 @@ function FestiveGifts() {
                             <div className="Customer_price-row d-flex align-items-center gap-2 mb-2">
                               <span className="Customer_price-main fw-bold text-success">{item.price}</span>
                               {item.originalPrice && <span className="Customer_price-original text-decoration-line-through text-muted">{item.originalPrice}</span>}
+                              {item.discount && (
+                                <span className="Customer_discount-badge badge bg-danger fw-bold" style={{ borderRadius: "6px" }}>
+                                  {item.discount}
+                                </span>
+                              )}
                             </div>
                           </div>
 
                           <div className="Customer_card-actions d-flex flex-column gap-1 mt-auto">
-                            <div className="d-flex gap-1">
-                              <button onClick={() => navigate(`/product/${item.id}`, { state: { product: item } })} className="Customer_card-btn btn btn-outline-dark w-50 fw-semibold" style={{ borderRadius: "6px" }}>
-                                View Details
+                            {isInCart ? (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  navigate("/cart");
+                                }}
+                                className="Customer_card-btn btn w-100 fw-semibold text-white"
+                                style={{ backgroundColor: "#2b8a3e", border: "none", borderRadius: "6px" }}
+                              >
+                                Go to Cart
                               </button>
-                              {isInCart ? (
-                                <button onClick={() => navigate("/cart")} className="Customer_card-btn btn w-50 fw-semibold text-white" style={{ backgroundColor: "#2b8a3e", border: "none", borderRadius: "6px" }}>
-                                  Go to Cart
-                                </button>
-                              ) : (
-                                <button onClick={() => handleAddToCart(item)} className="Customer_card-btn btn btn-dark w-50 fw-semibold text-white" style={{ backgroundColor: "#20af33", border: "none", borderRadius: "6px" }}>
-                                  Add to Cart
-                                </button>
-                              )}
-                            </div>
-                            <button onClick={() => handleBuyNow(item)} className="Customer_card-btn Customer_buy-now-btn btn w-100 fw-bold text-white border-0 shadow-sm" style={{ background: "linear-gradient(135deg, #d6bd69 0%, #dfa00b 100%)", borderRadius: "6px" }}>
-                              ⚡ Buy Now
+                            ) : (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleAddToCart(item);
+                                }}
+                                className="Customer_card-btn btn btn-dark w-100 fw-semibold text-white"
+                                style={{ backgroundColor: "#20af33", border: "none", borderRadius: "6px" }}
+                              >
+                                Add to Cart
+                              </button>
+                            )}
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleBuyNow(item);
+                              }}
+                              className="Customer_card-btn Customer_buy-now-btn btn w-100 fw-bold text-white border-0 shadow-sm"
+                              style={{ background: "linear-gradient(135deg, #d6bd69 0%, #dfa00b 100%)", borderRadius: "6px" }}
+                            >
+                              Buy Now
                             </button>
                           </div>
                         </div>

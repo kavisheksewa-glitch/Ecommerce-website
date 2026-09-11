@@ -6,10 +6,16 @@
 
 /* --- Hero Image --- */
 .Customer_hero-image {
-  width: 100px;
+  width: 100%;
   height: 620px;
   object-position: center;
   object-fit: cover;
+}
+
+@media (max-width: 576px) {
+  .Customer_hero-image {
+    height: 260px;
+  }
 }
 
 /* --- Animated Luxury Title --- */
@@ -21,21 +27,21 @@
   text-transform: uppercase;
   letter-spacing: 4px;
   margin: 0;
-  
-  background: linear-gradient(90deg, 
-    #b38728 0%,    
-    #f6dd79 30%,   
-    #b4aa3e 50%,   
-    #e7d693 70%,   
-    #855d08 100%   
+
+  background: linear-gradient(90deg,
+    #b38728 0%,
+    #f6dd79 30%,
+    #b4aa3e 50%,
+    #e7d693 70%,
+    #855d08 100%
   );
   background-size: 200% auto;
-  
+
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
-  
+
   animation: shine 3s linear infinite;
 }
 
@@ -45,21 +51,22 @@
   }
 }
 
-/* --- Card Base & Hover Effects --- */
+/* --- Card Base & Hover Effects (same as Home.jsx) --- */
 .Customer_card {
   border: none;
   border-radius: 18px;
   overflow: hidden;
-  transition: all 0.3s ease-in-out;
+  transition: box-shadow 0.3s ease-in-out;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
 }
 
 .Customer_card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 25px rgba(212, 175, 55, 0.3);
+  transform: translateY(0);
+  box-shadow: 0 12px 25px rgba(212, 175, 55, 0.2);
 }
 
-/* --- Product Share Button & Image Box Styling --- */
+/* --- Product Image Box & Zoom Effect --- */
 .Customer_product-image-box {
   position: relative;
   width: 100%;
@@ -83,29 +90,36 @@
   transform-origin: bottom center;
 }
 
-.Customer_share-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: rgba(255, 255, 255, 0.9);
+/* Share button — flat icon next to the title, no background circle (matches Home.jsx) */
+.Customer_share-btn-flat {
+  flex-shrink: 0;
   border: none;
-  border-radius: 50%;
-  width: 38px;
-  height: 38px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  background: transparent;
+  padding: 2px;
+  color: #6b4e14;
+  font-size: 15px;
+  line-height: 1;
   cursor: pointer;
-  z-index: 2;
-  color: #333;
-  transition: all 0.3s ease;
+  transition: color 0.2s ease, transform 0.2s ease;
 }
 
-.Customer_share-btn:hover {
-  background: #d4af37;
-  color: #ffffff;
-  transform: scale(1.1);
+.Customer_share-btn-flat:hover {
+  color: #b8860b;
+  transform: scale(1.15);
+}
+
+/* Discount badge — sits inline next to the price (not over the image) */
+.Customer_discount-badge {
+  display: inline-block;
+}
+
+/* Multi-line text clamping for description */
+.Customer_text-truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 /* --- Share Modal Styling --- */
@@ -131,6 +145,7 @@
   max-width: 360px;
   text-align: center;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  animation: Customer_popup 0.3s ease-out forwards;
 }
 
 .Customer_share-icons {
@@ -173,6 +188,17 @@
   background: #b8962d;
 }
 
+@keyframes Customer_popup {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 /* --- Mobile Responsive --- */
 @media (max-width: 768px) {
   .Customer_luxury-title {
@@ -181,22 +207,3 @@
   }
 }
 
-
-
-
-
-
-
-/* birthday */
-@media (max-width: 768px) {
-  .Customer_birthday-banner {
-    padding: 2rem 1.5rem !important;
-    background-position: center !important;
-  }
-  .Customer_birthday-banner h1 {
-    font-size: 1.6rem !important;
-  }
-  .Customer_birthday-banner p {
-    font-size: 0.85rem !important;
-  }
-}

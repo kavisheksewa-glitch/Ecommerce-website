@@ -294,11 +294,15 @@ function LuxuryGiftSets() {
     });
   };
 
+  const handleShare = (product) => {
+    setShareProduct(product);
+  };
+
   return (
     <div className="Customer_container1 bg-light pb-5">
       <ToastContainer />
 
-      {/* Local responsive tuning for elements not covered by Featuredcol.css (rating row, banner, 2-col mobile) */}
+      {/* Responsive, professional card & button styling — same structure/feature as Home.jsx */}
       <style>{`
         .Customer_luxury-banner {
           border-radius: 16px;
@@ -306,8 +310,84 @@ function LuxuryGiftSets() {
         .Customer_luxury-banner h1 {
           text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
         }
+        .Customer_card {
+          padding: 10px !important;
+        }
+        .Customer_product-image-box {
+          aspect-ratio: 1 / 1;
+          width: 100%;
+        }
+        .Customer_product-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        .Customer_brand-logo-box {
+          position: absolute;
+          top: 10px;
+          left: 10px;
+          width: 50px;
+          height: 50px;
+          z-index: 3;
+        }
+        .Customer_discount-badge {
+          font-size: 0.72rem;
+          padding: 4px 8px;
+        }
+        .Customer_wishlist-btn {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          width: 35px;
+          height: 35px;
+        }
+        .Customer_card-title {
+          font-size: 0.86rem;
+          margin-bottom: 4px !important;
+        }
+        .Customer_card-desc {
+          font-size: 0.74rem;
+          margin-bottom: 8px !important;
+        }
         .Customer_rating-row {
           font-size: 0.75rem;
+        }
+        .Customer_share-btn-flat {
+          flex-shrink: 0;
+          border: none;
+          background: transparent;
+          padding: 2px;
+          color: #6b4e14;
+          font-size: 15px;
+          line-height: 1;
+          cursor: pointer;
+          transition: color 0.2s ease, transform 0.2s ease;
+        }
+        .Customer_share-btn-flat:hover {
+          color: #b8860b;
+          transform: scale(1.15);
+        }
+        .Customer_price-row {
+          margin-bottom: 8px !important;
+          flex-wrap: wrap;
+          row-gap: 4px;
+        }
+        .Customer_price-main {
+          font-size: 0.9rem;
+        }
+        .Customer_price-original {
+          font-size: 0.72rem;
+        }
+        .Customer_card-btn {
+          font-size: clamp(0.68rem, 2.4vw, 0.85rem);
+          padding: 6px 8px;
+          letter-spacing: 0.2px;
+          white-space: nowrap;
+          line-height: 1.3;
+        }
+        .Customer_buy-now-btn {
+          font-size: clamp(0.72rem, 2.4vw, 0.9rem);
+          padding: 7px 8px;
         }
 
         @media (max-width: 575.98px) {
@@ -323,11 +403,60 @@ function LuxuryGiftSets() {
           .Customer_luxury-banner p {
             font-size: 0.8rem;
           }
+          .Customer_card {
+            padding: 7px !important;
+            border-radius: 12px !important;
+          }
+          .Customer_brand-logo-box {
+            width: 22px;
+            height: 22px;
+            top: 6px;
+            left: 6px;
+          }
+          .Customer_discount-badge {
+            font-size: 0.6rem;
+            padding: 2px 5px !important;
+          }
+          .Customer_wishlist-btn {
+            width: 24px;
+            height: 24px;
+            top: 6px;
+            right: 6px;
+            font-size: 11px;
+          }
+          .Customer_share-btn-flat {
+            font-size: 16px;
+          }
+          .Customer_card-body {
+            padding: 8px 4px !important;
+          }
           .Customer_rating-row {
             font-size: 0.62rem !important;
           }
-          .card-body {
-            padding: 8px 4px !important;
+          .Customer_card-title {
+            font-size: 0.78rem;
+            line-height: 1.25;
+          }
+          .Customer_card-desc {
+            display: none;
+          }
+          .Customer_price-main {
+            font-size: 0.82rem;
+          }
+          .Customer_price-original {
+            font-size: 0.65rem;
+          }
+          .Customer_card-btn {
+            font-size: 0.68rem;
+            padding: 5px 4px;
+            letter-spacing: 0.1px;
+          }
+          .Customer_buy-now-btn {
+            font-size: 0.72rem;
+            padding: 6px 4px;
+          }
+          .Customer_card-actions {
+            gap: 6px !important;
           }
         }
       `}</style>
@@ -468,14 +597,18 @@ function LuxuryGiftSets() {
 
                   return (
                     <div className="col-6 col-sm-6 col-md-4" key={productIdStr}>
-                      <div className="Customer_card card h-100 border-0 shadow-sm d-flex flex-column justify-content-between p-2 position-relative" style={{ backgroundColor: "#fff", borderRadius: "12px" }}>
+                      <div
+                        className="Customer_card h-100 border-0 shadow-sm d-flex flex-column justify-content-between p-2 position-relative"
+                        style={{ backgroundColor: "#fff", borderRadius: "12px", cursor: "pointer" }}
+                        onClick={() => navigate(`/product/${item.id}`, { state: { product: item } })}
+                      >
 
                         <div className="Customer_product-image-box card overflow-hidden position-relative">
 
                           {/* ✅ Brand Logo Display */}
                           {item.brandLogo && (
                             <div
-                              className="Customer_brand-logo-box position-absolute shadow-sm rounded-circle overflow-hidden bg-white d-flex align-items-center justify-content-center"
+                              className="Customer_brand-logo-box shadow-sm rounded-circle overflow-hidden bg-white d-flex align-items-center justify-content-center"
                               style={{ border: "1.5px solid #fff" }}
                               title="Brand Logo"
                             >
@@ -491,20 +624,6 @@ function LuxuryGiftSets() {
                             </div>
                           )}
 
-                          {/* Discount Badge */}
-                          {item.discount && (
-                            <span
-                              className={`Customer_discount-badge${item.brandLogo ? " Customer_has-logo" : ""} badge bg-danger position-absolute start-0 m-2 px-2 py-1 shadow-sm fw-bold`}
-                              style={{
-                                top: item.brandLogo ? "54px" : "0px",
-                                zIndex: 2,
-                                borderRadius: "6px",
-                              }}
-                            >
-                              {item.discount}
-                            </span>
-                          )}
-
                           <img
                             src={item.image}
                             className="card-img-top rounded Customer_product-image"
@@ -512,16 +631,11 @@ function LuxuryGiftSets() {
                           />
 
                           <button
-                            className="Customer_share-btn"
-                            onClick={() => setShareProduct(item)}
-                            title="Share Product"
-                          >
-                            <FaShareAlt />
-                          </button>
-
-                          <button
                             className="Customer_wishlist-btn"
-                            onClick={() => handleToggleWishlist(item)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleToggleWishlist(item);
+                            }}
                             title="Wishlist Product"
                             style={{
                               background: "white",
@@ -544,7 +658,19 @@ function LuxuryGiftSets() {
 
                         <div className="Customer_card-body card-body px-2 py-2 d-flex flex-column justify-content-between">
                           <div>
-                            <h6 className="Customer_card-title fw-bold mb-1 text-dark">{item.title}</h6>
+                            <div className="d-flex justify-content-between align-items-start gap-2 mb-1">
+                              <h6 className="Customer_card-title fw-bold mb-0 text-dark">{item.title}</h6>
+                              <button
+                                className="Customer_share-btn-flat"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleShare(item);
+                                }}
+                                title="Share Product"
+                              >
+                                <FaShareAlt />
+                              </button>
+                            </div>
                             <div className="Customer_rating-row text-warning small mb-1">
                               {[...Array(item.rating || 5)].map((_, i) => (<FaStar key={i} />))}
                               <span className="text-muted ms-1">({item.reviews || 16})</span>
@@ -555,26 +681,47 @@ function LuxuryGiftSets() {
                             <div className="Customer_price-row d-flex align-items-center gap-2 mb-2">
                               <span className="Customer_price-main fw-bold text-success">{item.price}</span>
                               {item.originalPrice && <span className="Customer_price-original text-decoration-line-through text-muted">{item.originalPrice}</span>}
+                              {item.discount && (
+                                <span className="Customer_discount-badge badge bg-danger fw-bold" style={{ borderRadius: "6px" }}>
+                                  {item.discount}
+                                </span>
+                              )}
                             </div>
                           </div>
 
                           <div className="Customer_card-actions d-flex flex-column gap-1 mt-auto">
-                            <div className="d-flex gap-1">
-                              <button onClick={() => navigate(`/product/${item.id}`, { state: { product: item } })} className="Customer_card-btn btn btn-outline-dark w-50 fw-semibold" style={{ borderRadius: "6px" }}>
-                                View Details
+                            {isInCart ? (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  navigate("/cart");
+                                }}
+                                className="Customer_card-btn btn w-100 fw-semibold text-white"
+                                style={{ backgroundColor: "#2b8a3e", border: "none", borderRadius: "6px" }}
+                              >
+                                Go to Cart
                               </button>
-                              {isInCart ? (
-                                <button onClick={() => navigate("/cart")} className="Customer_card-btn btn w-50 fw-semibold text-white" style={{ backgroundColor: "#2b8a3e", border: "none", borderRadius: "6px" }}>
-                                  Go to Cart
-                                </button>
-                              ) : (
-                                <button onClick={() => handleAddToCart(item)} className="Customer_card-btn btn btn-dark w-50 fw-semibold text-white" style={{ backgroundColor: "#064e3b", border: "none", borderRadius: "6px" }}>
-                                  Add to Cart
-                                </button>
-                              )}
-                            </div>
-                            <button onClick={() => handleBuyNow(item)} className="Customer_card-btn Customer_buy-now-btn btn w-100 fw-bold text-white border-0 shadow-sm" style={{ background: "linear-gradient(135deg, #d6bd69 0%, #dfa00b 100%)", borderRadius: "6px" }}>
-                              ⚡ Buy Now
+                            ) : (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleAddToCart(item);
+                                }}
+                                className="Customer_card-btn btn btn-dark w-100 fw-semibold text-white"
+                                style={{ backgroundColor: "#064e3b", border: "none", borderRadius: "6px" }}
+                              >
+                                Add to Cart
+                              </button>
+                            )}
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleBuyNow(item);
+                              }}
+                              className="Customer_card-btn Customer_buy-now-btn btn w-100 fw-bold text-white border-0 shadow-sm"
+                              style={{ background: "linear-gradient(135deg, #d6bd69 0%, #dfa00b 100%)", borderRadius: "6px" }}
+                            >
+                              Buy Now
                             </button>
                           </div>
                         </div>

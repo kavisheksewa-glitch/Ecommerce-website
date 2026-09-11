@@ -556,6 +556,10 @@ function WeddingGifts() {
     });
   };
 
+  const handleShare = (product) => {
+    setShareProduct(product);
+  };
+
   return (
     <div className="Customer_container1 bg-light pb-5">
 
@@ -972,7 +976,21 @@ function WeddingGifts() {
                         key={productIdStr}
                       >
 
-                        <div className="Customer_card card h-100 border-0 shadow-sm d-flex flex-column justify-content-between p-2 position-relative">
+                        <div
+                          className="Customer_card card h-100 border-0 shadow-sm d-flex flex-column justify-content-between p-2 position-relative"
+                          style={{ cursor: "pointer" }}
+                          onClick={() =>
+                            navigate(
+                              `/product/${item.id}`,
+                              {
+                                state: {
+                                  product:
+                                    item,
+                                },
+                              }
+                            )
+                          }
+                        >
 
                           {/* ================= IMAGE ================= */}
                           <div className="Customer_product-image-box card overflow-hidden position-relative">
@@ -990,15 +1008,6 @@ function WeddingGifts() {
                               </div>
                             )}
 
-                            {/* DISCOUNT */}
-                            {item.discount && (
-                              <span
-                                className="Customer_discount-badge badge bg-danger position-absolute start-0 shadow-sm fw-bold"
-                              >
-                                {item.discount}
-                              </span>
-                            )}
-
                             {/* PRODUCT IMAGE */}
                             <img
                               src={item.image}
@@ -1006,26 +1015,21 @@ function WeddingGifts() {
                               alt={item.title}
                             />
 
-                            {/* SHARE */}
-                            <button
-                              className="Customer_share-btn"
-                              onClick={() =>
-                                setShareProduct(item)
-                              }
-                              title="Share Product"
-                            >
-                              <FaShareAlt />
-                            </button>
-
                             {/* WISHLIST */}
                             <button
                               className="Customer_wishlist-btn"
-                              onClick={() =>
+                              onClick={(e) => {
+                                e.stopPropagation();
                                 handleToggleWishlist(
                                   item
-                                )
-                              }
+                                );
+                              }}
                               title="Wishlist Product"
+                              style={{
+                                color: isWishlisted
+                                  ? "red"
+                                  : "#ccc",
+                              }}
                             >
                               <FaHeart />
                             </button>
@@ -1037,9 +1041,22 @@ function WeddingGifts() {
 
                             <div>
 
-                              <h6 className="fw-bold mb-1 text-dark Customer_card-title">
-                                {item.title}
-                              </h6>
+                              <div className="d-flex justify-content-between align-items-start gap-2 mb-1">
+                                <h6 className="fw-bold mb-0 text-dark Customer_card-title">
+                                  {item.title}
+                                </h6>
+
+                                <button
+                                  className="Customer_share-btn-flat"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleShare(item);
+                                  }}
+                                  title="Share Product"
+                                >
+                                  <FaShareAlt />
+                                </button>
+                              </div>
 
                               <div className="text-warning small mb-1 Customer_rating">
                                 {[...Array(
@@ -1078,64 +1095,52 @@ function WeddingGifts() {
                                   </span>
                                 )}
 
+                                {item.discount && (
+                                  <span className="Customer_discount-badge badge bg-danger fw-bold">
+                                    {item.discount}
+                                  </span>
+                                )}
+
                               </div>
                             </div>
 
                             {/* ================= BUTTONS ================= */}
                             <div className="d-flex flex-column gap-1 mt-auto Customer_card-actions">
 
-                              <div className="d-flex gap-1">
-
+                              {isInCart ? (
                                 <button
-                                  onClick={() =>
+                                  onClick={(e) => {
+                                    e.stopPropagation();
                                     navigate(
-                                      `/product/${item.id}`,
-                                      {
-                                        state: {
-                                          product:
-                                            item,
-                                        },
-                                      }
-                                    )
-                                  }
-                                  className="btn btn-outline-dark btn-sm w-50 fw-semibold Customer_card-btn"
+                                      "/cart"
+                                    );
+                                  }}
+                                  className="btn btn-sm w-100 fw-semibold text-white Customer_card-btn Customer_cart-btn"
                                 >
-                                  View Details
+                                  Go to Cart
                                 </button>
-
-                                {isInCart ? (
-                                  <button
-                                    onClick={() =>
-                                      navigate(
-                                        "/cart"
-                                      )
-                                    }
-                                    className="btn btn-sm w-50 fw-semibold text-white Customer_card-btn Customer_cart-btn"
-                                  >
-                                    Go to Cart
-                                  </button>
-                                ) : (
-                                  <button
-                                    onClick={() =>
-                                      handleAddToCart(
-                                        item
-                                      )
-                                    }
-                                    className="btn btn-dark btn-sm w-50 fw-semibold text-white Customer_card-btn Customer_cart-btn"
-                                  >
-                                    Add to Cart
-                                  </button>
-                                )}
-
-                              </div>
+                              ) : (
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleAddToCart(
+                                      item
+                                    );
+                                  }}
+                                  className="btn btn-dark btn-sm w-100 fw-semibold text-white Customer_card-btn Customer_cart-btn"
+                                >
+                                  Add to Cart
+                                </button>
+                              )}
 
                               <button
-                                onClick={() =>
-                                  handleBuyNow(item)
-                                }
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleBuyNow(item);
+                                }}
                                 className="btn btn-sm w-100 fw-bold text-white border-0 shadow-sm Customer_buy-now-btn"
                               >
-                                ⚡ Buy Now
+                                Buy Now
                               </button>
 
                             </div>

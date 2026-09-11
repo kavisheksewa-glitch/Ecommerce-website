@@ -96,94 +96,75 @@
   background: #e4c893;
 }
 
+/* ===================== PRODUCT CARD (same structure/feature as Home.jsx) ===================== */
+.Customer_card {
+  border: none;
+  border-radius: 18px;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease-in-out;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+}
+
+.Customer_card:hover {
+  transform: translateY(0);
+  box-shadow: 0 12px 25px rgba(212, 175, 55, 0.2);
+}
+
 /* ===================== PRODUCT IMAGE BOX ===================== */
 .Customer_product-image-box {
   position: relative;
-  aspect-ratio: 1 / 1;
   width: 100%;
+  height: 220px;
+  border-radius: 12px;
   overflow: hidden;
-  border-top-left-radius: 16px;
-  border-top-right-radius: 16px;
+  z-index: 1;
 }
 
 .Customer_product-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s ease;
+  display: block;
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-.Customer_product-image-box:hover .Customer_product-image {
-  transform: scale(1.05);
+/* Hover Par Image Zoom Effect */
+.Customer_card:hover .Customer_product-image {
+  transform: scale(1.1);
+  transform-origin: bottom center;
 }
 
-/* ===================== BRAND LOGO BOX (on card) ===================== */
-.Customer_brand-logo-box {
-  top: 10px;
-  left: 10px;
-  width: 50px;
-  height: 50px;
-  z-index: 3;
-  border: 1.5px solid #fff;
-}
-
-/* ===================== DISCOUNT BADGE (on card) ===================== */
-.Customer_discount-badge {
-  font-size: 0.75rem;
-  top: 0px;
-}
-
-.Customer_discount-badge.Customer_has-logo {
-  top: 54px;
-}
-
-/* ===================== SHARE BUTTON (on card) ===================== */
-.Customer_share-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 35px;
-  height: 35px;
-  background: #fff;
+/* Share button — flat icon next to the title, no background circle (matches Home.jsx) */
+.Customer_share-btn-flat {
+  flex-shrink: 0;
   border: none;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: transparent;
+  padding: 2px;
+  color: #6b4e14;
+  font-size: 15px;
+  line-height: 1;
   cursor: pointer;
-  color: #54411d;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  z-index: 2;
   transition: color 0.2s ease, transform 0.2s ease;
 }
 
-.Customer_share-btn:hover {
-  color: #dfa00b;
-  transform: scale(1.08);
+.Customer_share-btn-flat:hover {
+  color: #b8860b;
+  transform: scale(1.15);
 }
 
-/* ===================== WISHLIST BUTTON (on card) ===================== */
-.Customer_wishlist-btn {
-  position: absolute;
-  top: 10px;
-  right: 50px;
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2;
+/* Discount badge — sits inline next to the price (not over the image) */
+.Customer_discount-badge {
+  display: inline-block;
 }
 
-/* ===================== PRODUCT CARD (Bootstrap `.card` used directly) ===================== */
-.Customer_container1 .card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.Customer_container1 .card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15) !important;
+/* Multi-line text clamping for description */
+.Customer_text-truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 /* ===================== PAGINATION ACTIVE STATE ===================== */
@@ -200,61 +181,6 @@
 
   .Customer_hero2-image {
     max-height: 200px;
-  }
-
-  .Customer_product-image-box {
-    border-top-left-radius: 12px;
-    border-top-right-radius: 12px;
-  }
-
-  .Customer_brand-logo-box {
-    width: 22px;
-    height: 22px;
-    top: 6px;
-    left: 6px;
-  }
-
-  .Customer_discount-badge {
-    font-size: 0.6rem;
-    padding: 2px 5px !important;
-    top: 0px;
-  }
-
-  .Customer_discount-badge.Customer_has-logo {
-    top: 30px;
-  }
-
-  .Customer_share-btn {
-    width: 26px;
-    height: 26px;
-    top: 6px;
-    right: 6px;
-    font-size: 11px;
-  }
-
-  .Customer_wishlist-btn {
-    width: 26px;
-    height: 26px;
-    top: 6px;
-    right: 36px;
-    font-size: 11px;
-  }
-
-  .Customer_container1 .card {
-    border-radius: 12px !important;
-  }
-
-  .Customer_container1 .card-body {
-    padding: 8px 10px !important;
-  }
-
-  .Customer_container1 h6 {
-    font-size: 0.8rem !important;
-  }
-
-  .Customer_container1 .btn-sm {
-    font-size: 0.7rem;
-    padding: 5px 6px;
   }
 
   .Customer_share-modal {
