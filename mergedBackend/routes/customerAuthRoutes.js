@@ -1,7 +1,3 @@
-
-
-
-
 const express = require("express");
 const router = express.Router();
 const Customer = require("../models/Customer");
@@ -14,7 +10,7 @@ const SellerNotification = require("../models/SellerNotification");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { protectCustomer } = require("../middleware/customerMiddleware");
-const transporter = require("../utils/SendEmail");
+const { sendOtpEmail } = require("../utils/SendEmail"); // ✅ FIX: named import (pehle poora module import ho raha tha)
 
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_key_here";
 
@@ -74,6 +70,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_key_here";
  *         description: Email is already registered
  */
 const registerCustomer = async (req, res) => {
+  console.log("🔥🔥🔥 REGISTER ROUTE HIT 🔥🔥🔥");
   try {
     const {
       fullName,
@@ -144,22 +141,19 @@ const registerCustomer = async (req, res) => {
       userId: savedCustomer._id,
       isEmailVerified: false,
     });
-    
-    let info =await transporter.sendMail({
-    from: EMAIL_USER,
-    to: savedCustomer.email,
-    subject: "Password Reset OTP – Admin Account",
-    text: `
-Hello ${savedCustomer.fullName},
-We received a request to reset the password for your admin account.
-Your 6-digit verification OTP is:
-${verifyOtp}
-This OTP is valid for 5 minutes. Please do not share this OTP with anyone.
-If you did not request a password reset, you can safely ignore this email.
-Regards,
-Support Team
-    `,
-  });
+
+    // ✅ FIX: pehle yahan transporter.sendMail() seedha, galat import ke sath, aur
+    // hardcoded galat subject/content ke sath call ho raha tha (jo "Admin Account"
+    // password reset wala template tha, register wale email ke liye galat).
+    // Ab sahi sendOtpEmail() helper use ho raha hai, "verify" purpose ke sath.
+    console.log("DEBUG: About to call sendOtpEmail for", savedCustomer.email);
+    sendOtpEmail(savedCustomer.email, verifyOtp, savedCustomer.fullName, "verify")
+      .then(() => {
+        console.log(`✅ Verification OTP email sent successfully to ${savedCustomer.email}`);
+      })
+      .catch((emailError) => {
+        console.error(`❌ Verification email failed to send to ${savedCustomer.email}:`, emailError);
+      });
 
     // ✅ Notification bhi background mein
     Notification.create({
@@ -388,14 +382,10 @@ const resendVerificationOtp = async (req, res) => {
       return res.status(400).json({ success: false, message: "userId or email is required" });
     }
 
-    const customer = await Customer.findOne({_id: userId,email});
-    if(!customer){
-       res.status(404).json({ success: false, message: "Customer not found" });
-      return 
+    const customer = await Customer.findOne({ _id: userId, email });
+    if (!customer) {
+      return res.status(404).json({ success: false, message: "Customer not found" });
     }
-    
-
-
 
     const verifyOtp = Math.floor(100000 + Math.random() * 900000).toString();
     customer.emailVerifyOtp = await bcrypt.hash(verifyOtp, 10);
@@ -475,8 +465,16 @@ const forgotPassword = async (req, res) => {
       userId: customer._id,
     });
 
+    // ✅ FIX: pehle sirf `sendOtpEmail(...)` call ho raha tha bina await/.then/.catch
+    // ke — result ignore ho raha tha aur agar reject hota to "Unhandled Promise
+    // Rejection" crash risk create karta. Ab sahi tarike se handle ho raha hai.
     sendOtpEmail(customer.email, otp, customer.fullName, "reset")
-     
+      .then(() => {
+        console.log(`✅ Reset OTP email sent successfully to ${customer.email}`);
+      })
+      .catch((emailError) => {
+        console.error(`❌ Reset password email failed to send to ${customer.email}:`, emailError);
+      });
   } catch (error) {
     console.error("Error in forgotPassword:", error);
     res.status(500).json({ success: false, message: error.message || "Server error, please try again." });
@@ -1341,7 +1339,7 @@ const getCustomerProfile = async (req, res) => {
     res.status(200).json({
       success: true,
       customer: {
-        dob:customer.dob,
+        dob: customer.dob,
         name: customer.fullName,
         email: customer.email,
         phone: customer.mobile,
