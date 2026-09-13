@@ -1,11 +1,15 @@
 
 const express = require("express");
 const router = express.Router();
-const { adminLogin } = require("../controllers/AdminController");
-const { protectAdmin } = require("../middleware/adminMiddleware"); // ✅ Middleware import kiya
-const User = require("../models/Customer");
-const Seller = require("../models/Seller");
-const Order = require("../models/Order");
+const {
+  adminLogin,
+  getAllUsers,
+  getAllSellers,
+  updateSellerStatus,
+  getAllOrders,
+  updateOrderStatus,
+} = require("../controllers/AdminController");
+const { protectAdmin } = require("../middleware/adminMiddleware");
 
 /**
  * @swagger
@@ -86,18 +90,7 @@ router.post("/login", adminLogin);
  *       401:
  *         description: Not authorized, no token provided
  */
-router.get("/users", protectAdmin, async (req, res) => {
-  try {
-    const users = await User.find().select("-password");
-    res.status(200).json({
-      success: true,
-      count: users.length,
-      users,
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-});
+router.get("/users", protectAdmin, getAllUsers);
 
 // ==================== GET ALL SELLERS ROUTE ====================
 /**
@@ -114,18 +107,7 @@ router.get("/users", protectAdmin, async (req, res) => {
  *       401:
  *         description: Not authorized
  */
-router.get("/sellers", protectAdmin, async (req, res) => {
-  try {
-    const sellers = await Seller.find().select("-password");
-    res.status(200).json({
-      success: true,
-      count: sellers.length,
-      sellers,
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-});
+router.get("/sellers", protectAdmin, getAllSellers);
 
 // ==================== UPDATE SELLER STATUS (Approve / Reject) ====================
 /**
@@ -162,33 +144,7 @@ router.get("/sellers", protectAdmin, async (req, res) => {
  *       404:
  *         description: Seller not found
  */
-router.put("/seller/:id/status", protectAdmin, async (req, res) => {
-  try {
-    const { status } = req.body;
-
-    if (!["Approved", "Rejected", "Pending"].includes(status)) {
-      return res.status(400).json({ success: false, message: "Invalid status value" });
-    }
-
-    const updatedSeller = await Seller.findByIdAndUpdate(
-      req.params.id,
-      { status },
-      { new: true }
-    ).select("-password");
-
-    if (!updatedSeller) {
-      return res.status(404).json({ success: false, message: "Seller not found" });
-    }
-
-    res.status(200).json({
-      success: true,
-      message: `Seller status updated to ${status}`,
-      seller: updatedSeller,
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-});
+router.put("/seller/:id/status", protectAdmin, updateSellerStatus);
 
 // ==================== GET ALL ORDERS ROUTE ====================
 /**
@@ -221,18 +177,7 @@ router.put("/seller/:id/status", protectAdmin, async (req, res) => {
  *       500:
  *         description: Server Error
  */
-router.get("/orders", protectAdmin, async (req, res) => {
-  try {
-    const orders = await Order.find().sort({ createdAt: -1 });
-    res.status(200).json({
-      success: true,
-      count: orders.length,
-      orders,
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-});
+router.get("/orders", protectAdmin, getAllOrders);
 
 // ==================== UPDATE ORDER STATUS & TRACKING ID ====================
 /**
@@ -270,28 +215,6 @@ router.get("/orders", protectAdmin, async (req, res) => {
  *       404:
  *         description: Order not found
  */
-router.put("/order/:id/status", protectAdmin, async (req, res) => {
-  try {
-    const { orderStatus, trackingId } = req.body;
-
-    const updateData = {};
-    if (orderStatus) updateData.orderStatus = orderStatus;
-    if (trackingId !== undefined) updateData.trackingId = trackingId;
-
-    const updatedOrder = await Order.findByIdAndUpdate(req.params.id, updateData, { new: true });
-
-    if (!updatedOrder) {
-      return res.status(404).json({ success: false, message: "Order not found" });
-    }
-
-    res.status(200).json({
-      success: true,
-      message: "Order updated successfully",
-      order: updatedOrder,
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-});
+router.put("/order/:id/status", protectAdmin, updateOrderStatus);
 
 module.exports = router;
