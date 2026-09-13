@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import API from "../../utils/api";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -14,7 +15,6 @@ import {
   TwitterIcon,
   EmailIcon,
 } from "react-share";
-//import "../Featured/Featuredcol.css";
 import "../BirthdayGifts/BirthdayGift.css";
 import birthdayBgImage from "../../assets/image1.png";
 import { BirthdayShawls } from "../../data/shawls";
@@ -53,64 +53,58 @@ function BirthdayGifts() {
       return;
     }
 
-    fetch("https://ecommerce-website-ggui.onrender.com/api/customer/cart", {
+    API.get("/api/customer/cart", {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success && Array.isArray(data.cart)) {
-          setCartProductIds(data.cart.map((item) => String(item.productId)));
+      .then((res) => {
+        if (res.data.success && Array.isArray(res.data.cart)) {
+          setCartProductIds(res.data.cart.map((item) => String(item.productId)));
         }
       })
       .catch((err) => console.error("Error fetching cart items:", err));
 
-    fetch("https://ecommerce-website-ggui.onrender.com/api/customer/wishlist", {
+    API.get("/api/customer/wishlist", {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success && Array.isArray(data.wishlist)) {
-          setWishlistProductIds(data.wishlist.map((item) => String(item.productId)));
+      .then((res) => {
+        if (res.data.success && Array.isArray(res.data.wishlist)) {
+          setWishlistProductIds(res.data.wishlist.map((item) => String(item.productId)));
         }
       })
       .catch((err) => console.error("Error fetching wishlist:", err));
   };
 
   useEffect(() => {
-    axios.get("https://ecommerce-website-ggui.onrender.com/api/seller/products/public")
+    API.get("/api/seller/products/public")
       .then((res) => {
         if (Array.isArray(res.data)) {
           const dbProducts = res.data
             .filter((p) => p.category === "BirthdayGift Shawls")
             .map((p) => {
-              // ✅ seller ne jo price enter kiya wahi "original" price hai; discount hone par
-              // actual bikne wala price (finalPrice) usse kam hoga
               const basePrice = Number(p.price || 0);
               const discountPercent = Number(p.discount || 0);
               const finalPrice = discountPercent > 0
                 ? Math.round(basePrice - (basePrice * discountPercent) / 100)
                 : basePrice;
-                return{
-              id: p._id,
-              title: p.productName,
-              description: p.description,
-              price: `₹${finalPrice}`,
+              return {
+                id: p._id,
+                title: p.productName,
+                description: p.description,
+                price: `₹${finalPrice}`,
                 originalPrice: discountPercent > 0 ? `₹${basePrice}` : "",
                 discount: discountPercent > 0 ? `${discountPercent}% OFF` : null,
-          
-              image: p.productImage?.startsWith("http") ? p.productImage : `https://ecommerce-website-ggui.onrender.com/${p.productImage}`,
-             
-             brandLogo: p.sellerId?.brandLogo ? (p.sellerId.brandLogo.startsWith("http") ? p.sellerId.brandLogo : `https://ecommerce-website-ggui.onrender.com/${p.sellerId.brandLogo}`): "",
-              stock: `Stock: ${p.stockQuantity}`,
-              fabric: p.fabric || "N/A",
-              color: p.color || "N/A",
-              size: p.size || "N/A",
-              careInstructions: p.washCare || "N/A",
-              rating: 5,
-              reviews: 18,
-              sellerId: p.sellerId?._id || p.sellerId || "",
-            };
-             });
+                image: p.productImage?.startsWith("http") ? p.productImage : `${API.defaults.baseURL}/${p.productImage}`,
+                brandLogo: p.sellerId?.brandLogo ? (p.sellerId.brandLogo.startsWith("http") ? p.sellerId.brandLogo : `${API.defaults.baseURL}/${p.sellerId.brandLogo}`) : "",
+                stock: `Stock: ${p.stockQuantity}`,
+                fabric: p.fabric || "N/A",
+                color: p.color || "N/A",
+                size: p.size || "N/A",
+                careInstructions: p.washCare || "N/A",
+                rating: 5,
+                reviews: 18,
+                sellerId: p.sellerId?._id || p.sellerId || "",
+              };
+            });
           setBirthdayGifts([...BirthdayShawls, ...dbProducts]);
         }
       })
@@ -167,26 +161,21 @@ function BirthdayGifts() {
   const handleAddToCart = (product) => {
     checkAuthAndExecute(async (token) => {
       try {
-        const response = await fetch("https://ecommerce-website-ggui.onrender.com/api/customer/cart/add", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            productId: product.id,
-            title: product.title,
-            description: product.description,
-            price: product.price,
-            originalPrice: product.originalPrice || "",
-            discount: product.discount || "",
-            image: product.image,
-            quantity: 1,
-           sellerId: product.sellerId, 
-          }),
+        const response = await API.post("/api/customer/cart/add", {
+          productId: product.id,
+          title: product.title,
+          description: product.description,
+          price: product.price,
+          originalPrice: product.originalPrice || "",
+          discount: product.discount || "",
+          image: product.image,
+          quantity: 1,
+          sellerId: product.sellerId,
+        }, {
+          headers: { Authorization: `Bearer ${token}` }
         });
 
-        if (response.ok) {
+        if (response.status === 200 || response.status === 201) {
           toast.success(`${product.title} added to cart! 🛒`, {
             position: "top-right",
             autoClose: 1000,
@@ -210,20 +199,19 @@ function BirthdayGifts() {
 
       try {
         if (isWishlisted) {
-          const res = await fetch("https://ecommerce-website-ggui.onrender.com/api/customer/wishlist", {
+          const res = await API.get("/api/customer/wishlist", {
             headers: { Authorization: `Bearer ${token}` },
           });
-          const data = await res.json();
-          const wishlistItem = data.wishlist?.find(
+          const wishlistItem = res.data.wishlist?.find(
             (w) => String(w.productId) === String(product.id)
           );
 
           if (wishlistItem) {
-            const delRes = await fetch(
-              `https://ecommerce-website-ggui.onrender.com/api/customer/wishlist/remove/${wishlistItem._id}`,
-              { method: "DELETE", headers: { Authorization: `Bearer ${token}` } }
+            const delRes = await API.delete(
+              `/api/customer/wishlist/remove/${wishlistItem._id}`,
+              { headers: { Authorization: `Bearer ${token}` } }
             );
-            if (delRes.ok) {
+            if (delRes.status === 200) {
               toast.info(`${product.title} removed from wishlist`, { autoClose: 1000 });
               setWishlistProductIds((prev) => prev.filter((id) => id !== String(product.id)));
             } else {
@@ -231,24 +219,19 @@ function BirthdayGifts() {
             }
           }
         } else {
-          const response = await fetch("https://ecommerce-website-ggui.onrender.com/api/customer/wishlist/add", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              productId: product.id,
-              title: product.title,
-              description: product.description,
-              price: product.price,
-              originalPrice: product.originalPrice || "",
-              discount: product.discount || "",
-              image: product.image,
-            }),
+          const response = await API.post("/api/customer/wishlist/add", {
+            productId: product.id,
+            title: product.title,
+            description: product.description,
+            price: product.price,
+            originalPrice: product.originalPrice || "",
+            discount: product.discount || "",
+            image: product.image,
+          }, {
+            headers: { Authorization: `Bearer ${token}` }
           });
 
-          if (response.ok) {
+          if (response.status === 200 || response.status === 201) {
             toast.success(`${product.title} added to wishlist ❤️`, { autoClose: 1000 });
             setWishlistProductIds((prev) => [...prev, String(product.id)]);
           } else {
@@ -269,23 +252,18 @@ function BirthdayGifts() {
     checkAuthAndExecute(async (token) => {
       if (!cartProductIds.includes(String(product.id))) {
         try {
-          await fetch("https://ecommerce-website-ggui.onrender.com/api/customer/cart/add", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              productId: product.id,
-              title: product.title,
-              description: product.description,
-              price: product.price,
-              originalPrice: product.originalPrice || "",
-              discount: product.discount || "",
-              image: product.image,
-              quantity: 1,
-              sellerId: product.sellerId,
-            }),
+          await API.post("/api/customer/cart/add", {
+            productId: product.id,
+            title: product.title,
+            description: product.description,
+            price: product.price,
+            originalPrice: product.originalPrice || "",
+            discount: product.discount || "",
+            image: product.image,
+            quantity: 1,
+            sellerId: product.sellerId,
+          }, {
+            headers: { Authorization: `Bearer ${token}` }
           });
           window.dispatchEvent(new Event("cartUpdated"));
         } catch (err) {
@@ -304,144 +282,39 @@ function BirthdayGifts() {
     <div className="Customer_container1 bg-light pb-5">
       <ToastContainer />
 
-      {/* Responsive, professional card & button styling — same structure/feature as Home.jsx */}
       <style>{`
-        .Customer_card {
-          padding: 10px !important;
-        }
-        .Customer_product-image-box {
-          aspect-ratio: 1 / 1;
-          width: 100%;
-        }
-        .Customer_product-image {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-        .Customer_brand-logo-box {
-          position: absolute;
-          top: 10px;
-          left: 10px;
-          width: 50px;
-          height: 50px;
-          z-index: 3;
-        }
-        .Customer_discount-badge {
-          font-size: 0.72rem;
-          padding: 4px 8px;
-        }
-        .Customer_wishlist-btn {
-          position: absolute;
-          top: 10px;
-          right: 10px;
-          width: 35px;
-          height: 35px;
-        }
-        .Customer_card-title {
-          font-size: 0.86rem;
-          margin-bottom: 4px !important;
-        }
-        .Customer_card-desc {
-          font-size: 0.74rem;
-          margin-bottom: 8px !important;
-        }
-        .Customer_rating-row {
-          font-size: 0.7rem;
-        }
-        .Customer_share-btn-flat {
-          flex-shrink: 0;
-          border: none;
-          background: transparent;
-          padding: 2px;
-          color: #6b4e14;
-          font-size: 15px;
-          line-height: 1;
-          cursor: pointer;
-          transition: color 0.2s ease, transform 0.2s ease;
-        }
-        .Customer_share-btn-flat:hover {
-          color: #b8860b;
-          transform: scale(1.15);
-        }
-        .Customer_price-row {
-          margin-bottom: 8px !important;
-          flex-wrap: wrap;
-          row-gap: 4px;
-        }
-        .Customer_price-main {
-          font-size: 0.9rem;
-        }
-        .Customer_price-original {
-          font-size: 0.72rem;
-        }
-        .Customer_card-btn {
-          font-size: clamp(0.68rem, 2.4vw, 0.85rem);
-          padding: 6px 8px;
-          letter-spacing: 0.2px;
-          white-space: nowrap;
-          line-height: 1.3;
-        }
-        .Customer_buy-now-btn {
-          font-size: clamp(0.72rem, 2.4vw, 0.9rem);
-          padding: 7px 8px;
-        }
+        .Customer_card { padding: 10px !important; }
+        .Customer_product-image-box { aspect-ratio: 1 / 1; width: 100%; }
+        .Customer_product-image { width: 100%; height: 100%; object-fit: cover; }
+        .Customer_brand-logo-box { position: absolute; top: 10px; left: 10px; width: 50px; height: 50px; z-index: 3; }
+        .Customer_discount-badge { font-size: 0.72rem; padding: 4px 8px; }
+        .Customer_wishlist-btn { position: absolute; top: 10px; right: 10px; width: 35px; height: 35px; }
+        .Customer_card-title { font-size: 0.86rem; margin-bottom: 4px !important; }
+        .Customer_card-desc { font-size: 0.74rem; margin-bottom: 8px !important; }
+        .Customer_rating-row { font-size: 0.7rem; }
+        .Customer_share-btn-flat { flex-shrink: 0; border: none; background: transparent; padding: 2px; color: #6b4e14; font-size: 15px; line-height: 1; cursor: pointer; transition: color 0.2s ease, transform 0.2s ease; }
+        .Customer_share-btn-flat:hover { color: #b8860b; transform: scale(1.15); }
+        .Customer_price-row { margin-bottom: 8px !important; flex-wrap: wrap; row-gap: 4px; }
+        .Customer_price-main { font-size: 0.9rem; }
+        .Customer_price-original { font-size: 0.72rem; }
+        .Customer_card-btn { font-size: clamp(0.68rem, 2.4vw, 0.85rem); padding: 6px 8px; letter-spacing: 0.2px; white-space: nowrap; line-height: 1.3; }
+        .Customer_buy-now-btn { font-size: clamp(0.72rem, 2.4vw, 0.9rem); padding: 7px 8px; }
 
         @media (max-width: 575.98px) {
-          .Customer_card {
-            padding: 7px !important;
-            border-radius: 12px !important;
-          }
-          .Customer_brand-logo-box {
-            width: 22px;
-            height: 22px;
-            top: 6px;
-            left: 6px;
-          }
-          .Customer_discount-badge {
-            font-size: 0.6rem;
-            padding: 2px 5px !important;
-          }
-          .Customer_wishlist-btn {
-            width: 24px;
-            height: 24px;
-            top: 6px;
-            right: 6px;
-            font-size: 11px;
-          }
-          .Customer_share-btn-flat {
-            font-size: 16px;
-          }
-          .Customer_card-body {
-            padding: 8px 4px !important;
-          }
-          .Customer_card-title {
-            font-size: 0.78rem;
-            line-height: 1.25;
-          }
-          .Customer_card-desc {
-            display: none;
-          }
-          .Customer_rating-row {
-            display: none;
-          }
-          .Customer_price-main {
-            font-size: 0.82rem;
-          }
-          .Customer_price-original {
-            font-size: 0.65rem;
-          }
-          .Customer_card-btn {
-            font-size: 0.68rem;
-            padding: 5px 4px;
-            letter-spacing: 0.1px;
-          }
-          .Customer_buy-now-btn {
-            font-size: 0.72rem;
-            padding: 6px 4px;
-          }
-          .Customer_card-actions {
-            gap: 6px !important;
-          }
+          .Customer_card { padding: 7px !important; border-radius: 12px !important; }
+          .Customer_brand-logo-box { width: 22px; height: 22px; top: 6px; left: 6px; }
+          .Customer_discount-badge { font-size: 0.6rem; padding: 2px 5px !important; }
+          .Customer_wishlist-btn { width: 24px; height: 24px; top: 6px; right: 6px; font-size: 11px; }
+          .Customer_share-btn-flat { font-size: 16px; }
+          .Customer_card-body { padding: 8px 4px !important; }
+          .Customer_card-title { font-size: 0.78rem; line-height: 1.25; }
+          .Customer_card-desc { display: none; }
+          .Customer_rating-row { display: none; }
+          .Customer_price-main { font-size: 0.82rem; }
+          .Customer_price-original { font-size: 0.65rem; }
+          .Customer_card-btn { font-size: 0.68rem; padding: 5px 4px; letter-spacing: 0.1px; }
+          .Customer_buy-now-btn { font-size: 0.72rem; padding: 6px 4px; }
+          .Customer_card-actions { gap: 6px !important; }
         }
       `}</style>
 
@@ -462,8 +335,6 @@ function BirthdayGifts() {
         </div>
       )}
 
-      
-
       <div className="mb-4">
         <div
           className="p-4 p-md-5 text-white rounded position-relative overflow-hidden d-flex align-items-center justify-content-between shadow-sm Customer_luxury-banner Customer_birthday-banner"
@@ -474,8 +345,6 @@ function BirthdayGifts() {
             minHeight: "260px"
           }}
         >
-
-          
           <div style={{ maxWidth: "600px", zIndex: 2 }}>
             <h1 className="fw-bold display-6 fst-italic" style={{ color: "#f3e5ab" }}>Birthday Gift Sets</h1>
             <p className="text-light opacity-95 small mb-3">
@@ -487,7 +356,8 @@ function BirthdayGifts() {
           </div>
         </div>
       </div>
-<div className="container my-3 text-center">
+
+      <div className="container my-3 text-center">
         <div className="position-relative mx-auto" style={{ maxWidth: "600px" }}>
           <span
             className="position-absolute top-50 start-0 translate-middle-y ps-3 text-muted"
@@ -495,7 +365,6 @@ function BirthdayGifts() {
           >
             <i className="bi bi-search"></i>
           </span>
-
           <input
             type="text"
             placeholder="Search birthday gift shawls..."
@@ -511,9 +380,9 @@ function BirthdayGifts() {
           />
         </div>
       </div>
+
       <div className="container-fluid">
         <div className="row">
-
           <div className="col-lg-3 mb-4">
             <div className="d-block d-lg-none mb-2">
               <button
@@ -562,7 +431,6 @@ function BirthdayGifts() {
           <div className="col-lg-9">
             <div className="d-flex justify-content-between align-items-center mb-3 bg-white p-2 px-3 rounded shadow-sm border">
               <span className="text-muted small">Showing 1–{displayedGifts.length} products</span>
-
               <select
                 className="form-select form-select-sm w-auto"
                 value={sortBy}
@@ -588,10 +456,7 @@ function BirthdayGifts() {
                         style={{ backgroundColor: "#fff", borderRadius: "12px", cursor: "pointer" }}
                         onClick={() => navigate(`/product/${item.id}`, { state: { product: item } })}
                       >
-
                         <div className="Customer_product-image-box card overflow-hidden position-relative">
-
-                          {/* ✅ Brand Logo Display */}
                           {item.brandLogo && (
                             <div
                               className="Customer_brand-logo-box shadow-sm rounded-circle overflow-hidden bg-white d-flex align-items-center justify-content-center"
@@ -602,7 +467,7 @@ function BirthdayGifts() {
                                 src={
                                   item.brandLogo.startsWith("http")
                                     ? item.brandLogo
-                                    : `https://ecommerce-website-ggui.onrender.com/${item.brandLogo}`
+                                    : `${API.defaults.baseURL}/${item.brandLogo}`
                                 }
                                 alt="Brand Logo"
                                 style={{ width: "100%", height: "100%", objectFit: "cover" }}
@@ -639,7 +504,6 @@ function BirthdayGifts() {
                           >
                             <FaHeart />
                           </button>
-
                         </div>
 
                         <div className="Customer_card-body card-body px-2 py-2 d-flex flex-column justify-content-between">
@@ -722,7 +586,6 @@ function BirthdayGifts() {
               )}
             </div>
           </div>
-
         </div>
       </div>
 
@@ -758,7 +621,6 @@ function BirthdayGifts() {
           </div>
         </div>
       </div>
-
     </div>
   );
 }

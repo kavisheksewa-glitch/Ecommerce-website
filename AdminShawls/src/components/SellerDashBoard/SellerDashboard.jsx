@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import "./SellerDashboard.css";
 import SellerHeader from "../SellerHeader/SellerHeader";
 import logo from "../../assets/logooo.png";
-
+import { BASE_URL } from "../../utils/api";
 function SellerDashboard() {
   const navigate = useNavigate();
 
@@ -30,7 +30,7 @@ function SellerDashboard() {
 
       try {
         // ✅ PRODUCTS — sirf isi seller ke products
-        const productsRes = await fetch("https://ecommerce-website-ggui.onrender.com/api/seller/products", {
+        const productsRes = await fetch(`${BASE_URL}/api/seller/products`, {
           headers: { Authorization: `Bearer ${sellerToken}` },
         });
         const productsData = await productsRes.json();
@@ -46,7 +46,7 @@ function SellerDashboard() {
         // ✅ ORDERS — ab naya secure route use ho raha hai jo server-side hi
         // JWT se seller ki id nikaal ke sirf uske orders return karta hai.
         // (Pehle client-side token decode karke filter karna padta tha.)
-        const ordersRes = await fetch("https://ecommerce-website-ggui.onrender.com/api/shawls/orders/seller/my-orders", {
+        const ordersRes = await fetch(`${BASE_URL}/api/shawls/orders/seller/my-orders`, {
           headers: { Authorization: `Bearer ${sellerToken}` },
         });
         const ordersData = await ordersRes.json();

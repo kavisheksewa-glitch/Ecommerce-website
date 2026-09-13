@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import "./PaymentGateway.css";
 import logo from "../../assets/logooo.png";
 import SellerHeader from "../SellerHeader/SellerHeader";
-
+import { BASE_URL } from "../../utils/api";
 function PaymentGateway() {
   const navigate = useNavigate();
   const [payments, setPayments] = useState([]);
@@ -23,7 +23,7 @@ function PaymentGateway() {
       }
 
       try {
-        const response = await fetch("https://ecommerce-website-ggui.onrender.com/api/shawls/orders/seller/my-orders", {
+        const response = await fetch(`${BASE_URL}/api/shawls/orders/seller/my-orders`, {
           headers: { Authorization: `Bearer ${sellerToken}` },
         });
         const data = await response.json();

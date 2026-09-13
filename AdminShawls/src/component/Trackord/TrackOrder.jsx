@@ -5,7 +5,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { BASE_URL } from "../../utils/api";
 function TrackOrder() {
   const { state } = useLocation();
   const navigate = useNavigate();
@@ -29,7 +29,7 @@ function TrackOrder() {
   const fetchOrderStatus = async (id) => {
     try {
       setErrorMsg("");
-      const response = await fetch(`https://ecommerce-website-ggui.onrender.com/api/shawls/orders/${id}`);
+      const response = await fetch(`${BASE_URL}/api/shawls/orders/${id}`);
       const data = await response.json();
       
       if (response.ok) {
@@ -72,7 +72,7 @@ function TrackOrder() {
     setCancelling(true);
 
     const response = await fetch(
-      `https://ecommerce-website-ggui.onrender.com/api/customer/order/cancel/${idToCancel}`,
+      `${BASE_URL}/api/customer/order/cancel/${idToCancel}`,
       {
         method: "PUT",
         headers: {
@@ -112,7 +112,7 @@ function TrackOrder() {
 
     try {
       setLoadingOrders(true);
-      const response = await fetch("https://ecommerce-website-ggui.onrender.com/api/customer/orders", {
+      const response = await fetch(`${BASE_URL}/api/customer/orders`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await response.json();

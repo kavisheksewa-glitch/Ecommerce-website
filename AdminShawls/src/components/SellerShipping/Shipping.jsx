@@ -1,5 +1,5 @@
 
-
+import { BASE_URL } from "../../utils/api";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Shipping.css";
@@ -29,7 +29,7 @@ function Shipping() {
     }
 
     try {
-      const response = await fetch("https://ecommerce-website-ggui.onrender.com/api/shawls/orders/seller/my-orders", {
+      const response = await fetch(`${BASE_URL}/api/shawls/orders/seller/my-orders`, {
         headers: { Authorization: `Bearer ${sellerToken}` },
       });
       const data = await response.json();
@@ -67,7 +67,7 @@ function Shipping() {
     }
 
     try {
-      const response = await fetch(`https://ecommerce-website-ggui.onrender.com/api/shawls/orders/${orderId}/track`, {
+      const response = await fetch(`${BASE_URL}/api/shawls/orders/${orderId}/track`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

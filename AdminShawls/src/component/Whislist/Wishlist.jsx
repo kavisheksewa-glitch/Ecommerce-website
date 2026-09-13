@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./wishlist.css";
-
+import { BASE_URL } from "../../utils/api";
 function Wishlist() {
   const [wishlistItems, setWishlistItems] = useState([]);
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ function Wishlist() {
     }
 
     try {
-      const response = await fetch("https://ecommerce-website-ggui.onrender.com/api/customer/wishlist", {
+      const response = await fetch("${BASE_URL}/api/customer/wishlist", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -51,7 +51,7 @@ function Wishlist() {
     const token = localStorage.getItem("token");
     try {
       const response = await fetch(
-        `https://ecommerce-website-ggui.onrender.com/api/customer/wishlist/remove/${wishlistItemId}`,
+        `${BASE_URL}/api/customer/wishlist/remove/${wishlistItemId}`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
@@ -81,7 +81,7 @@ function Wishlist() {
     }
 
     try {
-      const response = await fetch("https://ecommerce-website-ggui.onrender.com/api/customer/cart/add", {
+      const response = await fetch(`${BASE_URL}/api/customer/cart/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

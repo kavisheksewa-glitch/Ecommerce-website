@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import "./Analytics.css";
 import logo from "../../assets/logooo.png";
 import SellerHeader from "../SellerHeader/SellerHeader";
-
+import { BASE_URL } from "../../utils/api";
 const MONTH_NAMES = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December",
@@ -34,7 +34,7 @@ function Analytics() {
       try {
         // ✅ Naya secure route — server-side JWT se seller ki id nikal ke
         // sirf uske orders return karta hai, client-side decode ki zaroorat nahi
-        const res = await fetch("https://ecommerce-website-ggui.onrender.com/api/shawls/orders/seller/my-orders", {
+        const res = await fetch(`${BASE_URL}/api/shawls/orders/seller/my-orders`, {
           headers: { Authorization: `Bearer ${sellerToken}` },
         });
         const data = await res.json();

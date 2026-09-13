@@ -5,6 +5,7 @@ import {
   FaShoppingCart, FaUsers, FaChartLine, FaBars, FaCheck, FaTimes 
 } from "react-icons/fa";
 import logoImage from "../../assets/logooo.png";
+import { BASE_URL } from "../../utils/api";
 
 function AdminSellers() {
   const [showSidebar, setShowSidebar] = useState(false);
@@ -16,7 +17,7 @@ function AdminSellers() {
 
   const fetchSellers = async () => {
     try {
-      const response = await fetch("https://ecommerce-website-ggui.onrender.com/api/seller/auth", {
+      const response = await fetch(`${BASE_URL}/api/seller/auth`, {
         headers: {
           Authorization: `Bearer ${adminToken}`,
         },
@@ -42,7 +43,7 @@ function AdminSellers() {
 
   const handleStatusUpdate = async (sellerId, newStatus) => {
     try {
-      const response = await fetch(`https://ecommerce-website-ggui.onrender.com/api/seller/auth/status/${sellerId}`, {
+      const response = await fetch(`${BASE_URL}/api/seller/auth/status/${sellerId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

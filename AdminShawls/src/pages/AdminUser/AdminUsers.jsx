@@ -5,6 +5,7 @@ import {
   FaUsers, FaChartLine, FaBars, FaStore 
 } from "react-icons/fa";
 import logoImage from "../../assets/logooo.png";
+import { BASE_URL } from "../../utils/api";
 
 function AdminUsers() {
   const [showSidebar, setShowSidebar] = useState(false);
@@ -17,7 +18,7 @@ function AdminUsers() {
       try {
         const token = localStorage.getItem("adminToken");
 
-        const response = await fetch("https://ecommerce-website-ggui.onrender.com/api/admin/users", {
+        const response = await fetch(`${BASE_URL}/api/admin/users`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

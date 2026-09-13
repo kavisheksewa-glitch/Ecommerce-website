@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import API from "../../utils/api";
 import "./SellerDetails.css";
 
 // Tiny helper: JWT ka payload decode karta hai (bina kisi library ke)
@@ -44,8 +44,8 @@ function SellerDetails() {
 
     try {
       // ✅ FIX: Authorization header add kiya, kyunki route par "protect" middleware lagi hai
-      const res = await axios.get(
-        `https://ecommerce-website-ggui.onrender.com/api/seller/auth/${sellerId}`,
+      const res = await API.get(
+        `/api/seller/auth/${sellerId}`,
         {
           headers: {
             Authorization: `Bearer ${sellerToken}`,
@@ -96,7 +96,7 @@ function SellerDetails() {
       src={
         seller.profileImage.startsWith("http")
           ? seller.profileImage
-          : `https://ecommerce-website-ggui.onrender.com/${seller.profileImage.replace(/\\/g, "/")}`
+          : `${API.defaults.baseURL}/${seller.profileImage.replace(/\\/g, "/")}`
       }
       alt="Seller Profile"
       className="rounded-circle object-fit-cover shadow-sm ingg"

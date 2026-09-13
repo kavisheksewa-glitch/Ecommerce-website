@@ -15,6 +15,7 @@ import {
   FaTimes,
   FaSpinner
 } from "react-icons/fa";
+import { BASE_URL } from "../../utils/api";
 
 function Profile() {
   const [formData, setFormData] = useState({
@@ -45,7 +46,7 @@ function Profile() {
     const token = localStorage.getItem("token");
 
     try {
-      const res = await fetch("https://ecommerce-website-ggui.onrender.com/api/customer/profile", {
+      const res = await fetch(`${BASE_URL}/api/customer/profile`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -93,7 +94,7 @@ console.log("Profile fetch response:", data);
     const token = localStorage.getItem("token");
 
     try {
-      const res = await fetch("https://ecommerce-website-ggui.onrender.com/api/customer/profile/update", {
+      const res = await fetch(`${BASE_URL}/api/customer/profile/update`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

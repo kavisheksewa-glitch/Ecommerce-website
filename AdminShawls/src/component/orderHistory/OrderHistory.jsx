@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaBoxOpen, FaTruck, FaClock, FaCheckCircle, FaTimesCircle, FaEye } from "react-icons/fa";
-
+import { BASE_URL } from "../../utils/api";
 function OrderHistory() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -11,7 +11,7 @@ function OrderHistory() {
     const fetchOrders = async () => {
       const token = localStorage.getItem("token");
       try {
-        const res = await fetch("https://ecommerce-website-ggui.onrender.com/api/customer/orders", {
+        const res = await fetch(`${BASE_URL}/api/customer/orders`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -126,4 +126,4 @@ function OrderHistory() {
   );
 }
 
-export default OrderHistory; // Export default OrderHistory
+export default OrderHistory; 

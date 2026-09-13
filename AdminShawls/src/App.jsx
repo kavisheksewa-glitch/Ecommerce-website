@@ -52,7 +52,7 @@ import SellerDashboard from "./components/SellerDashBoard/SellerDashboard";
 import AddProduct from "./components/SellerAddProduct/AddProduct";
 import ProductCategories from "./components/SellerProductCategories/ProductCategories";
 import ProductsList from "./components/SellerProductList/ProductsList";
-import InventoryStock from "./components/SellerInventory/InventoryStock";
+//import InventoryStock from "./components/SellerInventory/InventoryStock";
 import ManageProducts from "./components/SellerManageProduct/ManageProducts";
 import Shipping from "./components/SellerShipping/Shipping";
 import PaymentGateway from "./components/SellerPaymentDetails/PaymentGateway";
@@ -190,7 +190,7 @@ function AppContent() {
         <Route path="/add-product" element={<AddProduct />} />
         <Route path="/product-categories" element={<ProductCategories />} />
         <Route path="/seller/products" element={<ProductsList />} />
-        <Route path="/inventory-stock" element={<InventoryStock />} />
+        {/* <Route path="/inventory-stock" element={<InventoryStock />} /> */}
         <Route path="/manage-products" element={<ManageProducts />} />
         <Route path="/shipping" element={<Shipping />} />
         <Route path="/payment-gateway" element={<PaymentGateway />} />

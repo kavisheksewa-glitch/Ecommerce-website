@@ -8,7 +8,7 @@ import { Link, useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { BASE_URL } from "../../utils/api";
 function SellerLogin() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -23,7 +23,7 @@ function SellerLogin() {
       // ✅ formData se email aur password destructure kar liye hain
       const { email, password } = formData;
 
-      const response = await fetch("https://ecommerce-website-ggui.onrender.com/api/seller/auth/login", {
+      const response = await fetch(`${BASE_URL}/api/seller/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

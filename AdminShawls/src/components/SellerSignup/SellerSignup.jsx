@@ -5,7 +5,7 @@ import "./SellerSignup.css";
 import image0 from "../../assets/logooo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import axios from "axios";
+import API from "../../utils/api";
 
 function SellerSignup() {
     const navigate = useNavigate();
@@ -50,8 +50,8 @@ function SellerSignup() {
         }
 
         try {
-            const res = await axios.post(
-                "https://ecommerce-website-ggui.onrender.com/api/seller/auth/register",
+            const res = await API.post(
+                "/api/seller/auth/register",
                 formData,
                 {
                     headers: { "Content-Type": "multipart/form-data" },

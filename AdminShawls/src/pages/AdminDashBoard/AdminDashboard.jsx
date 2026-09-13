@@ -9,6 +9,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
   PieChart, Pie, Cell, Legend 
 } from "recharts";
+import { BASE_URL } from "../../utils/api";
 
 import logoImage from "../../assets/logooo.png";
 
@@ -28,7 +29,7 @@ function AdminDashboard() {
 
   const fetchDashboardOrders = async () => {
     try {
-      const response = await fetch("https://ecommerce-website-ggui.onrender.com/api/shawls/orders");
+      const response = await fetch(`${BASE_URL}/api/shawls/orders`);
       const data = await response.json();
       if (response.ok) {
         setRecentOrders(data);

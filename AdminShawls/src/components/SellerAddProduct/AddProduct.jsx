@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import "./AddProduct.css";
 import logo from "../../assets/logooo.png";
-import axios from "axios";
+import API from "../../utils/api";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -41,8 +41,8 @@ function AddProduct() {
         return;
       }
 
-      const response = await axios.post(
-        "https://ecommerce-website-ggui.onrender.com/api/seller/products/add",
+      const response = await API.post(
+        "/api/seller/products/add",
         productData,
         {
           headers: {

@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import API from "../../utils/api";
 import "./Settings.css";
 import logo from "../../assets/logooo.png";
 import { ToastContainer, toast } from "react-toastify";
@@ -51,8 +51,8 @@ function Settings() {
 
   const getSeller = async () => {
     try {
-      const res = await axios.get(
-        `https://ecommerce-website-ggui.onrender.com/api/seller/auth/${sellerId}`,
+      const res = await API.get(
+        `/api/seller/auth/${sellerId}`,
         {
           headers: {
             Authorization: `Bearer ${sellerToken}`,
@@ -132,8 +132,8 @@ function Settings() {
     }
 
     try {
-      const res = await axios.put(
-        `https://ecommerce-website-ggui.onrender.com/api/seller/auth/update/${sellerId}`,
+      const res = await API.put(
+        `/api/seller/auth/update/${sellerId}`,
         formData,
         {
           headers: {

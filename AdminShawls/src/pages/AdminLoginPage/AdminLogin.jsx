@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { FaLock, FaEnvelope } from "react-icons/fa";
 
 import logoImage from "../../assets/logooo.png";
-
+import { BASE_URL } from "../../utils/api";
 function AdminLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,7 +15,7 @@ function AdminLogin() {
     setLoading(true);
 
     try {
-      const response = await fetch("https://ecommerce-website-ggui.onrender.com/api/admin/login", {
+      const response = await fetch(`${BASE_URL}/api/admin/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

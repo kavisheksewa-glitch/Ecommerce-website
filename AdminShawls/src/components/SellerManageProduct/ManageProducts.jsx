@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import "./ManageProducts.css";
 import logo from "../../assets/logooo.png";
 import SellerHeader from "../SellerHeader/SellerHeader";
-import axios from "axios";
+import API from "../../utils/api";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -34,7 +34,7 @@ function ManageProducts() {
   const fetchProducts = async () => {
     try {
       const token = localStorage.getItem("sellerToken");
-      const response = await axios.get("https://ecommerce-website-ggui.onrender.com/api/seller/products", {
+      const response = await API.get("/api/seller/products", {
         headers: { Authorization: `Bearer ${token}` }
       });
       setProducts(response.data.products || response.data);
@@ -54,7 +54,7 @@ function ManageProducts() {
     if (!sellerId) return;
 
     try {
-      const res = await axios.get(`https://ecommerce-website-ggui.onrender.com/api/seller/auth/${sellerId}`, {
+      const res = await API.get(`/api/seller/auth/${sellerId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setSellerBrand({
@@ -81,7 +81,7 @@ function ManageProducts() {
 
     try {
       const token = localStorage.getItem("sellerToken");
-      await axios.delete(`https://ecommerce-website-ggui.onrender.com/api/seller/products/delete/${id}`, {
+      await API.delete(`/api/seller/products/delete/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -139,7 +139,7 @@ function ManageProducts() {
         formData.append("productImage", editForm.productImage);
       }
 
-      const response = await axios.put(`https://ecommerce-website-ggui.onrender.com/api/seller/products/update/${id}`, formData, {
+      const response = await API.put(`/api/seller/products/update/${id}`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data"
@@ -195,7 +195,7 @@ function ManageProducts() {
           const prodImage = rawImage.startsWith("http")
             ? rawImage
             : rawImage
-            ? `https://ecommerce-website-ggui.onrender.com/${rawImage.replace(/\\/g, "/")}`
+            ? `${API.defaults.baseURL}/${rawImage.replace(/\\/g, "/")}`
             : "https://via.placeholder.com/130";
 
           return (

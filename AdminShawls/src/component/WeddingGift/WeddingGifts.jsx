@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import API, { BASE_URL } from "../../utils/api";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -80,7 +80,7 @@ function WeddingGifts() {
     }
 
     fetch(
-      "https://ecommerce-website-ggui.onrender.com/api/customer/cart",
+      `${BASE_URL}/api/customer/cart`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -100,7 +100,7 @@ function WeddingGifts() {
       );
 
     fetch(
-      "https://ecommerce-website-ggui.onrender.com/api/customer/wishlist",
+      `${BASE_URL}/api/customer/wishlist`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -122,9 +122,9 @@ function WeddingGifts() {
 
   // ================= FETCH PRODUCTS =================
   useEffect(() => {
-    axios
-      .get(
-        "https://ecommerce-website-ggui.onrender.com/api/seller/products/public"
+    
+      API.get(
+        "/api/seller/products/public"
       )
       .then((res) => {
         if (Array.isArray(res.data)) {
@@ -161,12 +161,12 @@ function WeddingGifts() {
 
                 image: p.productImage?.startsWith("http")
                   ? p.productImage
-                  : `https://ecommerce-website-ggui.onrender.com/${p.productImage}`,
+                  : `${BASE_URL}/${p.productImage}`,
 
                 brandLogo: p.sellerId?.brandLogo
                   ? p.sellerId.brandLogo.startsWith("http")
                     ? p.sellerId.brandLogo
-                    : `https://ecommerce-website-ggui.onrender.com/${p.sellerId.brandLogo}`
+                    : `${BASE_URL}/${p.sellerId.brandLogo}`
                   : "",
 
                 stock: `Stock: ${p.stockQuantity}`,
@@ -322,7 +322,7 @@ function WeddingGifts() {
 
     try {
       const response = await fetch(
-        "https://ecommerce-website-ggui.onrender.com/api/customer/cart/add",
+        `${BASE_URL}/api/customer/cart/add`,
         {
           method: "POST",
 
@@ -384,7 +384,7 @@ function WeddingGifts() {
 
     if (!cartProductIds.includes(String(product.id))) {
       fetch(
-        "https://ecommerce-website-ggui.onrender.com/api/customer/cart/add",
+        `${BASE_URL}/api/customer/cart/add`,
         {
           method: "POST",
 
@@ -434,7 +434,7 @@ function WeddingGifts() {
     try {
       if (isWishlisted) {
         const res = await fetch(
-          "https://ecommerce-website-ggui.onrender.com/api/customer/wishlist",
+          `${BASE_URL}/api/customer/wishlist`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -453,7 +453,7 @@ function WeddingGifts() {
 
         if (wishlistItem) {
           const delRes = await fetch(
-            `https://ecommerce-website-ggui.onrender.com/api/customer/wishlist/remove/${wishlistItem._id}`,
+            `${BASE_URL}/api/customer/wishlist/remove/${wishlistItem._id}`,
             {
               method: "DELETE",
               headers: {
@@ -484,7 +484,7 @@ function WeddingGifts() {
         }
       } else {
         const response = await fetch(
-          "https://ecommerce-website-ggui.onrender.com/api/customer/wishlist/add",
+          `${BASE_URL}/api/customer/wishlist/add`,
           {
             method: "POST",
 

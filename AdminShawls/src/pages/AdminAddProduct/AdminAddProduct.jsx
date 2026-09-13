@@ -6,6 +6,7 @@ import {
 } from "react-icons/fa";
 //import logoImage from "../assets/logooo.png";
 import logoImage from "../../assets/logooo.png";
+import { BASE_URL } from "../../utils/api";
 function AdminAddProduct() {
   const [showSidebar, setShowSidebar] = useState(false);
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ function AdminAddProduct() {
   const handleSubmit = async (e) => {
   e.preventDefault();
   try {
-    const response = await fetch("https://ecommerce-website-ggui.onrender.com/api/products", {
+    const response = await fetch(`${BASE_URL}/api/products`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

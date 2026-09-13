@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { BASE_URL } from "../../utils/api";
 function Checkout() {
   const { state } = useLocation();
   const navigate = useNavigate();
@@ -66,7 +66,7 @@ function Checkout() {
 
   const removeCartItemAfterOrder = async () => {
     try {
-      const res = await fetch("https://ecommerce-website-ggui.onrender.com/api/customer/cart", {
+      const res = await fetch(`${BASE_URL}/api/customer/cart`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -78,7 +78,7 @@ function Checkout() {
         );
 
         if (cartItem) {
-          await fetch(`https://ecommerce-website-ggui.onrender.com/api/customer/cart/remove/${cartItem._id}`, {
+          await fetch(`${BASE_URL}/api/customer/cart/remove/${cartItem._id}`, {
             method: "DELETE",
             headers: { Authorization: `Bearer ${token}` },
           });
@@ -91,7 +91,7 @@ function Checkout() {
   };
 
   const saveOrderToBackend = async ({ paymentStatus, razorpayPaymentId }) => {
-    const response = await fetch("https://ecommerce-website-ggui.onrender.com/api/customer/order/create", {
+    const response = await fetch(`${BASE_URL}/api/customer/order/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -341,3 +341,5 @@ function Checkout() {
 }
 
 export default Checkout;
+
+

@@ -5,7 +5,7 @@ import {
   FaShoppingCart, FaUsers, FaChartLine, FaBars, FaStore,
 } from "react-icons/fa";
 import logoImage from "../../assets/logooo.png";
-
+import { BASE_URL } from "../../utils/api";
 function AdminOrders() {
   const [showSidebar, setShowSidebar] = useState(false);
   const [orders, setOrders] = useState([]);
@@ -19,7 +19,7 @@ function AdminOrders() {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const response = await fetch("https://ecommerce-website-ggui.onrender.com/api/shawls/orders");
+      const response = await fetch(`${BASE_URL}/api/shawls/orders`);
       const data = await response.json();
       
       if (response.ok) {
@@ -37,7 +37,7 @@ function AdminOrders() {
 
   const updateStatus = async (id, newStatus) => {
     try {
-      const response = await fetch(`https://ecommerce-website-ggui.onrender.com/api/shawls/orders/${id}/status`, {
+      const response = await fetch(`${BASE_URL}/api/shawls/orders/${id}/status`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

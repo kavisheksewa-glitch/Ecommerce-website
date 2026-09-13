@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./cart.css";
-
+import { BASE_URL } from "../../utils/api";
 function Cart() {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,7 +22,7 @@ function Cart() {
     }
 
     try {
-      const response = await fetch(`https://ecommerce-website-ggui.onrender.com/api/customer/cart`, {
+      const response = await fetch(`${BASE_URL}/api/customer/cart`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -68,7 +68,7 @@ function Cart() {
   const handleRemove = async (id) => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`https://ecommerce-website-ggui.onrender.com/api/customer/cart/remove/${id}`, {
+      const response = await fetch(`${BASE_URL}/api/customer/cart/remove/${id}`, {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${token}`

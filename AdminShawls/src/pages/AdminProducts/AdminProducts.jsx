@@ -6,6 +6,7 @@ import {
 } from "react-icons/fa";
 //import logoImage from "../assets/logooo.png";
 import logoImage from "../../assets/logooo.png";
+import { BASE_URL } from "../../utils/api";
 function AdminProducts() {
   const [showSidebar, setShowSidebar] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -16,7 +17,7 @@ function AdminProducts() {
 
   // 2. Backend se MongoDB ka data fetch karein
   useEffect(() => {
-    fetch("https://ecommerce-website-ggui.onrender.com/api/products")
+    fetch(`${BASE_URL}/api/products`)
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
@@ -30,7 +31,7 @@ function AdminProducts() {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
       try {
-        const response = await fetch(`https://ecommerce-website-ggui.onrender.com/api/products/${id}`, {
+        const response = await fetch(`${BASE_URL}/api/products/${id}`, {
           method: "DELETE",
         });
         if (response.ok) {

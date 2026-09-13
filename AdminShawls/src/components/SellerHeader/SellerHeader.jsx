@@ -7,7 +7,7 @@ import { IoPerson } from "react-icons/io5";
 import { IoIosSettings } from "react-icons/io";
 import { IoIosLogOut } from "react-icons/io";
 import { FaHome } from "react-icons/fa";
-
+import { BASE_URL } from "../../utils/api";
 function SellerHeader() {
   const navigate = useNavigate();
   const [showProfile, setShowProfile] = useState(false);
@@ -22,7 +22,7 @@ function SellerHeader() {
 
         if (!token) return;
 
-        const response = await fetch("https://ecommerce-website-ggui.onrender.com/api/seller/notifications", {
+        const response = await fetch(`${BASE_URL}/api/seller/notifications`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

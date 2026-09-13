@@ -3,7 +3,7 @@
 
 
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import API from "../../utils/api";
 import "./ProductCategories.css";
 import logo from "../../assets/logooo.png";
 import SellerHeader from "../SellerHeader/SellerHeader";
@@ -31,7 +31,7 @@ function ProductCategories() {
       return;
     }
 
-    axios.get("https://ecommerce-website-ggui.onrender.com/api/seller/products", {
+    API.get("/api/seller/products", {
       headers: { "Authorization": `Bearer ${token}` }
     })
       .then((response) => {
@@ -89,7 +89,7 @@ function ProductCategories() {
     return rawImage.startsWith("http")
       ? rawImage
       : rawImage
-      ? `https://ecommerce-website-ggui.onrender.com/${rawImage.replace(/\\/g, "/")}`
+      ? `${API.defaults.baseURL}/${rawImage.replace(/\\/g, "/")}`
       : "https://via.placeholder.com/180";
   };
 

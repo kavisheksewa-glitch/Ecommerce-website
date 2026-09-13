@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import axios from "axios";
+import API from "../../utils/api";
 import SellerHeader from "../SellerHeader/SellerHeader";
 import "./ProductList.css";
 
@@ -13,7 +13,7 @@ function ProductsList() {
   const selectedCategory = queryParams.get("category");
 
   useEffect(() => {
-    axios.get("https://ecommerce-website-ggui.onrender.com/api/products")
+    API.get("/api/products")
       .then((response) => {
         const allProducts = response.data;
         
@@ -54,7 +54,7 @@ function ProductsList() {
                 <div className="card shadow border-0 rounded-4 h-100 p-3 Seller_card">
                   {product.productImage && (
                     <img 
-                      src={`https://ecommerce-website-ggui.onrender.com/${product.productImage}`} 
+                      src={`${API.defaults.baseURL}/${product.productImage}`} 
                       alt={product.productName} 
                       className="card-img-top rounded-3"
                       style={{ height: "300px", objectFit: "contain" }}

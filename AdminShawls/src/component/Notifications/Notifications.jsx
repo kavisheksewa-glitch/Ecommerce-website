@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
+import { BASE_URL } from "../../utils/api";
 function Notifications() {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -19,7 +19,7 @@ function Notifications() {
     }
 
     try {
-      const response = await fetch("https://ecommerce-website-ggui.onrender.com/api/customer/notifications", {
+      const response = await fetch(`${BASE_URL}/api/customer/notifications`, {
         headers: {
           Authorization: `Bearer ${token}`, // ✅ pehle yeh missing tha
         },
@@ -44,7 +44,7 @@ function Notifications() {
   const handleMarkAsRead = async (id) => {
     try {
       const response = await fetch(
-        `https://ecommerce-website-ggui.onrender.com/api/customer/notifications/read/${id}`,
+        `${BASE_URL}/api/customer/notifications/read/${id}`,
         {
           method: "PUT",
           headers: {
@@ -66,7 +66,7 @@ function Notifications() {
   const handleClearAll = async () => {
     if (!token) return;
     try {
-      const response = await fetch("https://ecommerce-website-ggui.onrender.com/api/customer/notifications/clear", {
+      const response = await fetch(`${BASE_URL}/api/customer/notifications/clear`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`, // ✅ pehle yeh missing tha

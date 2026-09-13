@@ -5,7 +5,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Notification.css";
 import logo from "../../assets/logooo.png";
-import axios from "axios";
+import API from "../../utils/api";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -27,7 +27,7 @@ function Notification() {
         return;
       }
 
-      const response = await axios.get("https://ecommerce-website-ggui.onrender.com/api/seller/notifications", {
+      const response = await API.get("/api/seller/notifications", {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -56,7 +56,7 @@ function Notification() {
     try {
       const token = localStorage.getItem("sellerToken");
 
-      await axios.put(`https://ecommerce-website-ggui.onrender.com/api/seller/notifications/${id}/read`, {}, {
+      await API.put(`/api/seller/notifications/${id}/read`, {}, {
         headers: {
           Authorization: `Bearer ${token}`
         }
