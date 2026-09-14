@@ -249,7 +249,7 @@ body::-webkit-scrollbar {
   .customer_icons {
     margin-top: 24px !important;
     justify-content: center !important;
-    gap: 22px !important;
+    gap: 2px !important;
     padding-top: 20px;
     border-top: 1px solid rgba(74, 58, 11, 0.2);
     width: 100%;
@@ -302,8 +302,54 @@ body::-webkit-scrollbar {
 
   /* Mobile Badges Position Adjustment */
   .customer_icons .badge {
-    top: -2px !important;
+    top: -8px !important;
     right: 18% !important; /* Expand hone par badge icon ke upar sahi align rahega */
     font-size: 10px !important;
+  }
+}
+
+
+/* Badge Styling Base (Laptop/Default) */
+.customer_badge_position {
+  position: absolute !important;
+  top: 0 !important;
+  start: 100% !important;
+  font-size: 10px !important;
+  padding: 0.35em 0.5em !important;
+}
+
+/* Tablet & Mobile Media Query (<992px) */
+@media (max-width: 991.98px) {
+  .customer_icons {
+    width: 100% !important;
+    max-width: 420px;
+    display: flex !important;
+    justify-content: space-around !important;
+    align-items: center !important;
+    margin-top: 20px !important;
+    padding: 15px 0 !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.15) !important;
+  }
+
+  .customer_icons > a,
+  .customer_icons > div {
+    flex: 1 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 5px 0 !important;
+    position: relative !important;
+  }
+
+  .customer_icons svg {
+    font-size: 24px !important;
+  }
+
+  /* Mobile/Tablet par Red Badge ki position fix karne ke liye */
+  .customer_badge_position {
+    top: 2px !important;
+    right: 22% !important;
+    left: auto !important;
+    transform: none !important;
   }
 }

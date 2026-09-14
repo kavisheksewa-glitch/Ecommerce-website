@@ -1,223 +1,5 @@
 
 
-// const Customer = require("../models/Customer");
-// const Notification = require("../models/Notification");
-// const bcrypt = require("bcryptjs");
-// const jwt = require("jsonwebtoken");
-
-// const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_key_here";
-
-// const registerCustomer = async (req, res) => {
-//   try {
-//     const { email, password } = req.body;
-
-//     const existingUser = await Customer.findOne({ email });
-//     if (existingUser) {
-//       return res.status(400).json({ message: "Email is already registered!" });
-//     }
-
-//     const saltRounds = 10;
-//     const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-//     const newCustomer = new Customer({
-//       ...req.body,
-//       password: hashedPassword,
-//     });
-
-//     const savedCustomer = await newCustomer.save();
-
-//     await Notification.create({
-//       userId: savedCustomer._id,
-//       title: "Welcome to Kavi Shawls! 🎉",
-//       message: "Thank you for registering with us. Enjoy exploring our luxury collection.",
-//       type: "offer"
-//     });
-
-//     // ✅ role add kiya
-//     const token = jwt.sign(
-//       { id: savedCustomer._id, email: savedCustomer.email, role: "customer" },
-//       JWT_SECRET,
-//       { expiresIn: "1d" }
-//     );
-
-//     // 🔒 Response me ab sirf message + token — customer ka poora data nahi bheja
-//     res.status(201).json({
-//       message: "Registration successful!",
-//       token,
-//     });
-//   } catch (error) {
-//     console.error("Error during registration:", error);
-//     res.status(500).json({ message: "Server error, please try again." });
-//   }
-// };
-
-// const loginCustomer = async (req, res) => {
-//   try {
-//     const { email: userEmail, password: userPassword } = req.body;
-
-//     const user = await Customer.findOne({ email: userEmail });
-//     if (!user) {
-//       return res.status(400).json({ message: "Invalid email or password!" });
-//     }
-
-//     const isMatch = await bcrypt.compare(userPassword, user.password);
-//     if (!isMatch) {
-//       return res.status(400).json({ message: "Invalid email or password!" });
-//     }
-
-//     await Notification.create({
-//       userId: user._id,
-//       title: "Login Successful! 🔓",
-//       message: `Welcome back, ${user.fullName || "Customer"}! You successfully logged into your account.`,
-//       type: "login"
-//     });
-
-//     // ✅ role add kiya
-//     const token = jwt.sign(
-//       { id: user._id, email: user.email, role: "customer" },
-//       JWT_SECRET,
-//       { expiresIn: "1d" }
-//     );
-
-//     // 🔒 Response me ab sirf message + token
-//     res.status(200).json({
-//       message: "Login Successfully",
-//       token,
-//     });
-//   } catch (error) {
-//     console.error("Error during login:", error);
-//     res.status(500).json({ message: "Server error during login" });
-//   }
-// };
-
-// const getAllCustomers = async (req, res) => {
-//   try {
-//     const users = await Customer.find().select("-password").sort({ createdAt: -1 });
-//     res.status(200).json({ success: true, users });
-//   } catch (error) {
-//     console.error("Error fetching users:", error);
-//     res.status(500).json({ message: "Server error while fetching users." });
-//   }
-// };
-
-// module.exports = {
-//   registerCustomer,
-//   loginCustomer,
-//   getAllCustomers,
-// };
-
-//remove
-
-
-
-// const Customer = require("../models/Customer");
-// const Notification = require("../models/Notification");
-// const bcrypt = require("bcryptjs");
-// const jwt = require("jsonwebtoken");
-
-// const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_key_here";
-
-// const registerCustomer = async (req, res) => {
-//   try {
-//     const { email, password } = req.body;
-
-//     const existingUser = await Customer.findOne({ email });
-//     if (existingUser) {
-//       return res.status(400).json({ message: "Email is already registered!" });
-//     }
-
-//     const saltRounds = 10;
-//     const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-//     const newCustomer = new Customer({
-//       ...req.body,
-//       password: hashedPassword,
-//     });
-
-//     const savedCustomer = await newCustomer.save();
-
-//     await Notification.create({
-//       userId: savedCustomer._id,
-//       title: "Welcome to Kavi Shawls! 🎉",
-//       message: "Thank you for registering with us. Enjoy exploring our luxury collection.",
-//       type: "offer"
-//     });
-
-//     const token = jwt.sign(
-//       { id: savedCustomer._id, email: savedCustomer.email, role: "customer" },
-//       JWT_SECRET,
-//       { expiresIn: "1d" }
-//     );
-
-//     res.status(201).json({
-//       success: true,
-//       message: "Registration successful!",
-//       token,
-//     });
-//   } catch (error) {
-//     console.error("Error during registration:", error);
-//     res.status(500).json({ message: "Server error, please try again." });
-//   }
-// };
-
-// const loginCustomer = async (req, res) => {
-//   try {
-//     const { email: userEmail, password: userPassword } = req.body;
-
-//     const user = await Customer.findOne({ email: userEmail });
-//     if (!user) {
-//       return res.status(400).json({ message: "Invalid email or password!" });
-//     }
-
-//     const isMatch = await bcrypt.compare(userPassword, user.password);
-//     if (!isMatch) {
-//       return res.status(400).json({ message: "Invalid email or password!" });
-//     }
-
-//     await Notification.create({
-//       userId: user._id,
-//       title: "Login Successful! 🔓",
-//       message: `Welcome back, ${user.fullName || "Customer"}! You successfully logged into your account.`,
-//       type: "login"
-//     });
-
-//     const token = jwt.sign(
-//       { id: user._id, email: user.email, role: "customer" },
-//       JWT_SECRET,
-//       { expiresIn: "1d" }
-//     );
-
-//     res.status(200).json({
-//       success: true,
-//       message: "Login Successfully",
-//       token,
-//     });
-//   } catch (error) {
-//     console.error("Error during login:", error);
-//     res.status(500).json({ message: "Server error during login" });
-//   }
-// };
-
-// const getAllCustomers = async (req, res) => {
-//   try {
-//     const users = await Customer.find().select("-password").sort({ createdAt: -1 });
-//     res.status(200).json({ success: true, users });
-//   } catch (error) {
-//     console.error("Error fetching users:", error);
-//     res.status(500).json({ message: "Server error while fetching users." });
-//   }
-// };
-
-// module.exports = {
-//   registerCustomer,
-//   loginCustomer,
-//   getAllCustomers,
-// };
-
-
-
-//all logic in controller
-
 
 
 const Customer = require("../models/Customer");
@@ -232,22 +14,18 @@ const jwt = require("jsonwebtoken");
 
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_key_here";
 
+const { sendOtpEmail } = require("../utils/SendEmail");
+
+const OTP_VALID_MS = 180 * 1000; // 180 seconds
+const generateOtp = () => Math.floor(100000 + Math.random() * 900000).toString();
+
 // ==================== AUTH CONTROLLERS ====================
 
 const registerCustomer = async (req, res) => {
   try {
     const {
-      fullName,
-      email,
-      mobile,
-      dob,
-      password,
-      houseNo,
-      street,
-      city,
-      state,
-      pincode,
-      country,
+      fullName, email, mobile, dob, password,
+      houseNo, street, city, state, pincode, country,
     } = req.body;
 
     const existingUser = await Customer.findOne({ email });
@@ -257,25 +35,67 @@ const registerCustomer = async (req, res) => {
 
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
+    const otp = generateOtp();
 
     const newCustomer = new Customer({
-      fullName,
-      email,
-      mobile,
-      dob,
+      fullName, email, mobile, dob,
       password: hashedPassword,
-      houseNo,
-      street,
-      city,
-      state,
-      pincode,
+      houseNo, street, city, state, pincode,
       country: country || "India",
+      isVerified: false,
+      otp,
+      otpExpiry: new Date(Date.now() + OTP_VALID_MS),
     });
 
     const savedCustomer = await newCustomer.save();
 
+    await sendOtpEmail(savedCustomer.email, otp, savedCustomer.fullName);
+
+    res.status(201).json({
+      message: "Registration successful! OTP sent to your email.",
+      email: savedCustomer.email,
+    });
+  } catch (error) {
+    console.error("Error during registration:", error);
+    res.status(500).json({ message: error.message || "Server error, please try again." });
+  }
+};
+
+const verifyOtp = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    if (!email || !otp) {
+      return res.status(400).json({ success: false, message: "Email and OTP are required" });
+    }
+
+    const customer = await Customer.findOne({ email });
+    if (!customer) {
+      return res.status(404).json({ success: false, message: "Customer not found" });
+    }
+
+    if (customer.isVerified) {
+      return res.status(400).json({ success: false, message: "Email already verified" });
+    }
+
+    if (!customer.otp || !customer.otpExpiry) {
+      return res.status(400).json({ success: false, message: "No OTP found, please resend OTP" });
+    }
+
+    if (Date.now() > new Date(customer.otpExpiry).getTime()) {
+      return res.status(400).json({ success: false, message: "OTP expired, please resend OTP" });
+    }
+
+    if (customer.otp !== otp) {
+      return res.status(400).json({ success: false, message: "Enter correct OTP" });
+    }
+
+    customer.isVerified = true;
+    customer.otp = undefined;
+    customer.otpExpiry = undefined;
+    await customer.save();
+
     const token = jwt.sign(
-      { id: savedCustomer._id, email: savedCustomer.email, role: "customer" },
+      { id: customer._id, email: customer.email, role: "customer" },
       JWT_SECRET,
       { expiresIn: "1d" }
     );
@@ -287,23 +107,52 @@ const registerCustomer = async (req, res) => {
       maxAge: 24 * 60 * 60 * 1000,
     });
 
-    res.status(201).json({
-      message: "Registration successful!",
+    res.status(200).json({
+      success: true,
+      message: "Email verified successfully!",
       token,
-      userId: savedCustomer._id,
+      userId: customer._id,
     });
 
     Notification.create({
-      userId: savedCustomer._id,
+      userId: customer._id,
       title: "Welcome to Kavi Shawls! 🎉",
-      message: "Thank you for registering with us. Enjoy shopping!",
+      message: "Your email has been verified. Enjoy shopping!",
       type: "offer",
-    }).catch((notifyError) => {
-      console.error("Notification creation failed (register):", notifyError.message);
-    });
+    }).catch((err) => console.error("Notification creation failed (verify):", err.message));
   } catch (error) {
-    console.error("Error during registration:", error);
-    res.status(500).json({ message: error.message || "Server error, please try again." });
+    console.error("Error verifying OTP:", error);
+    res.status(500).json({ success: false, message: error.message || "Server error" });
+  }
+};
+
+const resendOtp = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ success: false, message: "Email is required" });
+    }
+
+    const customer = await Customer.findOne({ email });
+    if (!customer) {
+      return res.status(404).json({ success: false, message: "Customer not found" });
+    }
+
+    if (customer.isVerified) {
+      return res.status(400).json({ success: false, message: "Email already verified" });
+    }
+
+    const otp = generateOtp();
+    customer.otp = otp;
+    customer.otpExpiry = new Date(Date.now() + OTP_VALID_MS);
+    await customer.save();
+
+    await sendOtpEmail(customer.email, otp, customer.fullName);
+
+    res.status(200).json({ success: true, message: "OTP resent successfully" });
+  } catch (error) {
+    console.error("Error resending OTP:", error);
+    res.status(500).json({ success: false, message: error.message || "Server error" });
   }
 };
 
@@ -319,6 +168,15 @@ const loginCustomer = async (req, res) => {
     const isMatch = await bcrypt.compare(userPassword, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid email or password!" });
+    }
+
+    // 👇 Email verify check
+    if (!user.isVerified) {
+      return res.status(403).json({
+        message: "Please verify your email before logging in.",
+        notVerified: true,
+        email: user.email,
+      });
     }
 
     const token = jwt.sign(
@@ -711,4 +569,6 @@ module.exports = {
   clearAllNotifications,
   getCustomerProfile,
   updateCustomerProfile,
+  verifyOtp,
+  resendOtp
 };

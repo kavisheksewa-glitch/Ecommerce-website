@@ -36,6 +36,7 @@ import ProductDetail from "./component/ProductDetails/ProductDetail";
 import SupportDesk from "./component/support/SupportDesk";  
 import OrderHistory from "./component/orderHistory/OrderHistory";
 import Profile from "./component/Profile/Profile";
+import VerifyOtp from "./component/VerifyOtp";
 // Admin Pages
 import AdminLogin from "./pages/AdminLoginPage/AdminLogin";
 import AdminDashboard from "./pages/AdminDashBoard/AdminDashboard";
@@ -64,6 +65,7 @@ import SellerForgetPassword from "./components/SellerForgetPassword/SellerForget
 import FrontPage from './FrontPage';
 //import VerifyEmail from "./component/Verifyemail";
 // Customer Layout (Includes Header and Footer)
+import { BASE_URL } from "./utils/api";
 const CustomerLayout = () => (
   <div>
     <Header />
@@ -92,7 +94,7 @@ function AppContent() {
       return;
     }
 
-    fetch("https://ecommerce-website-ggui.onrender.com/api/customer/cart", {
+    fetch("${BASE_URL}/api/customer/cart", {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(async (res) => {
@@ -125,7 +127,7 @@ function AppContent() {
     }
 
     try {
-      const response = await fetch("https://ecommerce-website-ggui.onrender.com/api/customer/cart/add", {
+      const response = await fetch(`${BASE_URL}/cart/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -235,7 +237,7 @@ function AppContent() {
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/checkout" element={<Checkout />} />
-          {/* <Route path="/verify-email" element={<VerifyEmail />} /> */}
+          <Route path="/verify-email" element={<VerifyOtp />} />
           <Route
             path="/product/:id"
             element={

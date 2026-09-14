@@ -9,6 +9,8 @@ const {
   registerCustomer,
   loginCustomer,
   logoutCustomer,
+  verifyOtp,      
+  resendOtp,
   getAllProductsForCustomer,
   addToWishlist,
   removeFromWishlist,
@@ -78,6 +80,57 @@ const {
  *         description: Email is already registered
  */
 router.post("/register", registerCustomer);
+
+/**
+ * @swagger
+ * /api/customer/verify-otp:
+ *   post:
+ *     summary: Verify customer email using OTP
+ *     tags: [Customer Authentication & Management]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email, otp]
+ *             properties:
+ *               email: { type: string }
+ *               otp: { type: string }
+ *     responses:
+ *       200:
+ *         description: Email verified successfully
+ *       400:
+ *         description: Enter correct OTP / OTP expired / Email already verified
+ *       404:
+ *         description: Customer not found
+ */
+router.post("/verify-otp", verifyOtp);
+
+/**
+ * @swagger
+ * /api/customer/resend-otp:
+ *   post:
+ *     summary: Resend OTP to customer's registered email
+ *     tags: [Customer Authentication & Management]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email]
+ *             properties:
+ *               email: { type: string }
+ *     responses:
+ *       200:
+ *         description: OTP resent successfully
+ *       400:
+ *         description: Email already verified
+ *       404:
+ *         description: Customer not found
+ */
+router.post("/resend-otp", resendOtp);
 
 /**
  * @swagger

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { 
   FaHeart, 
@@ -164,11 +163,10 @@ function Header() {
   return (
     <div className="customer_header-back border-bottom sticky-top z-3">
 
-      {/* ✅ Corrected Colors: Using original #eac35fe4 to match Header.css Gold Theme */}
       <style>{`
         @media (max-width: 991.98px) {
           .customer_mobile_collapse.show {
-            background-color: #eac35fe4 !important;
+            background-color: #eac35f !important;
             opacity: 1 !important;
           }
         }
@@ -306,10 +304,7 @@ function Header() {
               >
                 <FaHeart />
                 {wishlistCount > 0 && (
-                  <span
-                    className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                    style={{ fontSize: "10px", padding: "0.35em 0.5em" }}
-                  >
+                  <span className="position-absolute badge rounded-pill bg-danger customer_badge_position">
                     {wishlistCount}
                   </span>
                 )}
@@ -323,10 +318,7 @@ function Header() {
               >
                 <FaBell />
                 {unreadCount > 0 && (
-                  <span
-                    className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                    style={{ fontSize: "10px", padding: "0.35em 0.5em" }}
-                  >
+                  <span className="position-absolute badge rounded-pill bg-danger customer_badge_position">
                     {unreadCount}
                   </span>
                 )}
@@ -340,10 +332,7 @@ function Header() {
               >
                 <FaShoppingCart />
                 {cartCount > 0 && (
-                  <span
-                    className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                    style={{ fontSize: "10px", padding: "0.35em 0.5em" }}
-                  >
+                  <span className="position-absolute badge rounded-pill bg-danger customer_badge_position">
                     {cartCount}
                   </span>
                 )}

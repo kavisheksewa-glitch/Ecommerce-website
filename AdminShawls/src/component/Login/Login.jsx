@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
@@ -51,6 +50,11 @@ function Login() {
         alert(data.message || "Login Successful!");
         navigate("/customer");
       } else {
+        // 👇 Agar email verify nahi hai to verify page pe bhejein
+        if (data.notVerified) {
+          navigate("/verify-email", { state: { email: data.email || formData.email } });
+          return;
+        }
         setError(data.message || "Invalid email or password!");
       }
     } catch (err) {

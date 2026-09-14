@@ -41,19 +41,17 @@ function CustomerRegister() {
     }
 
     try {
-      const response = await API.post("/api/customer/register", formData);
-      const data = response.data;
+  const response = await API.post("/api/customer/register", formData);
+  const data = response.data;
 
-      // ✅ Registration successful, redirecting directly to login
-      alert("Registration Successful! You can now log in.");
-      navigate("/login");
-    } catch (error) {
-      console.error("Error during registration:", error);
-      const errorMsg = error.response?.data?.message || error.message || "Server connection failed. Please try again later.";
-      alert(errorMsg);
-    }
+  // ✅ Registration successful, redirect to OTP verification page
+  navigate("/verify-email", { state: { email: formData.email } });
+} catch (error) {
+  console.error("Error during registration:", error);
+  const errorMsg = error.response?.data?.message || error.message || "Server connection failed. Please try again later.";
+  alert(errorMsg);
+}
   };
-
   return (
     <div className="video-bg-container">
       {/* Background Video */}
