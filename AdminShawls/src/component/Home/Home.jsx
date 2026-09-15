@@ -3,10 +3,10 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Home.css";
 
-import image1 from "../../assets/1.png";
-import image1111 from "../../assets/h1.png";
-import image1112 from "../../assets/h2.png";
-import image1113 from "../../assets/h3.png";
+import image1 from "../../assets/1.webp";
+import image1111 from "../../assets/h1.webp";
+import image1112 from "../../assets/h2.webp";
+import image1113 from "../../assets/h3.webp";
 import API, { BASE_URL } from "../../utils/api";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";

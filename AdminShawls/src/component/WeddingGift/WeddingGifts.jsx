@@ -30,7 +30,7 @@ import "../Featured/Featuredcol.css";
 import "./WeddingGift.css";
 
 import { WeddingShawls } from "../../data/shawls";
-import weddingBgImage from "../../assets/image.png";
+import weddingBgImage from "../../assets/image.webp";
 
 function WeddingGifts() {
   const navigate = useNavigate();

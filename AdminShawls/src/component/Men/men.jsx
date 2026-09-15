@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import API, { BASE_URL } from "../../utils/api";
-import image13 from "../../assets/men.png";
+import image13 from "../../assets/men.webp";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";

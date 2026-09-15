@@ -14,7 +14,7 @@ import {
   TwitterIcon,
   EmailIcon,
 } from "react-share";
-import festiveBgImage from "../../assets/image.png";
+import festiveBgImage from "../../assets/image.webp";
 import { FestiveShawls } from "../../data/shawls";
 
 function FestiveGifts() {

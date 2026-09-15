@@ -16,7 +16,7 @@ import {
   EmailIcon,
 } from "react-share";
 import "../BirthdayGifts/BirthdayGift.css";
-import birthdayBgImage from "../../assets/image1.png";
+import birthdayBgImage from "../../assets/image1.webp";
 import { BirthdayShawls } from "../../data/shawls";
 
 function BirthdayGifts() {

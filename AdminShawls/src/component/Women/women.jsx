@@ -4,7 +4,7 @@ import API, { BASE_URL } from "../../utils/api";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import image11 from "../../assets/spring.png";
+import image11 from "../../assets/h3.webp";
 import { FaShareAlt, FaLink, FaHeart, FaFilter } from "react-icons/fa";
 import {
   WhatsappShareButton,

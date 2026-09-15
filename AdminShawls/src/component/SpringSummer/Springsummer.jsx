@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import image111 from "../../assets/spring.png";
+import image111 from "../../assets/spring.webp";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";

@@ -16,7 +16,7 @@ import {
 } from "react-share";
 import "../Featured/Featuredcol.css";
 
-import luxuryBgImage from "../../assets/image.png";
+import luxuryBgImage from "../../assets/image.webp";
 import { LuxuryShawls } from "../../data/shawls";
 
 function LuxuryGiftSets() {
