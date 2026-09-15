@@ -65,7 +65,7 @@ function VerifyOtp() {
       localStorage.setItem("customerRole", "customer");
 
       setMessage("Email verified successfully!");
-      navigate("/customer");
+      navigate("/login");
     } catch (err) {
       setError(err.response?.data?.message || "Enter correct OTP");
     }
