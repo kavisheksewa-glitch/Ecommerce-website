@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 import "./GiftGuide.css";
 import image14 from "../../assets/gift0.webp";
 import image15 from "../../assets/giftbir.webp";
-import image16 from "../../assets/giftwed.png";
-import image17 from "../../assets/giftfest.png";
-import image18 from "../../assets/giftset.png";
+import image16 from "../../assets/giftwed.webp";
+import image17 from "../../assets/giftfest.webp";
+import image18 from "../../assets/giftset.webp";
 
 function GiftGuide() {
   // Har gift object mein 'path' property jodh di gayi hai
