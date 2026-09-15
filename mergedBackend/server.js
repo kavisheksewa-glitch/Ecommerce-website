@@ -26,7 +26,8 @@ app.use(cors({
     "http://localhost:5173",
     "http://localhost:5174",
     "https://kavi-shawls.vercel.app",
-    "https://kavisheksewa-glitch.github.io"
+    "https://kavisheksewa-glitch.github.io",
+    "https://ecommerce-website-svra.vercel.app"
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   credentials: true, // ✅ Zaroori hai taaki cookies frontend se backend jayein
