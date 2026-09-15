@@ -1,69 +1,94 @@
-// const nodemailer = require("nodemailer");
 
-// const transporter = nodemailer.createTransport({
-//   host: process.env.SMTP_HOST,
-//   port: Number(process.env.SMTP_PORT) || 465,
-//   secure: true, // true for port 465 (SSL/TLS)
-//   auth: {
-//     user: process.env.SMTP_USER,
-//     pass: process.env.SMTP_PASS,
-//   },
-// });
+const { BrevoClient } = require("@getbrevo/brevo");
 
-// const sendOtpEmail = async (toEmail, otp, fullName = "Customer") => {
-//   const mailOptions = {
-//     from: `"Kavi Shawls" <${process.env.SMTP_USER}>`,
-//     to: toEmail,
-//     subject: "Verify your email - OTP Code",
-//     html: `
-//       <div style="font-family: Arial, sans-serif; max-width: 480px; margin:auto;">
-//         <h2>Kavi Shawls - Email Verification</h2>
-//         <p>Hi ${fullName},</p>
-//         <p>Thank you for registering. Use the OTP below to verify your email:</p>
-//         <h1 style="letter-spacing: 6px;">${otp}</h1>
-//         <p>This OTP is valid for <b>180 seconds</b> only.</p>
-//         <p>If you did not request this, please ignore this email.</p>
-//       </div>
-//     `,
-//   };
+const brevo = new BrevoClient({
+  apiKey: process.env.BREVO_API_KEY,
+});
 
-//   await transporter.sendMail(mailOptions);
-// };
-
-// module.exports = { sendOtpEmail };
-
-
-
-//resend
-
-
-
-const { Resend } = require('resend');
-
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-const sendOtpEmail = async (toEmail, otp, fullName = "Customer") => {
+const sendOtpEmail = async (
+  toEmail,
+  otp,
+  fullName = "Customer"
+) => {
   try {
-    const data = await resend.emails.send({
-      from: 'Kavi Shawls <onboarding@resend.dev>',
-      to: toEmail,
+    const result = await brevo.transactionalEmails.sendTransacEmail({
+      sender: {
+        name: process.env.BREVO_FROM_NAME || "Kavi Shawls",
+        email: process.env.BREVO_FROM_EMAIL,
+      },
+
+      to: [
+        {
+          email: toEmail,
+          name: fullName,
+        },
+      ],
+
       subject: "Verify your email - OTP Code",
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 480px; margin:auto;">
-          <h2>Kavi Shawls - Email Verification</h2>
+
+      htmlContent: `
+        <div style="
+          font-family: Arial, sans-serif;
+          max-width: 480px;
+          margin: 30px auto;
+          padding: 25px;
+          border: 1px solid #ddd;
+          border-radius: 10px;
+        ">
+
+          <h2 style="margin-bottom: 20px;">
+            Kavi Shawls - Email Verification
+          </h2>
+
           <p>Hi ${fullName},</p>
-          <p>Thank you for registering. Use the OTP below to verify your email:</p>
-          <h1 style="letter-spacing: 6px;">${otp}</h1>
-          <p>This OTP is valid for <b>180 seconds</b> only.</p>
-          <p>If you did not request this, please ignore this email.</p>
+
+          <p>
+            Thank you for registering with Kavi Shawls.
+            Use the OTP below to verify your email:
+          </p>
+
+          <div style="
+            text-align: center;
+            margin: 25px 0;
+          ">
+            <h1 style="
+              letter-spacing: 8px;
+              font-size: 32px;
+            ">
+              ${otp}
+            </h1>
+          </div>
+
+          <p>
+            This OTP is valid for <b>180 seconds</b> only.
+          </p>
+
+          <p>
+            If you did not request this, please ignore this email.
+          </p>
+
+          <hr />
+
+          <p style="font-size: 12px; color: #777;">
+            © Kavi Shawls
+          </p>
+
         </div>
       `,
     });
 
-    console.log("OTP Email sent successfully via Resend:", data);
-    return data;
+    console.log(
+      "OTP Email sent successfully via Brevo:",
+      result
+    );
+
+    return result;
   } catch (error) {
-    console.error("Error sending OTP email with Resend:", error);
+    console.error(
+      "Error sending OTP email with Brevo:",
+      error
+    );
+
     throw error;
   }
 };
