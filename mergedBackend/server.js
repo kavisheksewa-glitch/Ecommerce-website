@@ -25,7 +25,7 @@ app.use(cors({
   origin: [
     "http://localhost:5173",
     "http://localhost:5174",
-    "https://kavi-shawls.vercel.app"
+    "https://kavi-shawls.vercel.app",
     "https://kavisheksewa-glitch.github.io"
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
