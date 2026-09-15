@@ -38,16 +38,13 @@
 
 
 
-import { Resend } from 'resend';
+const { Resend } = require('resend');
 
-// Resend client initialize karo using environment variable
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendOtpEmail = async (toEmail, otp, fullName = "Customer") => {
   try {
     const data = await resend.emails.send({
-      // Free testing ke liye 'onboarding@resend.dev' use hota hai
-      // (Jab aap domain verify karloge tab 'Kavi Shawls <support@yourdomain.com>' use kar sakte ho)
       from: 'Kavi Shawls <onboarding@resend.dev>',
       to: toEmail,
       subject: "Verify your email - OTP Code",
@@ -71,4 +68,4 @@ const sendOtpEmail = async (toEmail, otp, fullName = "Customer") => {
   }
 };
 
-export { sendOtpEmail };
+module.exports = { sendOtpEmail };
