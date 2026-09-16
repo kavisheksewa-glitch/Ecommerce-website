@@ -18,7 +18,7 @@ function Wishlist() {
     }
 
     try {
-      const response = await fetch("${BASE_URL}/api/customer/wishlist", {
+      const response = await fetch(`${BASE_URL}/api/customer/wishlist`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
