@@ -160,7 +160,7 @@ h1 {
   object-position: top;
 }
 
-.Customer_hero-image {
+.Customer_hero0-image {
   width: 100% !important;
   height: auto !important;
   object-fit: contain !important;
@@ -176,7 +176,7 @@ h1 {
     align-items: flex-start;
   }
 
-  .Customer_hero-image {
+  .Customer_hero0-image {
     object-fit: contain !important;
     object-position: top center !important;
   }

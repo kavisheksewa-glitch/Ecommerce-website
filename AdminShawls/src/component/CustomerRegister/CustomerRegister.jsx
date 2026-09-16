@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import API from "../../utils/api"; // ✅ Import central API config
 import { useNavigate } from "react-router-dom";
 import "./CustomerRegister.css"; // CSS file import karein
-import bgVideo from "../../assets/Register-bg.mp4";
+import bgVideo from "../../assets/Register-bg.webm";
 
 function CustomerRegister() {
   const navigate = useNavigate();

@@ -694,7 +694,7 @@ function Home() {
                   key={index}
                   src={img}
                   alt={`Kavi Shawls Banner ${(index % bannerImages.length) + 1}`}
-                  className="Customer_hero-image w-100 flex-shrink-0"
+                  className="Customer_hero0-image w-100 flex-shrink-0"
                   style={{ minWidth: "100%", objectFit: "cover", objectPosition: "top" }}
                 />
               ))}
