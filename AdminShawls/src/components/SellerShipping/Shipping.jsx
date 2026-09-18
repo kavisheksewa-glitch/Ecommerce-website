@@ -107,7 +107,7 @@ function Shipping() {
           </div>
         ) : orders.length === 0 ? (
           <div className="text-center py-5">
-            <h5 className="text-muted">Abhi tak koi order delivery ke liye nahi aaya hai.</h5>
+            <h5 className="text-muted">No orders or payments have been received yet..</h5>
           </div>
         ) : (
           <div className="row g-4">

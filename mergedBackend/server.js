@@ -90,7 +90,7 @@ app.use("/api/customer", require("./routes/customerAuthRoutes"));
 app.use("/api/shawls/orders", require("./routes/orderRoutes"));
 app.use("/api/seller/notifications", require("./routes/sellerNotificationRoutes"));
 app.use("/api/shawls/auth/admin", require("./routes/adminRoutes"));
-
+app.use("/api/customer/support", require("./routes/Customersupportroutes"));
 // ==================== DEFAULT ROUTE ====================
 app.get("/", (req, res) => {
   res.send("Merged Backend (Admin + Seller + Shawls) is Running...");

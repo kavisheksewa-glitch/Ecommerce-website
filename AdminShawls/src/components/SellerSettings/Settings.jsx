@@ -263,7 +263,7 @@ function Settings() {
 
                   <h5 className="fw-bold Seller_text-brown mb-3">🏷️ Brand Details</h5>
                   <p className="text-muted" style={{ fontSize: "0.9rem" }}>
-                    Ye naam aur logo aapke saare products pe dikhega — dobara add karne ki zaroorat nahi.
+                    This logo name view on all Products.don't add again.
                   </p>
 
                   <div className="row">
