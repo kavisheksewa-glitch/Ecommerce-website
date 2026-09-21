@@ -1,11 +1,28 @@
+
+
+
 const mongoose = require("mongoose");
 const Cart = require("../models/Cart");
 const Notification = require("../models/Notification");
 
 const addToCart = async (req, res) => {
   try {
-    const { userId, productId, title, price, description, image, quantity } = req.body;
-    
+    const {
+      userId,
+      productId,
+      title,
+      price,
+      description,
+      image,
+      images,     // ✅ NEW: saari product images
+      quantity,
+      sellerId,   // ✅ NEW: Cart schema me required hai
+    } = req.body;
+
+    // ✅ NEW: images array safe banao (na aaye to main image se fallback)
+    const cartImages =
+      Array.isArray(images) && images.length > 0 ? images : image ? [image] : [];
+
     // 🛒 Cart mein save karein
     await Cart.create({
       userId,
@@ -13,8 +30,10 @@ const addToCart = async (req, res) => {
       title,
       price,
       description,
-      image,
-      quantity: quantity || 1
+      image: image || cartImages[0] || "",
+      images: cartImages,
+      quantity: quantity || 1,
+      sellerId,
     });
 
     // 🔔 Notification Create Karein (ObjectId conversion added)

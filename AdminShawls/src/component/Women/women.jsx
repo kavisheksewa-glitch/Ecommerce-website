@@ -17,6 +17,7 @@ import {
   EmailIcon,
 } from "react-share";
 import { womenShawls } from "../../data/shawls";
+import ProductImageSlider from "../../components/ProductImageSlider";
 import "./women.css";
 
 function Women() {
@@ -91,8 +92,32 @@ function Women() {
                 rawPrice: finalPrice || 0,
               originalPrice: discountPercent > 0 ? `₹${basePrice}` : "",
               discount: discountPercent > 0 ? `${discountPercent}% OFF` : null,
-              image: p.productImage?.startsWith("http") ? p.productImage : `${BASE_URL}/${p.productImage}`,
-              brandLogo: p.sellerId?.brandLogo ? (p.sellerId.brandLogo.startsWith("http") ? p.sellerId.brandLogo : `${BASE_URL}/${p.sellerId.brandLogo}`): "",
+              // Support both multiple images and old single-image products
+              images: (
+                Array.isArray(p.productImages) && p.productImages.length > 0
+                  ? p.productImages
+                  : [p.productImage || p.image].filter(Boolean)
+              ).map((rawImage) =>
+                rawImage?.startsWith("http")
+                  ? rawImage
+                  : `${BASE_URL}/${String(rawImage).replace(/\\\\/g, "/").replace(/^\\// "")}`
+              ),
+              image: (() => {
+                const rawImage =
+                  Array.isArray(p.productImages) && p.productImages.length > 0
+                    ? p.productImages[0]
+                    : p.productImage || p.image;
+
+                if (!rawImage) return "https://via.placeholder.com/150";
+                return rawImage.startsWith("http")
+                  ? rawImage
+                  : `${BASE_URL}/${String(rawImage).replace(/\\\\/g, "/").replace(/^\\// "")}`;
+              })(),
+              brandLogo: p.sellerId?.brandLogo
+                ? (p.sellerId.brandLogo.startsWith("http")
+                    ? p.sellerId.brandLogo
+                    : `${BASE_URL}/${p.sellerId.brandLogo}`)
+                : "",
               stock: `Stock: ${p.stockQuantity}`,
               fabric: p.fabric || "N/A",
               color: p.color || "N/A",
@@ -707,10 +732,14 @@ function Women() {
                         </div>
                       )}
 
-                      <img
-                        src={item.image}
-                        className="card-img-top rounded Customer_product-image"
+                      <ProductImageSlider
+                        images={
+                          item.images && item.images.length > 0
+                            ? item.images
+                            : [item.image]
+                        }
                         alt={item.title}
+                        hideArrowsOnMobile
                       />
 
                       <button

@@ -1,3 +1,6 @@
+
+
+
 import React, { useState, useEffect } from "react";
 import image111 from "../../assets/spring.webp";
 import { useNavigate } from "react-router-dom";
@@ -17,6 +20,7 @@ import {
 import "./Springsummer.css";
 import { springShawls } from "../../data/shawls";
 import API, { BASE_URL } from "../../utils/api";
+import ProductImageSlider from "../../components/ProductImageSlider";
 
 function Springsummer() {
   const navigate = useNavigate();
@@ -103,7 +107,20 @@ function Springsummer() {
                 rawPrice: finalPrice || 0,
               originalPrice: discountPercent > 0 ? `₹${basePrice}` : "",
               discount: discountPercent > 0 ? `${discountPercent}% OFF` : null,
-              image: p.productImage?.startsWith("http") ? p.productImage : `${BASE_URL}/${p.productImage}`,
+              images: (
+                Array.isArray(p.productImages) && p.productImages.length > 0
+                  ? p.productImages
+                  : [p.productImage || p.image].filter(Boolean)
+              ).map((raw) =>
+                raw?.startsWith("http") ? raw : `${BASE_URL}/${raw}`
+              ),
+              image: (
+                Array.isArray(p.productImages) && p.productImages.length > 0
+                  ? p.productImages
+                  : [p.productImage || p.image].filter(Boolean)
+              ).map((raw) =>
+                raw?.startsWith("http") ? raw : `${BASE_URL}/${raw}`
+              )[0] || "",
                brandLogo: p.sellerId?.brandLogo ? (p.sellerId.brandLogo.startsWith("http") ? p.sellerId.brandLogo : `${BASE_URL}/${p.sellerId.brandLogo}`): "",
               stock: `Stock: ${p.stockQuantity}`,
               fabric: p.fabric || "N/A",
@@ -745,10 +762,14 @@ function Springsummer() {
                         </div>
                       )}
 
-                      <img
-                        src={item.image}
-                        className="card-img-top rounded Customer_product-image"
+                      <ProductImageSlider
+                        images={
+                          item.images && item.images.length > 0
+                            ? item.images
+                            : [item.image].filter(Boolean)
+                        }
                         alt={item.title}
+                        hideArrowsOnMobile
                       />
 
                       <button

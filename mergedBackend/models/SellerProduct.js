@@ -1,3 +1,5 @@
+
+
 const mongoose = require("mongoose");
 
 // NOTE: renamed from "Product" -> "SellerProduct" to avoid clashing with
@@ -16,7 +18,8 @@ const sellerProductSchema = new mongoose.Schema(
     discount: { type: Number },
     description: { type: String },
     stockQuantity: { type: Number, required: true },
-    productImage: { type: String, required: true },
+    productImage: { type: String, required: true },          // main image (pehli image)
+    productImages: { type: [String], default: [] },          // ✅ NEW: saari images (max 5)
     sellerId: { type: mongoose.Schema.Types.ObjectId, ref: "Seller", required: true },
   },
   { timestamps: true }

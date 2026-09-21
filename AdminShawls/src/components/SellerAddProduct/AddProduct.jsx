@@ -1,37 +1,90 @@
 
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./AddProduct.css";
 import logo from "../../assets/logooo.png";
 import API from "../../utils/api";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+const MAX_IMAGES = 5;
+
 function AddProduct() {
   const [formData, setFormData] = useState({
     productName: "", category: "", fabric: "", color: "",
     size: "", price: "", discount: "", description: "", stockQuantity: "", washCare: ""
   });
-  const [image, setImage] = useState(null);
+
+  // Multiple images: [{ file, preview }]
+  const [images, setImages] = useState([]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Memory leak se bachne ke liye previews revoke karo (unmount par)
+  useEffect(() => {
+    return () => {
+      images.forEach((img) => URL.revokeObjectURL(img.preview));
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleImageChange = (e) => {
-    setImage(e.target.files[0]);
+    const selected = Array.from(e.target.files || []);
+    // same file dobara select kar sake, isliye input reset
+    e.target.value = "";
+
+    if (selected.length === 0) return;
+
+    const remainingSlots = MAX_IMAGES - images.length;
+    if (remainingSlots <= 0) {
+      toast.warning(`Maximum ${MAX_IMAGES} images allowed`);
+      return;
+    }
+    if (selected.length > remainingSlots) {
+      toast.warning(`Only ${remainingSlots} more image(s) can be added (max ${MAX_IMAGES})`);
+    }
+
+    const newItems = selected
+      .slice(0, remainingSlots)
+      .filter((file) => file.type.startsWith("image/"))
+      .map((file) => ({ file, preview: URL.createObjectURL(file) }));
+
+    setImages((prev) => [...prev, ...newItems]);
+  };
+
+  const handleRemoveImage = (index) => {
+    setImages((prev) => {
+      URL.revokeObjectURL(prev[index].preview);
+      return prev.filter((_, i) => i !== index);
+    });
+  };
+
+  // Chuni hui image ko "main" (cover) image bana do
+  const handleMakeMain = (index) => {
+    setImages((prev) => {
+      const copy = [...prev];
+      const [picked] = copy.splice(index, 1);
+      return [picked, ...copy];
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (images.length === 0) {
+      toast.error("Please add at least one product image");
+      return;
+    }
+
     const productData = new FormData();
     for (const key in formData) {
       productData.append(key, formData[key]);
     }
-    if (image) {
-      productData.append("productImage", image);
-    }
+    // Backend field name: productImages (multiple). Pehli image = main image.
+    images.forEach((img) => {
+      productData.append("productImages", img.file);
+    });
 
     try {
       const token = localStorage.getItem("sellerToken");
@@ -147,9 +200,80 @@ function AddProduct() {
                   <textarea name="description" className="form-control add-product-input" rows="4" placeholder="Product Description" onChange={handleChange}></textarea>
                 </div>
 
+                {/* MULTIPLE IMAGES */}
                 <div className="mb-3">
-                  <label className="form-label fw-semibold">Product Image</label>
-                  <input type="file" name="productImage" className="form-control add-product-input" accept="image/*" required onChange={handleImageChange} />
+                  <label className="form-label fw-semibold">
+                    Product Images ({images.length}/{MAX_IMAGES})
+                  </label>
+                  <input
+                    type="file"
+                    className="form-control add-product-input"
+                    accept="image/*"
+                    multiple
+                    disabled={images.length >= MAX_IMAGES}
+                    onChange={handleImageChange}
+                  />
+                  <div className="form-text">
+                    Upto {MAX_IMAGES} images add kar sakte ho. Pehli image main image hogi.
+                  </div>
+
+                  {images.length > 0 && (
+                    <div className="d-flex flex-wrap gap-3 mt-3">
+                      {images.map((img, i) => (
+                        <div
+                          key={img.preview}
+                          className="position-relative border rounded-3 overflow-hidden bg-light"
+                          style={{
+                            width: 110,
+                            height: 110,
+                            border: i === 0 ? "2px solid #dfa00b" : undefined,
+                          }}
+                        >
+                          <img
+                            src={img.preview}
+                            alt={`Preview ${i + 1}`}
+                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                          />
+
+                          {i === 0 ? (
+                            <span
+                              className="position-absolute bottom-0 start-0 w-100 text-center text-white fw-semibold"
+                              style={{ background: "rgba(223,160,11,0.9)", fontSize: "0.7rem", padding: "2px 0" }}
+                            >
+                              Main
+                            </span>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => handleMakeMain(i)}
+                              className="position-absolute bottom-0 start-0 w-100 border-0 text-white"
+                              style={{ background: "rgba(0,0,0,0.6)", fontSize: "0.7rem", padding: "2px 0", cursor: "pointer" }}
+                            >
+                              Make main
+                            </button>
+                          )}
+
+                          <button
+                            type="button"
+                            aria-label="Remove image"
+                            onClick={() => handleRemoveImage(i)}
+                            className="position-absolute top-0 end-0 m-1 border-0 rounded-circle d-flex align-items-center justify-content-center"
+                            style={{
+                              width: 22,
+                              height: 22,
+                              background: "rgba(220,53,69,0.95)",
+                              color: "#fff",
+                              fontSize: 13,
+                              lineHeight: 1,
+                              cursor: "pointer",
+                            }}
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div className="mb-4">

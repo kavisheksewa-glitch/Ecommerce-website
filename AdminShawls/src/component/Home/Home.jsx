@@ -25,6 +25,7 @@ import {
 } from "react-share";
 
 import { homeShawls, shawls } from "../../data/shawls";
+import ProductImageSlider from "../../components/ProductImageSlider"; // ✅ NEW (path apne folder ke hisaab se adjust karo)
 
 function Home() {
   const navigate = useNavigate();
@@ -177,8 +178,7 @@ function Home() {
     window.addEventListener("cartUpdated", fetchCartAndWishlist);
     window.addEventListener("wishlistUpdated", fetchCartAndWishlist);
 
-  
-      API.get("/api/seller/products/public")
+    API.get("/api/seller/products/public")
       .then((res) => {
         const productList = Array.isArray(res.data)
           ? res.data
@@ -186,12 +186,21 @@ function Home() {
 
         if (Array.isArray(productList)) {
           const formattedDbProducts = productList.map((p) => {
-            const rawImage = p.productImage || p.image || "";
-            const formattedImage = rawImage.startsWith("http")
-              ? rawImage
-              : rawImage
-              ? `${API.defaults.baseURL}/${rawImage.replace(/\\/g, "/")}`
-              : "https://via.placeholder.com/150";
+            // ✅ NEW: image path ko full URL me convert karne ka helper
+            const toUrl = (raw) =>
+              raw.startsWith("http")
+                ? raw
+                : `${API.defaults.baseURL}/${raw.replace(/\\/g, "/")}`;
+
+            // ✅ NEW: multiple images (purane products me sirf productImage hota hai)
+            const rawImages =
+              Array.isArray(p.productImages) && p.productImages.length > 0
+                ? p.productImages
+                : [p.productImage || p.image].filter(Boolean);
+
+            const formattedImages = rawImages.length
+              ? rawImages.map(toUrl)
+              : ["https://via.placeholder.com/150"];
 
             const basePrice = Number(p.price || 0);
             const discountPercent = Number(p.discount || 0);
@@ -207,7 +216,8 @@ function Home() {
               price: `₹${finalPrice}`,
               originalPrice: discountPercent > 0 ? `₹${basePrice}` : "",
               discount: discountPercent > 0 ? `${discountPercent}% OFF` : null,
-              image: formattedImage,
+              image: formattedImages[0], // main image (cart/wishlist ke liye)
+              images: formattedImages,   // ✅ NEW: saari images (slider ke liye)
               brandLogo: p.sellerId?.brandLogo
                 ? (p.sellerId.brandLogo.startsWith("http") ? p.sellerId.brandLogo : `${BASE_URL}/${p.sellerId.brandLogo}`)
                 : "",
@@ -479,6 +489,7 @@ function Home() {
         .Customer_product-image-box {
           aspect-ratio: 1 / 1;
           width: 100%;
+          isolation: isolate; /* logo/wishlist/arrows header ke upar na aaye */
         }
         .Customer_product-image {
           width: 100%;
@@ -893,11 +904,12 @@ function Home() {
                         </div>
                       )}
 
-                      <img
-                        src={item.image}
-                        className="card-img-top rounded Customer_product-image"
-                        alt={item.title}
-                      />
+                      {/* ✅ NEW: multiple images slider (static shawls me sirf item.image hoti hai) */}
+                      <ProductImageSlider
+  images={item.images && item.images.length ? item.images : [item.image]}
+  alt={item.title}
+  hideArrowsOnMobile
+/>
 
                       <button
                         className="Customer_wishlist-btn"

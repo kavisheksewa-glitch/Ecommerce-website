@@ -1,3 +1,6 @@
+
+
+
 import React, { useState, useEffect } from "react";
 import API, { BASE_URL } from "../../utils/api";
 import image112 from "../../assets/featured.webp";
@@ -15,40 +18,62 @@ import {
   TwitterIcon,
   EmailIcon,
 } from "react-share";
-import "./Featuredcol.css";
 import { featuredShawls } from "../../data/shawls";
+import ProductImageSlider from "../../components/ProductImageSlider";
+import "./Featuredcol.css";
+
+const MAX_PRICE = 10000;
+
+const PLACEHOLDER_IMG =
+  "data:image/svg+xml;utf8," +
+  encodeURIComponent(
+    `<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><rect width='100%' height='100%' fill='#efe6d2'/><text x='50%' y='50%' fill='#8a7a55' font-size='16' text-anchor='middle' dominant-baseline='middle'>No image</text></svg>`
+  );
+
+// ✅ Image path ko full URL me badalta hai (backslash + leading slash normalize)
+const toImageUrl = (raw) => {
+  if (!raw) return "";
+  if (String(raw).startsWith("http")) return raw;
+  const path = String(raw).replace(/\\/g, "/").replace(/^\//, "");
+  return `${BASE_URL}/${path}`;
+};
+
+// ✅ Static products ko format karta hai (initial state + fallback dono me use hota hai)
+const formatStatic = (list) =>
+  list.map((item, index) => ({
+    ...item,
+    rawPrice: Number(String(item.price).replace(/[^0-9]/g, "")) || 0,
+    createdAt: index,
+    sellerId: item.sellerId || "",
+  }));
 
 function Featuredcoll() {
   const navigate = useNavigate();
-  const [allProducts, setAllProducts] = useState([...featuredShawls]);
+  const [allProducts, setAllProducts] = useState(() => formatStatic(featuredShawls));
   const [shareProduct, setShareProduct] = useState(null);
   const [cartProductIds, setCartProductIds] = useState([]);
   const [wishlistProductIds, setWishlistProductIds] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
 
   const [selectedFabric, setSelectedFabric] = useState("All");
-  const [selectedColor, setSelectedColor] = useState("All");
-  const [maxPrice, setMaxPrice] = useState(10000);
+  const [maxPrice, setMaxPrice] = useState(MAX_PRICE);
   const [sortBy, setSortBy] = useState("newest");
   const [showFilters, setShowFilters] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 12;
 
-  // ✅ Sirf JWT "token" ke basis pe auth check hota hai
-  const checkAuthAndExecute = (actionCallback) => {
+  // ✅ Login check: token na ho to toast + redirect, warna token return
+  const requireToken = () => {
     const token = localStorage.getItem("token");
     if (!token) {
-      toast.warning("🔒 Please login first to perform this action!", {
-        autoClose: 2000,
-      });
-      setTimeout(() => {
-        navigate("/login");
-      }, 1000);
-      return;
+      toast.error("Please login first!");
+      navigate("/login");
+      return null;
     }
-    actionCallback(token);
+    return token;
   };
 
+  // ✅ Cart/Wishlist refresh helper (JWT token based)
   const fetchCartAndWishlist = () => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -87,13 +112,20 @@ function Featuredcoll() {
           const dbProducts = res.data
             .filter((p) => p.category === "Featured Shawls")
             .map((p, index) => {
-              // ✅ seller ne jo price enter kiya wahi "original" price hai; discount hone par
-              // actual bikne wala price (finalPrice) usse kam hoga
+              // seller ka enter kiya price "original" hai; discount par finalPrice kam hoga
               const basePrice = Number(p.price || 0);
               const discountPercent = Number(p.discount || 0);
-              const finalPrice = discountPercent > 0
-                ? Math.round(basePrice - (basePrice * discountPercent) / 100)
-                : basePrice;
+              const finalPrice =
+                discountPercent > 0
+                  ? Math.round(basePrice - (basePrice * discountPercent) / 100)
+                  : basePrice;
+
+              // Multiple images + purane single-image products dono support
+              const rawImages =
+                Array.isArray(p.productImages) && p.productImages.length > 0
+                  ? p.productImages
+                  : [p.productImage || p.image].filter(Boolean);
+              const images = rawImages.map(toImageUrl);
 
               return {
                 id: p._id,
@@ -101,38 +133,28 @@ function Featuredcoll() {
                 description: p.description,
                 price: `₹${finalPrice}`,
                 rawPrice: finalPrice || 0,
-              originalPrice: discountPercent > 0 ? `₹${basePrice}` : "",
-              discount: discountPercent > 0 ? `${discountPercent}% OFF` : null,
-             
-              image: p.productImage?.startsWith("http") ? p.productImage : `${BASE_URL}/${p.productImage}`,
-              brandLogo: p.sellerId?.brandLogo ? (p.sellerId.brandLogo.startsWith("http") ? p.sellerId.brandLogo : `${BASE_URL}/${p.sellerId.brandLogo}`): "",
-              stock: `Stock: ${p.stockQuantity}`,
-              fabric: p.fabric || "N/A",
-              color: p.color || "N/A",
-              size: p.size || "N/A",
-              careInstructions: p.washCare || "N/A",
-              createdAt: p.createdAt ? new Date(p.createdAt).getTime() : index,
-              sellerId: p.sellerId?._id || p.sellerId || "",
-            };
-          });
+                originalPrice: discountPercent > 0 ? `₹${basePrice}` : "",
+                discount: discountPercent > 0 ? `${discountPercent}% OFF` : null,
+                images,
+                image: images[0] || PLACEHOLDER_IMG,
+                brandLogo: toImageUrl(p.sellerId?.brandLogo),
+                stock: `Stock: ${p.stockQuantity}`,
+                stockQuantity: Number(p.stockQuantity),
+                fabric: p.fabric || "N/A",
+                color: p.color || "N/A",
+                size: p.size || "N/A",
+                careInstructions: p.washCare || "N/A",
+                createdAt: p.createdAt ? new Date(p.createdAt).getTime() : index,
+                sellerId: p.sellerId?._id || p.sellerId || "",
+              };
+            });
 
-          const formattedStatic = featuredShawls.map((item, index) => ({
-            ...item,
-            rawPrice: Number(item.price.replace(/[^0-9]/g, "")) || 0,
-            createdAt: index,
-          }));
-
-          setAllProducts([...formattedStatic, ...dbProducts]);
+          setAllProducts([...formatStatic(featuredShawls), ...dbProducts]);
         }
       })
       .catch((err) => {
         console.error("Error fetching live products:", err);
-        const formattedStatic = featuredShawls.map((item, index) => ({
-          ...item,
-          rawPrice: Number(item.price.replace(/[^0-9]/g, "")) || 0,
-          createdAt: index,
-        }));
-        setAllProducts(formattedStatic);
+        setAllProducts(formatStatic(featuredShawls));
       });
 
     fetchCartAndWishlist();
@@ -144,8 +166,9 @@ function Featuredcoll() {
     };
   }, []);
 
-  const fabrics = [...new Set(allProducts.map((p) => p.fabric).filter((f) => f && f !== "N/A"))];
-  const colors = ["All", ...new Set(allProducts.map((p) => p.color).filter((c) => c && c !== "N/A"))];
+  const fabrics = [
+    ...new Set(allProducts.map((p) => p.fabric).filter((f) => f && f !== "N/A")),
+  ];
 
   const getProcessedProducts = () => {
     let list = [...allProducts];
@@ -157,10 +180,6 @@ function Featuredcoll() {
 
     if (selectedFabric !== "All") {
       list = list.filter((item) => item.fabric === selectedFabric);
-    }
-
-    if (selectedColor !== "All") {
-      list = list.filter((item) => item.color === selectedColor);
     }
 
     list = list.filter((item) => item.rawPrice <= maxPrice);
@@ -185,7 +204,12 @@ function Featuredcoll() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, selectedFabric, selectedColor, maxPrice, sortBy]);
+  }, [searchQuery, selectedFabric, maxPrice, sortBy]);
+
+  const goToPage = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const copyLink = async () => {
     try {
@@ -198,129 +222,121 @@ function Featuredcoll() {
     }
   };
 
-  // ✅ ADD TO CART
+  // ✅ ADD TO CART — success par true, fail par false return karta hai
   const handleAddToCart = async (product) => {
-    const token = localStorage.getItem("token");
-       if (!token) {
-         toast.error("Please login first!");
-         navigate("/login");
-         return;
-       }
-   
-       try {
-         const response = await fetch(`${BASE_URL}/api/customer/cart/add`, {
-           method: "POST",
-           headers: {
-             "Content-Type": "application/json",
-             Authorization: `Bearer ${token}`,
-           },
-           body: JSON.stringify({
-             productId: product.id,
-             title: product.title,
-             description: product.description,
-             price: product.price,
-             originalPrice: product.originalPrice || "",
-             discount: product.discount || "",
-             image: product.image,
-             quantity: 1,
-             sellerId: product.sellerId,
-           }),
-         });
-   
-         if (response.ok) {
-           toast.success(`${product.title} added to cart! 🛒`, {
-             position: "top-right",
-             autoClose: 1000,
-           });
-           setCartProductIds((prev) => [...prev, String(product.id)]);
-           window.dispatchEvent(new Event("cartUpdated"));
-         } else {
-           toast.error("Failed to add to cart");
-         }
-       } catch (err) {
-         console.error("Error connecting to backend:", err);
-         toast.error("Server connection failed");
-       }
+    const token = requireToken();
+    if (!token) return false;
+
+    try {
+      const response = await fetch(`${BASE_URL}/api/customer/cart/add`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          productId: product.id,
+          title: product.title,
+          description: product.description,
+          price: product.price,
+          originalPrice: product.originalPrice || "",
+          discount: product.discount || "",
+          image: product.image,
+          quantity: 1,
+          sellerId: product.sellerId,
+        }),
+      });
+
+      if (response.ok) {
+        toast.success(`${product.title} added to cart! 🛒`, {
+          position: "top-right",
+          autoClose: 1000,
+        });
+        setCartProductIds((prev) => [...prev, String(product.id)]);
+        window.dispatchEvent(new Event("cartUpdated"));
+        return true;
+      }
+      toast.error("Failed to add to cart");
+      return false;
+    } catch (err) {
+      console.error("Error connecting to backend:", err);
+      toast.error("Server connection failed");
+      return false;
+    }
   };
 
-  // ✅ WISHLIST
-  const handleToggleWishlist = (product) => {
-    checkAuthAndExecute(async (token) => {
-      const isWishlisted = wishlistProductIds.includes(String(product.id));
+  // ✅ WISHLIST — /api/customer/wishlist/add & /remove/:id
+  const handleToggleWishlist = async (product) => {
+    const token = requireToken();
+    if (!token) return;
 
-      try {
-        if (isWishlisted) {
-          const res = await fetch(`${BASE_URL}/api/customer/wishlist`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          const data = await res.json();
-          const wishlistItem = data.wishlist?.find((w) => String(w.productId) === String(product.id));
+    const isWishlisted = wishlistProductIds.includes(String(product.id));
 
-          if (wishlistItem) {
-            const delRes = await fetch(
-              `${BASE_URL}/api/customer/wishlist/remove/${wishlistItem._id}`,
-              { method: "DELETE", headers: { Authorization: `Bearer ${token}` } }
-            );
-            if (delRes.ok) {
-              toast.info(`${product.title} removed from wishlist`, { autoClose: 1000 });
-              setWishlistProductIds((prev) => prev.filter((id) => id !== String(product.id)));
-            }
-          }
-        } else {
-          const response = await fetch(`${BASE_URL}/api/customer/wishlist/add`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              productId: product.id,
-              title: product.title,
-              description: product.description,
-              price: product.price,
-              image: product.image,
-            }),
-          });
-          if (response.ok) {
-            toast.success(`${product.title} added to wishlist ❤️`, { autoClose: 1000 });
-            setWishlistProductIds((prev) => [...prev, String(product.id)]);
+    try {
+      if (isWishlisted) {
+        const res = await fetch(`${BASE_URL}/api/customer/wishlist`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        const wishlistItem = data.wishlist?.find(
+          (w) => String(w.productId) === String(product.id)
+        );
+
+        if (wishlistItem) {
+          const delRes = await fetch(
+            `${BASE_URL}/api/customer/wishlist/remove/${wishlistItem._id}`,
+            { method: "DELETE", headers: { Authorization: `Bearer ${token}` } }
+          );
+          if (delRes.ok) {
+            toast.info(`${product.title} removed from wishlist`, { autoClose: 1000 });
+            setWishlistProductIds((prev) => prev.filter((id) => id !== String(product.id)));
+          } else {
+            toast.error("Failed to update wishlist");
           }
         }
-        window.dispatchEvent(new Event("wishlistUpdated"));
-      } catch (err) { toast.error("Error updating wishlist"); }
-    });
-  };
+      } else {
+        const response = await fetch(`${BASE_URL}/api/customer/wishlist/add`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            productId: product.id,
+            title: product.title,
+            description: product.description,
+            price: product.price,
+            originalPrice: product.originalPrice || "",
+            discount: product.discount || "",
+            image: product.image,
+          }),
+        });
 
-  // ✅ BUY NOW
-  const handleBuyNow = (product) => {
-    checkAuthAndExecute(async (token) => {
-      if (!cartProductIds.includes(String(product.id))) {
-        try {
-          await fetch(`${BASE_URL}/api/customer/cart/add`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              productId: product.id,
-              title: product.title,
-              description: product.description,
-              price: product.price,
-              originalPrice: product.originalPrice || "",
-              discount: product.discount || "",
-              image: product.image,
-              quantity: 1,
-              sellerId: product.sellerId || "",
-            }),
-          });
-          window.dispatchEvent(new Event("cartUpdated"));
-        } catch (err) {
-          console.error(err);
+        if (response.ok) {
+          toast.success(`${product.title} added to wishlist ❤️`, { autoClose: 1000 });
+          setWishlistProductIds((prev) => [...prev, String(product.id)]);
+        } else {
+          toast.error("Failed to update wishlist");
         }
       }
-      navigate("/checkout", { state: { product } });
-    });
+
+      window.dispatchEvent(new Event("wishlistUpdated"));
+    } catch (err) {
+      console.error("Error connecting to backend:", err);
+      toast.error("Server connection failed");
+    }
+  };
+
+  // ✅ BUY NOW — cart add fail ho to checkout nahi khulta
+  const handleBuyNow = async (product) => {
+    const token = requireToken();
+    if (!token) return;
+
+    if (!cartProductIds.includes(String(product.id))) {
+      const ok = await handleAddToCart(product);
+      if (!ok) return;
+    }
+    navigate("/checkout", { state: { product } });
   };
 
   const handleShare = (product) => {
@@ -329,8 +345,7 @@ function Featuredcoll() {
 
   const resetFilters = () => {
     setSelectedFabric("All");
-    setSelectedColor("All");
-    setMaxPrice(5000);
+    setMaxPrice(MAX_PRICE);
     setSortBy("newest");
     setSearchQuery("");
   };
@@ -527,11 +542,15 @@ function Featuredcoll() {
         </div>
       )}
 
-      
-
-      <h1 className="Customer_luxury-title text-center my-4 fw-bold fst-italic" style={{ color: "#54411d" }}>FEATURED COLLECTION</h1>
+      <h1
+        className="Customer_luxury-title text-center my-4 fw-bold fst-italic"
+        style={{ color: "#54411d" }}
+      >
+        FEATURED COLLECTION
+      </h1>
       <img src={image112} alt="Banner" className="Customer_hero-image w-100 mb-4" />
 
+      {/* SEARCH BAR */}
       <div className="container my-3 text-center">
         <div className="position-relative mx-auto" style={{ maxWidth: "600px" }}>
           <span
@@ -557,7 +576,7 @@ function Featuredcoll() {
         </div>
       </div>
 
-      
+      {/* TOP CONTROLS & FILTER BAR */}
       <div className="container my-3">
         <div className="d-flex flex-wrap justify-content-between align-items-center bg-white p-3 rounded-4 shadow-sm gap-3 border">
           <div className="text-muted small fw-semibold">
@@ -612,14 +631,14 @@ function Featuredcoll() {
                 type="range"
                 className="form-range"
                 min="500"
-                max="10000"
+                max={MAX_PRICE}
                 step="100"
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(Number(e.target.value))}
               />
               <div className="d-flex justify-content-between text-muted small">
                 <span>₹500</span>
-                <span>₹10000</span>
+                <span>₹{MAX_PRICE}</span>
               </div>
             </div>
 
@@ -660,10 +679,7 @@ function Featuredcoll() {
             </div>
 
             <div className="col-12 text-end mt-3">
-              <button
-                className="btn btn-outline-danger btn-sm px-4"
-                onClick={resetFilters}
-              >
+              <button className="btn btn-outline-danger btn-sm px-4" onClick={resetFilters}>
                 Clear Filters
               </button>
             </div>
@@ -679,6 +695,8 @@ function Featuredcoll() {
               const pid = String(item.id);
               const isInCart = cartProductIds.includes(pid);
               const isWishlisted = wishlistProductIds.includes(pid);
+              const isOutOfStock =
+                Number.isFinite(item.stockQuantity) && item.stockQuantity <= 0;
 
               return (
                 <div className="col-6 col-sm-6 col-md-4 col-lg-3" key={pid}>
@@ -701,21 +719,21 @@ function Featuredcoll() {
                           title="Brand Logo"
                         >
                           <img
-                            src={
-                              item.brandLogo.startsWith("http")
-                                ? item.brandLogo
-                                : `${BASE_URL}/${item.brandLogo}`
-                            }
+                            src={toImageUrl(item.brandLogo)}
                             alt="Brand Logo"
                             style={{ width: "100%", height: "100%", objectFit: "cover" }}
                           />
                         </div>
                       )}
 
-                      <img
-                        src={item.image}
-                        className="card-img-top rounded Customer_product-image"
+                      <ProductImageSlider
+                        images={
+                          item.images && item.images.length > 0
+                            ? item.images
+                            : [item.image || PLACEHOLDER_IMG]
+                        }
                         alt={item.title}
+                        hideArrowsOnMobile
                       />
 
                       <button
@@ -768,7 +786,9 @@ function Featuredcoll() {
 
                         <div className="Customer_price-row d-flex align-items-center mb-3">
                           <div className="d-flex align-items-center gap-2 flex-wrap">
-                            <span className="Customer_price-main fw-bold text-success">{item.price}</span>
+                            <span className="Customer_price-main fw-bold text-success">
+                              {item.price}
+                            </span>
                             {item.originalPrice && (
                               <span className="Customer_price-original text-decoration-line-through text-muted">
                                 {item.originalPrice}
@@ -787,40 +807,56 @@ function Featuredcoll() {
                       </div>
 
                       <div className="Customer_card-actions d-flex flex-column gap-2 mt-auto">
-                        {isInCart ? (
+                        {isOutOfStock ? (
                           <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              navigate("/cart");
-                            }}
+                            disabled
+                            onClick={(e) => e.stopPropagation()}
                             className="Customer_card-btn btn w-100 fw-semibold text-white"
-                            style={{ backgroundColor: "#2b8a3e", border: "none", borderRadius: "8px" }}
+                            style={{ backgroundColor: "#8a8a8a", border: "none", borderRadius: "8px" }}
                           >
-                            Go to Cart
+                            Out of Stock
                           </button>
                         ) : (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleAddToCart(item);
-                            }}
-                            className="Customer_card-btn btn btn-dark w-100 fw-semibold text-white"
-                            style={{ backgroundColor: "#166228", border: "none", borderRadius: "8px" }}
-                          >
-                            Add to Cart
-                          </button>
-                        )}
+                          <>
+                            {isInCart ? (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  navigate("/cart");
+                                }}
+                                className="Customer_card-btn btn w-100 fw-semibold text-white"
+                                style={{ backgroundColor: "#2b8a3e", border: "none", borderRadius: "8px" }}
+                              >
+                                Go to Cart
+                              </button>
+                            ) : (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleAddToCart(item);
+                                }}
+                                className="Customer_card-btn btn btn-dark w-100 fw-semibold text-white"
+                                style={{ backgroundColor: "#166228", border: "none", borderRadius: "8px" }}
+                              >
+                                Add to Cart
+                              </button>
+                            )}
 
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleBuyNow(item);
-                          }}
-                          className="Customer_card-btn Customer_buy-now-btn btn w-100 fw-bold text-white border-0 shadow-sm"
-                          style={{ background: "linear-gradient(135deg, #d6bd69 0%, #dfa00b 100%)", borderRadius: "8px" }}
-                        >
-                          Buy Now
-                        </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleBuyNow(item);
+                              }}
+                              className="Customer_card-btn Customer_buy-now-btn btn w-100 fw-bold text-white border-0 shadow-sm"
+                              style={{
+                                background: "linear-gradient(135deg, #d6bd69 0%, #dfa00b 100%)",
+                                borderRadius: "8px",
+                              }}
+                            >
+                              Buy Now
+                            </button>
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -837,13 +873,14 @@ function Featuredcoll() {
           )}
         </div>
 
+        {/* PAGINATION */}
         {totalPages > 1 && (
           <nav className="d-flex justify-content-center mt-5">
             <ul className="pagination">
               <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
                 <button
                   className="page-link"
-                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  onClick={() => goToPage(Math.max(currentPage - 1, 1))}
                 >
                   Previous
                 </button>
@@ -856,7 +893,7 @@ function Featuredcoll() {
                 >
                   <button
                     className="page-link"
-                    onClick={() => setCurrentPage(index + 1)}
+                    onClick={() => goToPage(index + 1)}
                     style={
                       currentPage === index + 1
                         ? { backgroundColor: "#54411d", borderColor: "#54411d", color: "#fff" }
@@ -871,7 +908,7 @@ function Featuredcoll() {
               <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
                 <button
                   className="page-link"
-                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  onClick={() => goToPage(Math.min(currentPage + 1, totalPages))}
                 >
                   Next
                 </button>
@@ -885,4 +922,3 @@ function Featuredcoll() {
 }
 
 export default Featuredcoll;
-

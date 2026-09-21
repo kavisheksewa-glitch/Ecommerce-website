@@ -1,5 +1,4 @@
 
-
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
@@ -22,8 +21,13 @@ const storage = new CloudinaryStorage({
 });
 const upload = multer({ storage });
 
-// ✅ ab sirf productImage — brandLogo ab seller profile se aata hai
+// ✅ NEW: multiple images -> "productImages" (max 5)
+// "productImage" (single) purane clients ke liye rakha hai, taaki kuch toote nahi.
+// Controller me files ye milengi:
+//   req.files.productImages -> array (max 5)
+//   req.files.productImage  -> array (max 1)
 const uploadFields = upload.fields([
+  { name: "productImages", maxCount: 5 },
   { name: "productImage", maxCount: 1 },
 ]);
 
@@ -56,6 +60,13 @@ const uploadFields = upload.fields([
  *         productImage:
  *           type: string
  *           example: "uploads/1624356789-shawl.jpg"
+ *           description: "Main image (productImages ki pehli image)"
+ *         productImages:
+ *           type: array
+ *           items:
+ *             type: string
+ *           example: ["https://res.cloudinary.com/demo/image/upload/a.jpg", "https://res.cloudinary.com/demo/image/upload/b.jpg"]
+ *           description: "Product ki saari images (max 5)"
  *         brand:
  *           type: string
  *           example: "Kavi Shawls Premium"
@@ -95,7 +106,7 @@ router.get("/public", getProducts);
  * /api/seller/products/add:
  *   post:
  *     summary: Add a new product (Seller)
- *     description: Brand name/logo auto-filled from the seller's profile.
+ *     description: Brand name/logo auto-filled from the seller's profile. Upto 5 images allowed.
  *     tags: [Seller Products]
  *     security:
  *       - SellerBearerAuth: []
@@ -146,9 +157,12 @@ router.get("/public", getProducts);
  *               washCare:
  *                 type: string
  *                 example: "Dry clean only"
- *               productImage:
- *                 type: string
- *                 format: binary
+ *               productImages:
+ *                 type: array
+ *                 description: "Upto 5 images. Pehli image main image hogi."
+ *                 items:
+ *                   type: string
+ *                   format: binary
  *     responses:
  *       '201':
  *         description: Product added successfully
@@ -229,9 +243,12 @@ router.get("/", protect, getProducts);
  *               washCare:
  *                 type: string
  *                 example: "Dry clean only"
- *               productImage:
- *                 type: string
- *                 format: binary
+ *               productImages:
+ *                 type: array
+ *                 description: "Naye images bhejne par purani images replace ho jayengi"
+ *                 items:
+ *                   type: string
+ *                   format: binary
  *     responses:
  *       '200':
  *         description: Product updated successfully

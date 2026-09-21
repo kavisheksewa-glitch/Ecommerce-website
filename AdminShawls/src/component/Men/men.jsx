@@ -1,3 +1,6 @@
+
+
+
 import React, { useState, useEffect } from "react";
 import API, { BASE_URL } from "../../utils/api";
 import image13 from "../../assets/men.webp";
@@ -15,109 +18,148 @@ import {
   TwitterIcon,
   EmailIcon,
 } from "react-share";
-import "./men.css";
 import { menShawls } from "../../data/shawls";
+import ProductImageSlider from "../../components/ProductImageSlider";
+import "./men.css";
+
+const MAX_PRICE = 10000;
+
+const PLACEHOLDER_IMG =
+  "data:image/svg+xml;utf8," +
+  encodeURIComponent(
+    `<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><rect width='100%' height='100%' fill='#efe6d2'/><text x='50%' y='50%' fill='#8a7a55' font-size='16' text-anchor='middle' dominant-baseline='middle'>No image</text></svg>`
+  );
+
+// ✅ Image path ko full URL me badalta hai (backslash + leading slash normalize)
+const toImageUrl = (raw) => {
+  if (!raw) return "";
+  if (String(raw).startsWith("http")) return raw;
+  const path = String(raw).replace(/\\/g, "/").replace(/^\//, "");
+  return `${BASE_URL}/${path}`;
+};
+
+// ✅ Static products ko format karta hai (initial state + fallback dono me use hota hai)
+const formatStatic = (list) =>
+  list.map((item, index) => ({
+    ...item,
+    rawPrice: Number(String(item.price).replace(/[^0-9]/g, "")) || 0,
+    fabric: item.fabric || "N/A",
+    createdAt: index,
+    sellerId: item.sellerId || "",
+  }));
 
 function Men() {
   const navigate = useNavigate();
-  const [allProducts, setAllProducts] = useState([...menShawls]);
+  const [allProducts, setAllProducts] = useState(() => formatStatic(menShawls));
   const [shareProduct, setShareProduct] = useState(null);
   const [cartProductIds, setCartProductIds] = useState([]);
   const [wishlistProductIds, setWishlistProductIds] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
 
   // --- Filter & Pagination States ---
-  const [priceRange, setPriceRange] = useState(5000);
-  const [selectedMaterials, setSelectedMaterials] = useState([]);
-  const [sortOrder, setSortOrder] = useState("newest");
+  const [selectedFabric, setSelectedFabric] = useState("All");
+  const [maxPrice, setMaxPrice] = useState(MAX_PRICE);
+  const [sortBy, setSortBy] = useState("newest");
+  const [showFilters, setShowFilters] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [showFilterModal, setShowFilterModal] = useState(false);
-  const itemsPerPage = 12;
+  const productsPerPage = 12;
 
-  // ✅ Ab sirf JWT "token" ke basis pe auth check hota hai (userId guesswork hataya)
-  const checkAuthAndExecute = (actionCallback) => {
+  // ✅ Login check: token na ho to toast + redirect, warna token return
+  const requireToken = () => {
     const token = localStorage.getItem("token");
     if (!token) {
-      toast.warning("🔒 Please login first to perform this action!", { autoClose: 2000 });
-      setTimeout(() => navigate("/login"), 1000);
+      toast.error("Please login first!");
+      navigate("/login");
+      return null;
+    }
+    return token;
+  };
+
+  // ✅ Cart/Wishlist refresh helper (JWT token based)
+  const fetchCartAndWishlist = () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setCartProductIds([]);
+      setWishlistProductIds([]);
       return;
     }
-    actionCallback(token);
+
+    fetch(`${BASE_URL}/api/customer/cart`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.cart)) {
+          setCartProductIds(data.cart.map((item) => String(item.productId)));
+        }
+      })
+      .catch((err) => console.error("Error fetching cart items:", err));
+
+    fetch(`${BASE_URL}/api/customer/wishlist`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.wishlist)) {
+          setWishlistProductIds(data.wishlist.map((item) => String(item.productId)));
+        }
+      })
+      .catch((err) => console.error("Error fetching wishlist items:", err));
   };
 
   useEffect(() => {
-      API.get("/api/seller/products/public")
+    API.get("/api/seller/products/public")
       .then((res) => {
         if (Array.isArray(res.data)) {
           const dbProducts = res.data
             .filter((p) => p.category === "Men's Shawls")
             .map((p, index) => {
-              // ✅ seller ne jo price enter kiya wahi "original" price hai; discount hone par
-              // actual bikne wala price (finalPrice) usse kam hoga
+              // seller ka enter kiya price "original" hai; discount par finalPrice kam hoga
               const basePrice = Number(p.price || 0);
               const discountPercent = Number(p.discount || 0);
-              const finalPrice = discountPercent > 0
-                ? Math.round(basePrice - (basePrice * discountPercent) / 100)
-                : basePrice;
+              const finalPrice =
+                discountPercent > 0
+                  ? Math.round(basePrice - (basePrice * discountPercent) / 100)
+                  : basePrice;
+
+              // Multiple images + purane single-image products dono support
+              const rawImages =
+                Array.isArray(p.productImages) && p.productImages.length > 0
+                  ? p.productImages
+                  : [p.productImage || p.image].filter(Boolean);
+              const images = rawImages.map(toImageUrl);
 
               return {
                 id: p._id,
                 title: p.productName,
                 description: p.description,
                 price: `₹${finalPrice}`,
-                numericPrice: finalPrice || 0,
-              originalPrice: discountPercent > 0 ? `₹${basePrice}` : "",
-              discount: discountPercent > 0 ? `${discountPercent}% OFF` : null,
-              image: p.productImage?.startsWith("http") ? p.productImage : `${BASE_URL}/${p.productImage}`,
-              brandLogo: p.sellerId?.brandLogo ? (p.sellerId.brandLogo.startsWith("http") ? p.sellerId.brandLogo : `${BASE_URL}/${p.sellerId.brandLogo}`): "",
-             stock: `Stock: ${p.stockQuantity}`,
-              fabric: p.fabric || "Pashmina",
-              color: p.color || "N/A",
-              createdAt: p.createdAt ? new Date(p.createdAt).getTime() : index,
-              sellerId: p.sellerId?._id || p.sellerId || "",
-            }
-        });
+                rawPrice: finalPrice || 0,
+                originalPrice: discountPercent > 0 ? `₹${basePrice}` : "",
+                discount: discountPercent > 0 ? `${discountPercent}% OFF` : null,
+                images,
+                image: images[0] || PLACEHOLDER_IMG,
+                brandLogo: toImageUrl(p.sellerId?.brandLogo),
+                stock: `Stock: ${p.stockQuantity}`,
+                stockQuantity: Number(p.stockQuantity),
+                fabric: p.fabric || "N/A",
+                color: p.color || "N/A",
+                size: p.size || "N/A",
+                careInstructions: p.washCare || "N/A",
+                createdAt: p.createdAt ? new Date(p.createdAt).getTime() : index,
+                sellerId: p.sellerId?._id || p.sellerId || "",
+              };
+            });
 
-          const staticFormatted = menShawls.map((item, index) => ({
-            ...item,
-            numericPrice: Number(item.price.replace(/[^0-9]/g, "")) || 0,
-            fabric: item.fabric || "Wool",
-            createdAt: index,
-          }));
-
-          setAllProducts([...staticFormatted, ...dbProducts]);
+          setAllProducts([...formatStatic(menShawls), ...dbProducts]);
         }
       })
-      .catch((err) => console.error("Error fetching live products:", err));
+      .catch((err) => {
+        console.error("Error fetching live products:", err);
+        setAllProducts(formatStatic(menShawls));
+      });
 
-    // ✅ CART + WISHLIST: sirf /api/customer/... use karo, JWT token ke sath
-    const token = localStorage.getItem("token");
-    if (!token) return;
-
-    const fetchCartAndWishlist = () => {
-      fetch(`${BASE_URL}/api/customer/cart`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.success && Array.isArray(data.cart)) {
-            setCartProductIds(data.cart.map((item) => String(item.productId)));
-          }
-        })
-        .catch((err) => console.error(err));
-
-      fetch(`${BASE_URL}/api/customer/wishlist`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.success && Array.isArray(data.wishlist)) {
-            setWishlistProductIds(data.wishlist.map((item) => String(item.productId)));
-          }
-        })
-        .catch((err) => console.error(err));
-    };
-
+    // ✅ Token ho ya na ho, listeners hamesha lagte hain (login ke baad bhi sync rahe)
     fetchCartAndWishlist();
     window.addEventListener("cartUpdated", fetchCartAndWishlist);
     window.addEventListener("wishlistUpdated", fetchCartAndWishlist);
@@ -127,42 +169,59 @@ function Men() {
     };
   }, []);
 
-  const handleMaterialChange = (material) => {
-    if (selectedMaterials.includes(material)) {
-      setSelectedMaterials(selectedMaterials.filter((m) => m !== material));
-    } else {
-      setSelectedMaterials([...selectedMaterials, material]);
+  // Fabric list products se dynamic banti hai
+  const fabrics = [
+    ...new Set(allProducts.map((p) => p.fabric).filter((f) => f && f !== "N/A")),
+  ];
+
+  const getProcessedProducts = () => {
+    let list = [...allProducts];
+
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase().trim();
+      list = list.filter(
+        (item) =>
+          item.title?.toLowerCase().includes(query) ||
+          item.description?.toLowerCase().includes(query)
+      );
     }
+
+    if (selectedFabric !== "All") {
+      list = list.filter((item) => item.fabric === selectedFabric);
+    }
+
+    list = list.filter((item) => item.rawPrice <= maxPrice);
+
+    if (sortBy === "low-high") {
+      list.sort((a, b) => a.rawPrice - b.rawPrice);
+    } else if (sortBy === "high-low") {
+      list.sort((a, b) => b.rawPrice - a.rawPrice);
+    } else if (sortBy === "a-z") {
+      list.sort((a, b) => (a.title || "").localeCompare(b.title || ""));
+    } else if (sortBy === "z-a") {
+      list.sort((a, b) => (b.title || "").localeCompare(a.title || ""));
+    } else if (sortBy === "newest") {
+      list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+    }
+
+    return list;
   };
 
-  const filteredProducts = allProducts.filter((item) => {
-    const matchesSearch =
-      item.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.description?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesPrice = item.numericPrice <= priceRange;
-    const matchesMaterial =
-      selectedMaterials.length === 0 ||
-      selectedMaterials.some((mat) => item.fabric?.toLowerCase().includes(mat.toLowerCase()));
-    return matchesSearch && matchesPrice && matchesMaterial;
-  });
+  const filteredProducts = getProcessedProducts();
 
-  const sortedProducts = [...filteredProducts].sort((a, b) => {
-    if (sortOrder === "low-high") return a.numericPrice - b.numericPrice;
-    if (sortOrder === "high-low") return b.numericPrice - a.numericPrice;
-    if (sortOrder === "a-z") return a.title.localeCompare(b.title);
-    if (sortOrder === "z-a") return b.title.localeCompare(a.title);
-    if (sortOrder === "newest") return (b.createdAt || 0) - (a.createdAt || 0);
-    return 0;
-  });
-
-  const totalPages = Math.ceil(sortedProducts.length / itemsPerPage) || 1;
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentProducts = sortedProducts.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, priceRange, selectedMaterials, sortOrder]);
+  }, [searchQuery, selectedFabric, maxPrice, sortBy]);
+
+  const goToPage = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const copyLink = async () => {
     try {
@@ -175,11 +234,80 @@ function Men() {
     }
   };
 
-  // ✅ ADD TO CART — /api/customer/cart/add, JWT token ke sath
-  const handleAddToCart = (product) => {
-    checkAuthAndExecute(async (token) => {
-      try {
-        const response = await fetch(`${BASE_URL}/api/customer/cart/add`, {
+  // ✅ ADD TO CART — success par true, fail par false return karta hai
+  const handleAddToCart = async (product) => {
+    const token = requireToken();
+    if (!token) return false;
+
+    try {
+      const response = await fetch(`${BASE_URL}/api/customer/cart/add`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          productId: product.id,
+          title: product.title,
+          description: product.description,
+          price: product.price,
+          originalPrice: product.originalPrice || "",
+          discount: product.discount || "",
+          image: product.image,
+          quantity: 1,
+          sellerId: product.sellerId,
+        }),
+      });
+
+      if (response.ok) {
+        toast.success(`${product.title} added to cart! 🛒`, {
+          position: "top-right",
+          autoClose: 1000,
+        });
+        setCartProductIds((prev) => [...prev, String(product.id)]);
+        window.dispatchEvent(new Event("cartUpdated"));
+        return true;
+      }
+      toast.error("Failed to add to cart");
+      return false;
+    } catch (err) {
+      console.error("Error connecting to backend:", err);
+      toast.error("Server connection failed");
+      return false;
+    }
+  };
+
+  // ✅ WISHLIST — /api/customer/wishlist/add & /remove/:id
+  const handleToggleWishlist = async (product) => {
+    const token = requireToken();
+    if (!token) return;
+
+    const isWishlisted = wishlistProductIds.includes(String(product.id));
+
+    try {
+      if (isWishlisted) {
+        const res = await fetch(`${BASE_URL}/api/customer/wishlist`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        const wishlistItem = data.wishlist?.find(
+          (w) => String(w.productId) === String(product.id)
+        );
+
+        if (wishlistItem) {
+          const delRes = await fetch(
+            `${BASE_URL}/api/customer/wishlist/remove/${wishlistItem._id}`,
+            { method: "DELETE", headers: { Authorization: `Bearer ${token}` } }
+          );
+          if (delRes.ok) {
+            toast.info(`${product.title} removed from wishlist`, { autoClose: 1000 });
+            setWishlistProductIds((prev) => prev.filter((id) => id !== String(product.id)));
+          } else {
+            toast.error("Failed to update wishlist");
+          }
+        }
+      } else {
+        const response = await fetch(`${BASE_URL}/api/customer/wishlist/add`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -193,118 +321,45 @@ function Men() {
             originalPrice: product.originalPrice || "",
             discount: product.discount || "",
             image: product.image,
-            quantity: 1,
-            sellerId: product.sellerId,
           }),
         });
 
         if (response.ok) {
-          toast.success(`${product.title} added to cart! 🛒`, { autoClose: 1000 });
-          setCartProductIds((prev) => [...prev, String(product.id)]);
-          window.dispatchEvent(new Event("cartUpdated"));
+          toast.success(`${product.title} added to wishlist ❤️`, { autoClose: 1000 });
+          setWishlistProductIds((prev) => [...prev, String(product.id)]);
         } else {
-          toast.error("Failed to add to cart");
+          toast.error("Failed to update wishlist");
         }
-      } catch (err) {
-        toast.error("Server connection failed");
       }
-    });
+
+      window.dispatchEvent(new Event("wishlistUpdated"));
+    } catch (err) {
+      console.error("Error connecting to backend:", err);
+      toast.error("Server connection failed");
+    }
   };
 
-  // ✅ WISHLIST — /api/customer/wishlist/add & /remove/:id, JWT token ke sath
-  const handleToggleWishlist = (product) => {
-    checkAuthAndExecute(async (token) => {
-      const isWishlisted = wishlistProductIds.includes(String(product.id));
+  // ✅ BUY NOW — cart add fail ho to checkout nahi khulta
+  const handleBuyNow = async (product) => {
+    const token = requireToken();
+    if (!token) return;
 
-      try {
-        if (isWishlisted) {
-          const res = await fetch(`${BASE_URL}/api/customer/wishlist`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          const data = await res.json();
-          const wishlistItem = data.wishlist?.find(
-            (w) => String(w.productId) === String(product.id)
-          );
-
-          if (wishlistItem) {
-            const delRes = await fetch(
-              `${BASE_URL}/api/customer/wishlist/remove/${wishlistItem._id}`,
-              { method: "DELETE", headers: { Authorization: `Bearer ${token}` } }
-            );
-            if (delRes.ok) {
-              toast.info("Removed from wishlist", { autoClose: 1000 });
-              setWishlistProductIds((prev) => prev.filter((id) => id !== String(product.id)));
-            } else {
-              toast.error("Failed to update wishlist");
-            }
-          }
-        } else {
-          const response = await fetch(`${BASE_URL}/api/customer/wishlist/add`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              productId: product.id,
-              title: product.title,
-              description: product.description,
-              price: product.price,
-              originalPrice: product.originalPrice || "",
-              discount: product.discount || "",
-              image: product.image,
-            }),
-          });
-
-          if (response.ok) {
-            toast.success("Added to wishlist ❤️", { autoClose: 1000 });
-            setWishlistProductIds((prev) => [...prev, String(product.id)]);
-          } else {
-            toast.error("Failed to update wishlist");
-          }
-        }
-
-        window.dispatchEvent(new Event("wishlistUpdated"));
-      } catch (err) {
-        toast.error("Server connection failed");
-      }
-    });
-  };
-
-  // ✅ BUY NOW
-  const handleBuyNow = (product) => {
-    checkAuthAndExecute(async (token) => {
-      if (!cartProductIds.includes(String(product.id))) {
-        try {
-          await fetch(`${BASE_URL}/api/customer/cart/add`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              productId: product.id,
-              title: product.title,
-              description: product.description,
-              price: product.price,
-              originalPrice: product.originalPrice || "",
-              discount: product.discount || "",
-              image: product.image,
-              quantity: 1,
-              sellerId: product.sellerId,
-            }),
-          });
-          window.dispatchEvent(new Event("cartUpdated"));
-        } catch (err) {
-          console.error(err);
-        }
-      }
-      navigate("/checkout", { state: { product } });
-    });
+    if (!cartProductIds.includes(String(product.id))) {
+      const ok = await handleAddToCart(product);
+      if (!ok) return;
+    }
+    navigate("/checkout", { state: { product } });
   };
 
   const handleShare = (product) => {
     setShareProduct(product);
+  };
+
+  const resetFilters = () => {
+    setSelectedFabric("All");
+    setMaxPrice(MAX_PRICE);
+    setSortBy("newest");
+    setSearchQuery("");
   };
 
   return (
@@ -469,6 +524,7 @@ function Men() {
           <div className="Customer_share-modal">
             <h4 className="fw-bold mb-1">Share Product</h4>
             <p className="text-muted small">{shareProduct.title}</p>
+
             <div className="Customer_share-icons">
               <WhatsappShareButton url={`${window.location.origin}/product/${shareProduct.id}`}>
                 <WhatsappIcon size={46} round />
@@ -483,9 +539,11 @@ function Men() {
                 <EmailIcon size={46} round />
               </EmailShareButton>
             </div>
+
             <button className="Customer_copy-btn" onClick={copyLink}>
               <FaLink className="me-2" /> Copy Link
             </button>
+
             <button className="Customer_close-btn" onClick={() => setShareProduct(null)}>
               Close
             </button>
@@ -494,43 +552,73 @@ function Men() {
       )}
 
       <div className="Customer_luxury-title-wrapper">
-        <h1 className="Customer_luxury-title text-center my-3 fw-bold fst-italic" style={{ color: "#54411d" }}>
+        <h1
+          className="Customer_luxury-title text-center my-4 fw-bold fst-italic"
+          style={{ color: "#54411d" }}
+        >
           MEN'S SHAWLS
         </h1>
       </div>
 
-      <img src={image13} alt="Men Shawls Banner" className="Customer_hero1-image w-100 mb-4" />
+      <img
+        src={image13}
+        alt="Men Shawls Banner"
+        className="Customer_hero1-image w-100 mb-4"
+      />
+
+      {/* SEARCH BAR */}
+      <div className="container my-3 text-center">
+        <div className="position-relative mx-auto" style={{ maxWidth: "600px" }}>
+          <span
+            className="position-absolute top-50 start-0 translate-middle-y ps-3 text-muted"
+            style={{ pointerEvents: "none" }}
+          >
+            <i className="bi bi-search"></i>
+          </span>
+
+          <input
+            type="text"
+            placeholder="Search men's shawls..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="form-control w-100 shadow-sm"
+            style={{
+              padding: "12px 15px 12px 45px",
+              borderRadius: "30px",
+              border: "1px solid #ccc",
+              fontSize: "0.95rem",
+            }}
+          />
+        </div>
+      </div>
 
       {/* --- TOP CONTROLS & FILTER BAR --- */}
       <div className="container my-3">
-        <div
-          className="p-3 bg-white shadow-sm d-flex flex-wrap justify-content-between align-items-center gap-3"
-          style={{ borderRadius: "8px", border: "1px solid #eee" }}
-        >
-          <div className="d-flex align-items-center gap-3">
-            <span className="text-muted small fw-medium">
-              {sortedProducts.length > 0
-                ? `Showing ${indexOfFirstItem + 1}-${Math.min(indexOfLastItem, sortedProducts.length)} of ${sortedProducts.length} products`
-                : "No products found"}
-            </span>
+        <div className="d-flex flex-wrap justify-content-between align-items-center bg-white p-3 rounded-4 shadow-sm gap-3 border">
+          <div className="text-muted small fw-semibold">
+            {filteredProducts.length > 0
+              ? `Showing ${indexOfFirstProduct + 1}-${Math.min(
+                  indexOfLastProduct,
+                  filteredProducts.length
+                )} of ${filteredProducts.length} products`
+              : "No products found"}
           </div>
 
-          <div className="d-flex align-items-center gap-3 flex-wrap">
+          <div className="d-flex align-items-center gap-3">
             <button
-              className="btn btn-outline-dark btn-sm d-flex align-items-center gap-2 px-3"
-              onClick={() => setShowFilterModal(!showFilterModal)}
-              style={{ borderRadius: "6px" }}
+              className="btn btn-outline-dark btn-sm d-flex align-items-center gap-1 rounded-pill px-3"
+              onClick={() => setShowFilters(!showFilters)}
             >
-              <FaFilter /> Filters {selectedMaterials.length > 0 && `(${selectedMaterials.length})`}
+              <FaFilter /> Filters
             </button>
 
             <div className="d-flex align-items-center gap-2">
-              <span className="text-muted small">Sort By:</span>
+              <span className="text-muted small fw-semibold">Sort By:</span>
               <select
-                className="form-select form-select-sm shadow-none"
-                style={{ width: "160px", borderRadius: "6px", fontSize: "0.85rem" }}
-                value={sortOrder}
-                onChange={(e) => setSortOrder(e.target.value)}
+                className="form-select form-select-sm rounded-pill px-3"
+                style={{ width: "160px" }}
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
               >
                 <option value="newest">Newest First</option>
                 <option value="low-high">Price: Low to High</option>
@@ -542,87 +630,92 @@ function Men() {
           </div>
         </div>
 
-        {/* SEARCH BAR */}
-        <div className="container my-3 text-center">
-          <div className="position-relative mx-auto" style={{ maxWidth: "600px" }}>
-            <span className="position-absolute top-50 start-0 translate-middle-y ps-3 text-muted">
-              <i className="bi bi-search"></i>
-            </span>
-            <input
-              type="text"
-              placeholder="Search men's shawls..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="form-control w-100 shadow-sm"
-              style={{
-                padding: "10px 15px 10px 45px",
-                borderRadius: "25px",
-                border: "1px solid #ddd",
-                backgroundColor: "#fcfbfa",
-              }}
-            />
-          </div>
-        </div>
-
-        {/* EXPANDABLE TOP FILTER PANEL */}
-        {showFilterModal && (
-          <div className="p-4 bg-white shadow-sm mt-3 border rounded-3 position-relative">
+        {/* EXPANDABLE FILTER PANEL */}
+        {showFilters && (
+          <div className="row g-3 mt-2 p-4 bg-white border rounded-4 shadow-sm position-relative">
             <button
+              type="button"
               className="btn-close position-absolute top-0 end-0 m-3"
-              onClick={() => setShowFilterModal(false)}
+              aria-label="Close"
+              onClick={() => setShowFilters(false)}
             ></button>
-            <h5 className="fw-bold mb-3" style={{ color: "#333", fontSize: "1.05rem" }}>Filter Options</h5>
 
-            <div className="row g-4">
-              <div className="col-md-6">
-                <label className="fw-semibold text-dark small mb-2 d-block">Price Range: ₹{priceRange}</label>
-                <input
-                  type="range"
-                  min="500"
-                  max="10000"
-                  step="100"
-                  value={priceRange}
-                  onChange={(e) => setPriceRange(Number(e.target.value))}
-                  className="form-range"
-                />
-                <div className="d-flex justify-content-between text-muted small mt-1">
-                  <span>₹500</span>
-                  <span>₹10000</span>
-                </div>
-              </div>
+            <h5 className="fw-bold mb-3">Filter Options</h5>
 
-              <div className="col-md-6">
-                <label className="fw-semibold text-dark small mb-2 d-block">Material / Fabric</label>
-                <div className="d-flex flex-wrap gap-3">
-                  {["Pashmina", "Wool", "Silk Blend"].map((material) => (
-                    <div className="form-check" key={material}>
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        id={`top-mat-${material}`}
-                        checked={selectedMaterials.includes(material)}
-                        onChange={() => handleMaterialChange(material)}
-                      />
-                      <label className="form-check-label text-secondary small" htmlFor={`top-mat-${material}`} style={{ cursor: "pointer" }}>
-                        {material}
-                      </label>
-                    </div>
-                  ))}
-                </div>
+            <div className="col-md-6">
+              <label className="form-label fw-bold small text-secondary">
+                Price Range: ₹{maxPrice}
+              </label>
+              <input
+                type="range"
+                className="form-range"
+                min="500"
+                max={MAX_PRICE}
+                step="100"
+                value={maxPrice}
+                onChange={(e) => setMaxPrice(Number(e.target.value))}
+              />
+              <div className="d-flex justify-content-between text-muted small">
+                <span>₹500</span>
+                <span>₹{MAX_PRICE}</span>
               </div>
+            </div>
+
+            <div className="col-md-6">
+              <label className="form-label fw-bold small text-secondary d-block">
+                Material / Fabric
+              </label>
+              <div className="d-flex flex-wrap gap-3 align-items-center mt-2">
+                <div className="form-check">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="fabricRadio"
+                    id="fabricAll"
+                    checked={selectedFabric === "All"}
+                    onChange={() => setSelectedFabric("All")}
+                  />
+                  <label className="form-check-label small" htmlFor="fabricAll">
+                    All
+                  </label>
+                </div>
+                {fabrics.map((fab, idx) => (
+                  <div className="form-check" key={idx}>
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name="fabricRadio"
+                      id={`fabric-${idx}`}
+                      checked={selectedFabric === fab}
+                      onChange={() => setSelectedFabric(fab)}
+                    />
+                    <label className="form-check-label small" htmlFor={`fabric-${idx}`}>
+                      {fab}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="col-12 text-end mt-3">
+              <button className="btn btn-outline-danger btn-sm px-4" onClick={resetFilters}>
+                Clear Filters
+              </button>
             </div>
           </div>
         )}
       </div>
 
       {/* --- PRODUCTS GRID (same card structure/feature as Home.jsx) --- */}
-      <div className="container my-3">
+      <div className="container my-4">
         <div className="row g-2 g-md-4">
           {currentProducts.length > 0 ? (
             currentProducts.map((item) => {
               const productIdStr = String(item.id);
               const isInCart = cartProductIds.includes(productIdStr);
               const isWishlisted = wishlistProductIds.includes(productIdStr);
+              const isOutOfStock =
+                Number.isFinite(item.stockQuantity) && item.stockQuantity <= 0;
 
               return (
                 <div className="col-6 col-sm-6 col-md-4 col-lg-3" key={productIdStr}>
@@ -645,21 +738,21 @@ function Men() {
                           title="Brand Logo"
                         >
                           <img
-                            src={
-                              item.brandLogo.startsWith("http")
-                                ? item.brandLogo
-                                : `${BASE_URL}/${item.brandLogo}`
-                            }
+                            src={toImageUrl(item.brandLogo)}
                             alt="Brand Logo"
                             style={{ width: "100%", height: "100%", objectFit: "cover" }}
                           />
                         </div>
                       )}
 
-                      <img
-                        src={item.image}
-                        className="card-img-top rounded Customer_product-image"
+                      <ProductImageSlider
+                        images={
+                          item.images && item.images.length > 0
+                            ? item.images
+                            : [item.image || PLACEHOLDER_IMG]
+                        }
                         alt={item.title}
+                        hideArrowsOnMobile
                       />
 
                       <button
@@ -733,43 +826,56 @@ function Men() {
                       </div>
 
                       <div className="Customer_card-actions d-flex flex-column gap-2 mt-auto">
-                        {isInCart ? (
+                        {isOutOfStock ? (
                           <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              navigate("/cart");
-                            }}
+                            disabled
+                            onClick={(e) => e.stopPropagation()}
                             className="Customer_card-btn btn w-100 fw-semibold text-white"
-                            style={{ backgroundColor: "#2b8a3e", border: "none", borderRadius: "8px" }}
+                            style={{ backgroundColor: "#8a8a8a", border: "none", borderRadius: "8px" }}
                           >
-                            Go to Cart
+                            Out of Stock
                           </button>
                         ) : (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleAddToCart(item);
-                            }}
-                            className="Customer_card-btn btn btn-dark w-100 fw-semibold text-white"
-                            style={{ backgroundColor: "#166228", border: "none", borderRadius: "8px" }}
-                          >
-                            Add to Cart
-                          </button>
-                        )}
+                          <>
+                            {isInCart ? (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  navigate("/cart");
+                                }}
+                                className="Customer_card-btn btn w-100 fw-semibold text-white"
+                                style={{ backgroundColor: "#2b8a3e", border: "none", borderRadius: "8px" }}
+                              >
+                                Go to Cart
+                              </button>
+                            ) : (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleAddToCart(item);
+                                }}
+                                className="Customer_card-btn btn btn-dark w-100 fw-semibold text-white"
+                                style={{ backgroundColor: "#166228", border: "none", borderRadius: "8px" }}
+                              >
+                                Add to Cart
+                              </button>
+                            )}
 
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleBuyNow(item);
-                          }}
-                          className="Customer_card-btn Customer_buy-now-btn btn w-100 fw-bold text-white border-0 shadow-sm"
-                          style={{
-                            background: "linear-gradient(135deg, #d6bd69 0%, #dfa00b 100%)",
-                            borderRadius: "8px",
-                          }}
-                        >
-                          Buy Now
-                        </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleBuyNow(item);
+                              }}
+                              className="Customer_card-btn Customer_buy-now-btn btn w-100 fw-bold text-white border-0 shadow-sm"
+                              style={{
+                                background: "linear-gradient(135deg, #d6bd69 0%, #dfa00b 100%)",
+                                borderRadius: "8px",
+                              }}
+                            >
+                              Buy Now
+                            </button>
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -777,41 +883,52 @@ function Men() {
               );
             })
           ) : (
-            <div className="col-12 text-center py-5 bg-white shadow-sm" style={{ borderRadius: "12px" }}>
-              <p className="text-muted fs-5 mb-0">No men's shawls found matching your search or filters.</p>
+            <div className="col-12 text-center py-5">
+              <p className="text-muted fs-5">No men's shawls found matching your filters.</p>
+              <button className="btn btn-outline-dark btn-sm mt-2" onClick={resetFilters}>
+                Reset Filters
+              </button>
             </div>
           )}
         </div>
 
         {/* PAGINATION */}
         {totalPages > 1 && (
-          <nav className="d-flex justify-content-center my-5">
-            <ul className="pagination shadow-sm">
+          <nav className="d-flex justify-content-center mt-5">
+            <ul className="pagination">
               <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                <button className="page-link" onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}>
+                <button
+                  className="page-link"
+                  onClick={() => goToPage(Math.max(currentPage - 1, 1))}
+                >
                   Previous
                 </button>
               </li>
-              {Array.from({ length: totalPages }, (_, index) => {
-                const pageNumber = index + 1;
-                return (
-                  <li key={pageNumber} className={`page-item ${currentPage === pageNumber ? "active" : ""}`}>
-                    <button
-                      className="page-link"
-                      onClick={() => setCurrentPage(pageNumber)}
-                      style={
-                        currentPage === pageNumber
-                          ? { backgroundColor: "#54411d", borderColor: "#54411d", color: "#fff" }
-                          : { color: "#54411d" }
-                      }
-                    >
-                      {pageNumber}
-                    </button>
-                  </li>
-                );
-              })}
+
+              {Array.from({ length: totalPages }, (_, index) => (
+                <li
+                  key={index + 1}
+                  className={`page-item ${currentPage === index + 1 ? "active" : ""}`}
+                >
+                  <button
+                    className="page-link"
+                    onClick={() => goToPage(index + 1)}
+                    style={
+                      currentPage === index + 1
+                        ? { backgroundColor: "#54411d", borderColor: "#54411d", color: "#fff" }
+                        : { color: "#54411d" }
+                    }
+                  >
+                    {index + 1}
+                  </button>
+                </li>
+              ))}
+
               <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-                <button className="page-link" onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}>
+                <button
+                  className="page-link"
+                  onClick={() => goToPage(Math.min(currentPage + 1, totalPages))}
+                >
                   Next
                 </button>
               </li>
