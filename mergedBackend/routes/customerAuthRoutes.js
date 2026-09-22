@@ -11,6 +11,8 @@ const {
   logoutCustomer,
   verifyOtp,      
   resendOtp,
+  forgotPassword,
+  resetPassword,
   getAllProductsForCustomer,
   addToWishlist,
   removeFromWishlist,
@@ -131,6 +133,159 @@ router.post("/verify-otp", verifyOtp);
  *         description: Customer not found
  */
 router.post("/resend-otp", resendOtp);
+
+// ==================== PASSWORD RESET ====================
+
+/**
+ * @swagger
+ * /api/customer/forgot-password:
+ *   post:
+ *     summary: Send password reset OTP
+ *     description: Sends a password reset OTP to the customer's registered email address.
+ *     tags:
+ *       - Customer Authentication
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: customer@gmail.com
+ *     responses:
+ *       200:
+ *         description: Password reset OTP sent successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Password reset OTP sent to your email.
+ *                 email:
+ *                   type: string
+ *                   example: customer@gmail.com
+ *       400:
+ *         description: Email is required
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Email is required
+ *       404:
+ *         description: Customer not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: No customer account found with this email.
+ *       500:
+ *         description: Server error while sending password reset OTP
+ */
+router.post(
+  "/forgot-password",
+  forgotPassword
+);
+
+
+/**
+ * @swagger
+ * /api/customer/reset-password:
+ *   post:
+ *     summary: Reset customer password
+ *     description: Verifies the OTP and updates the customer's password.
+ *     tags:
+ *       - Customer Authentication
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - otp
+ *               - newPassword
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: customer@gmail.com
+ *               otp:
+ *                 type: string
+ *                 example: "123456"
+ *               newPassword:
+ *                 type: string
+ *                 format: password
+ *                 example: NewPassword@123
+ *     responses:
+ *       200:
+ *         description: Password reset successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Password reset successfully. You can now login.
+ *       400:
+ *         description: Invalid request, expired OTP, incorrect OTP, or weak password
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Enter correct OTP.
+ *       404:
+ *         description: Customer not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Customer not found.
+ *       500:
+ *         description: Server error while resetting password
+ */
+router.post(
+  "/reset-password",
+  resetPassword
+);
 
 /**
  * @swagger

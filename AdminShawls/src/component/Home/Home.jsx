@@ -905,11 +905,7 @@ function Home() {
                       )}
 
                       {/* ✅ NEW: multiple images slider (static shawls me sirf item.image hoti hai) */}
-                      <ProductImageSlider
-  images={item.images && item.images.length ? item.images : [item.image]}
-  alt={item.title}
-  hideArrowsOnMobile
-/>
+ <ProductImageSlider images={ item.images && item.images.length ? item.images : [item.image] } alt={item.title} hideArrowsOnMobile={true} hideArrowsOnDesktop={true} />
 
                       <button
                         className="Customer_wishlist-btn"

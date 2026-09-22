@@ -659,12 +659,13 @@ function FestiveGifts() {
                           {/* ✅ Image Slider (Birthday page jaisa) — ab multiple images swipe/arrow se dikhenge */}
                           <ProductImageSlider
                             images={
-                              item.images && item.images.length > 0
+                              item.images && item.images.length
                                 ? item.images
                                 : [item.image]
                             }
                             alt={item.title}
-                            hideArrowsOnMobile
+                            hideArrowsOnMobile={true}
+                            hideArrowsOnDesktop={true}
                           />
 
                           <button

@@ -563,7 +563,7 @@ export default function ProductDetail({
       style={{
         // reduced top space (was clamp(90px, 12vw, 120px))
         paddingTop:
-          "clamp(60px, 8vw, 90px)",
+          "clamp(35px, 1vw, 40px)",
       }}
     >
 

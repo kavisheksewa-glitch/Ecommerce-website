@@ -1,229 +1,250 @@
-// import React, { useState } from "react";
-// import { Link, useNavigate } from "react-router-dom";
-// import { jwtDecode } from "jwt-decode";
-// import "./Login.css";
-// import bgVideo from "../../assets/login-bg.mp4";
-// import { BASE_URL } from "../../utils/api";
-// function Login() {
-//   const navigate = useNavigate();
-//   const [formData, setFormData] = useState({
-//     email: "",
-//     password: "",
-//   });
-//   const [error, setError] = useState("");
-
-//   const handleChange = (e) => {
-//     setFormData({ ...formData, [e.target.name]: e.target.value });
-//   };
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     setError("");
-
-//     if (!formData.email || !formData.password) {
-//       setError("Please fill in all fields.");
-//       return;
-//     }
-
-//     try {
-//       const response = await fetch(`${BASE_URL}/api/customer/login`, {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify(formData),
-//       });
-
-//       const data = await response.json();
-
-//       if (response.ok) {
-//         localStorage.setItem("token", data.token);
-
-//         try {
-//           const decoded = jwtDecode(data.token);
-//           localStorage.setItem("userId", decoded.id);
-//           localStorage.setItem("customerRole", decoded.role);
-//         } catch (decodeErr) {
-//           console.error("Token decode failed:", decodeErr);
-//         }
-
-//         alert(data.message || "Login Successful!");
-//         navigate("/customer");
-//       } else {
-//         // 👇 Agar email verify nahi hai to verify page pe bhejein
-//         if (data.notVerified) {
-//           navigate("/verify-email", { state: { email: data.email || formData.email } });
-//           return;
-//         }
-//         setError(data.message || "Invalid email or password!");
-//       }
-//     } catch (err) {
-//       console.error("Login error:", err);
-//       setError("Something went wrong. Please try again later.");
-//     }
-//   };
-
-//   return (
-//     <div className="video-bg-container">
-//       {/* Background Video */}
-//       <video autoPlay loop muted playsInline className="bg-video-element">
-//         <source src={bgVideo} type="video/mp4" />
-//         Your browser does not support the video tag.
-//       </video>
-
-//       {/* Login Box Container */}
-//       <div className="Customer_login-container">
-//         <div className="Customer_login-card">
-//           <h2 className="Customer_login-title">Welcome Back</h2>
-//           <p className="Customer_login-subtitle">Login to your Kavi Shawls account</p>
-
-//           {error && <div className="alert alert-danger py-2">{error}</div>}
-
-//           <form onSubmit={handleSubmit}>
-//             <div className="mb-3">
-//               <label className="Customer_form-label">Email Address</label>
-//               <input
-//                 type="email"
-//                 name="email"
-//                 className="Customer_form-control"
-//                 placeholder="you@example.com"
-//                 value={formData.email}
-//                 onChange={handleChange}
-//                 autoComplete="off"
-//                 required
-//               />
-//             </div>
-
-//             <div className="mb-3">
-//               <label className="Customer_form-label">Password</label>
-//               <input
-//                 type="password"
-//                 name="password"
-//                 className="Customer_form-control"
-//                 placeholder="Enter your password"
-//                 value={formData.password}
-//                 onChange={handleChange}
-//                 autoComplete="current-password"
-//                 required
-//               />
-//             </div>
-
-//             <div className="d-flex justify-content-between align-items-center mb-3">
-//               <div className="form-check">
-//                 <input type="checkbox" className="form-check-input" id="remember" />
-//                 <label className="form-check-label" htmlFor="remember" style={{ fontSize: "13px" }}>
-//                   Remember me
-//                 </label>
-//               </div>
-//               <Link to="/forgot-password" className="Customer_forgot-link">
-//                 Forgot Password?
-//               </Link>
-//             </div>
-
-//             <button type="submit" className="Customer_login-btn w-100">
-//               Login
-//             </button>
-//           </form>
-
-//           <p className="Customer_signup-text">
-//             Don't have an account? <Link to="/signup">Sign Up</Link>
-//           </p>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default Login;
-
-
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import "./Login.css";
 import bgVideo from "../../assets/login-bg.webm";
 import { BASE_URL } from "../../utils/api";
+
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 function Login() {
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  const [error, setError] = useState("");
 
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // =========================
+  // HANDLE INPUT CHANGE
+  // =========================
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+
+    // Remove old error when user starts typing
+    if (error) {
+      setError("");
+    }
   };
 
+  // =========================
+  // HANDLE LOGIN
+  // =========================
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Prevent double click / multiple requests
+    if (loading) return;
+
     setError("");
 
+    // =========================
+    // EMPTY FIELD VALIDATION
+    // =========================
     if (!formData.email || !formData.password) {
-      setError("Please fill in all fields.");
+      toast.warning("Please fill in all fields.", {
+        position: "top-right",
+        autoClose: 2500,
+      });
+
       return;
     }
 
+    // Start loader
+    setLoading(true);
+
     try {
-      const response = await fetch(`${BASE_URL}/api/customer/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      // =========================
+      // LOGIN API
+      // =========================
+      const response = await fetch(
+        `${BASE_URL}/api/customer/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
 
       const data = await response.json();
 
+      // =========================
+      // LOGIN SUCCESS
+      // =========================
       if (response.ok) {
+        // Save token
         localStorage.setItem("token", data.token);
 
+        // Decode JWT
         try {
           const decoded = jwtDecode(data.token);
+
           localStorage.setItem("userId", decoded.id);
-          localStorage.setItem("customerRole", decoded.role);
+          localStorage.setItem(
+            "customerRole",
+            decoded.role
+          );
         } catch (decodeErr) {
-          console.error("Token decode failed:", decodeErr);
+          console.error(
+            "Token decode failed:",
+            decodeErr
+          );
         }
 
-        alert(data.message || "Login Successful!");
+        // Success toast
+        toast.success(
+          data.message || "Login successful!",
+          {
+            position: "top-right",
+            autoClose: 1800,
+          }
+        );
 
-        // 👇 Full page reload ke saath redirect
-        window.location.href = "/customer";
+        // Redirect after toast
+        setTimeout(() => {
+          window.location.href = "/customer";
+        }, 2000);
+
         return;
-      } else {
-        // 👇 Agar email verify nahi hai to verify page pe bhejein
-        if (data.notVerified) {
-          navigate("/verify-email", { state: { email: data.email || formData.email } });
-          return;
-        }
-        setError(data.message || "Invalid email or password!");
       }
+
+      // =========================
+      // EMAIL NOT VERIFIED
+      // =========================
+      if (data.notVerified) {
+        toast.warning(
+          "Please verify your email first.",
+          {
+            position: "top-right",
+            autoClose: 2000,
+          }
+        );
+
+        setTimeout(() => {
+          navigate("/verify-email", {
+            state: {
+              email:
+                data.email || formData.email,
+            },
+          });
+        }, 2200);
+
+        return;
+      }
+
+      // =========================
+      // INVALID LOGIN
+      // =========================
+      const errorMessage =
+        data.message ||
+        "Invalid email or password!";
+
+      setError(errorMessage);
+
+      toast.error(errorMessage, {
+        position: "top-right",
+        autoClose: 3000,
+      });
+
+      // Allow retry
+      setLoading(false);
+
     } catch (err) {
       console.error("Login error:", err);
-      setError("Something went wrong. Please try again later.");
+
+      const errorMessage =
+        "Something went wrong. Please try again later.";
+
+      setError(errorMessage);
+
+      toast.error(errorMessage, {
+        position: "top-right",
+        autoClose: 3000,
+      });
+
+      // Allow retry
+      setLoading(false);
     }
   };
 
   return (
     <div className="video-bg-container">
-      {/* Background Video */}
-      <video autoPlay loop muted playsInline className="bg-video-element">
-        <source src={bgVideo} type="video/mp4" />
+
+      {/* =========================
+          BACKGROUND VIDEO
+      ========================= */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="bg-video-element"
+      >
+        <source
+          src={bgVideo}
+          type="video/webm"
+        />
+
         Your browser does not support the video tag.
       </video>
 
-      {/* Login Box Container */}
+      {/* =========================
+          TOAST CONTAINER
+      ========================= */}
+      <ToastContainer
+        position="top-right"
+        autoClose={2500}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        draggable
+      />
+
+      {/* =========================
+          LOGIN CONTAINER
+      ========================= */}
       <div className="Customer_login-container">
+
         <div className="Customer_login-card">
-          <h2 className="Customer_login-title">Welcome Back</h2>
-          <p className="Customer_login-subtitle">Login to your Kavi Shawls account</p>
 
-          {error && <div className="alert alert-danger py-2">{error}</div>}
+          {/* TITLE */}
+          <h2 className="Customer_login-title">
+            Welcome Back
+          </h2>
 
+          <p className="Customer_login-subtitle">
+            Login to your Kavi Shawls account
+          </p>
+
+          {/* ERROR MESSAGE */}
+          {error && (
+            <div className="alert alert-danger py-2">
+              {error}
+            </div>
+          )}
+
+          {/* =========================
+              LOGIN FORM
+          ========================= */}
           <form onSubmit={handleSubmit}>
+
+            {/* EMAIL */}
             <div className="mb-3">
-              <label className="Customer_form-label">Email Address</label>
+
+              <label className="Customer_form-label">
+                Email Address
+              </label>
+
               <input
                 type="email"
                 name="email"
@@ -233,11 +254,18 @@ function Login() {
                 onChange={handleChange}
                 autoComplete="off"
                 required
+                disabled={loading}
               />
+
             </div>
 
+            {/* PASSWORD */}
             <div className="mb-3">
-              <label className="Customer_form-label">Password</label>
+
+              <label className="Customer_form-label">
+                Password
+              </label>
+
               <input
                 type="password"
                 name="password"
@@ -247,29 +275,80 @@ function Login() {
                 onChange={handleChange}
                 autoComplete="current-password"
                 required
+                disabled={loading}
               />
+
             </div>
 
+            {/* REMEMBER + FORGOT PASSWORD */}
             <div className="d-flex justify-content-between align-items-center mb-3">
+
               <div className="form-check">
-                <input type="checkbox" className="form-check-input" id="remember" />
-                <label className="form-check-label" htmlFor="remember" style={{ fontSize: "13px" }}>
+
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="remember"
+                  disabled={loading}
+                />
+
+                <label
+                  className="form-check-label"
+                  htmlFor="remember"
+                  style={{ fontSize: "13px" }}
+                >
                   Remember me
                 </label>
+
               </div>
-              <Link to="/forgot-password" className="Customer_forgot-link">
+
+              <Link
+                to="/forgot-password"
+                className="Customer_forgot-link"
+              >
                 Forgot Password?
               </Link>
+
             </div>
 
-            <button type="submit" className="Customer_login-btn w-100">
-              Login
+            {/* =========================
+                LOGIN BUTTON
+            ========================= */}
+            <button
+              type="submit"
+              className="Customer_login-btn w-100"
+              disabled={loading}
+            >
+
+              {loading ? (
+                <>
+                  <span
+                    className="spinner-border spinner-border-sm me-2"
+                    role="status"
+                    aria-hidden="true"
+                  ></span>
+
+                  Logging in...
+                </>
+              ) : (
+                "Login"
+              )}
+
             </button>
+
           </form>
 
+          {/* SIGN UP */}
           <p className="Customer_signup-text">
-            Don't have an account? <Link to="/signup">Sign Up</Link>
+
+            Don't have an account?{" "}
+
+            <Link to="/signup">
+              Sign Up
+            </Link>
+
           </p>
+
         </div>
       </div>
     </div>

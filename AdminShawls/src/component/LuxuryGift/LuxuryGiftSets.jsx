@@ -725,12 +725,13 @@ function LuxuryGiftSets() {
 
                           <ProductImageSlider
                             images={
-                              item.images && item.images.length > 0
+                              item.images && item.images.length
                                 ? item.images
-                                : [item.image || PLACEHOLDER_IMG]
+                                : [item.image]
                             }
                             alt={item.title}
-                            hideArrowsOnMobile
+                            hideArrowsOnMobile={true}
+                            hideArrowsOnDesktop={true}
                           />
 
                           <button

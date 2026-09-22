@@ -1024,15 +1024,16 @@ function WeddingGifts() {
                             )}
 
                             {/* ✅ PRODUCT IMAGE SLIDER (Birthday/Festive pages jaisa) */}
-                            <ProductImageSlider
-                              images={
-                                item.images && item.images.length > 0
-                                  ? item.images
-                                  : [item.image]
-                              }
-                              alt={item.title}
-                              hideArrowsOnMobile
-                            />
+                         <ProductImageSlider
+                           images={
+                             item.images && item.images.length
+                               ? item.images
+                               : [item.image]
+                           }
+                           alt={item.title}
+                           hideArrowsOnMobile={true}
+                           hideArrowsOnDesktop={true}
+                         />
 
                             {/* WISHLIST */}
                             <button

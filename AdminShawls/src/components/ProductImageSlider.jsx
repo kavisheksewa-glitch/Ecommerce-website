@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
@@ -7,8 +8,15 @@ export default function ProductImageSlider({
   height = "100%",
   showThumbs = false,
   brandLogo = "",
-  stockLabel = "", // NEW: rendered bottom-left of the MAIN IMAGE only
-  hideArrowsOnMobile = false, // true => arrows sirf desktop (>= 992px) par dikhenge
+  stockLabel = "",
+
+  // Mobile/tablet arrows hide karne ke liye
+  hideArrowsOnMobile = false,
+
+  // Desktop arrows hide karne ke liye
+  // Home cards mein true hoga
+  // ProductDetails mein false rahega
+  hideArrowsOnDesktop = false,
 }) {
   // --------------------------------------------------
   // MAXIMUM 5 PRODUCT IMAGES
@@ -16,23 +24,33 @@ export default function ProductImageSlider({
   const list = (images || []).filter(Boolean).slice(0, 5);
 
   const [index, setIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+
   const touchStartX = useRef(null);
+  const hoverIntervalRef = useRef(null);
 
   // --------------------------------------------------
-  // DESKTOP DETECTION (Bootstrap lg = 992px)
+  // DESKTOP DETECTION
+  // Bootstrap lg = 992px
   // --------------------------------------------------
   const [isDesktop, setIsDesktop] = useState(() => {
     if (typeof window === "undefined") return true;
+
     return window.innerWidth >= 992;
   });
 
   useEffect(() => {
-    const handleResize = () => setIsDesktop(window.innerWidth >= 992);
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 992);
+    };
 
     handleResize();
+
     window.addEventListener("resize", handleResize);
 
-    return () => window.removeEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
 
   // --------------------------------------------------
@@ -48,29 +66,95 @@ export default function ProductImageSlider({
   }
 
   const total = list.length;
+
   const current = Math.min(index, total - 1);
 
   // --------------------------------------------------
   // ARROWS VISIBILITY
-  // - 1 se zyada image ho tabhi
-  // - hideArrowsOnMobile ON ho to mobile/tablet par hide
+  //
+  // Desktop:
+  //   hideArrowsOnDesktop = true  -> hidden
+  //   hideArrowsOnDesktop = false -> visible
+  //
+  // Mobile/tablet:
+  //   hideArrowsOnMobile = true  -> hidden
+  //   hideArrowsOnMobile = false -> visible
   // --------------------------------------------------
-  const showArrows = total > 1 && !(hideArrowsOnMobile && !isDesktop);
+  const showArrows =
+    total > 1 &&
+    (isDesktop
+      ? !hideArrowsOnDesktop
+      : !hideArrowsOnMobile);
 
   // --------------------------------------------------
   // NEXT / PREVIOUS
   // --------------------------------------------------
   const go = (e, direction) => {
-    if (e) e.stopPropagation();
+    if (e) {
+      e.stopPropagation();
+    }
+
+    if (total <= 1) return;
 
     setIndex((prev) => {
       const safeIndex = Math.min(prev, total - 1);
+
       return (safeIndex + direction + total) % total;
     });
   };
 
   // --------------------------------------------------
+  // DESKTOP HOVER AUTO SLIDER
+  //
+  // Sirf tab chalega jab:
+  // 1. Desktop ho
+  // 2. Product image hover ho
+  // 3. Multiple images hon
+  // 4. Desktop arrows hidden hon
+  //
+  // Har 2 seconds image change hogi.
+  // --------------------------------------------------
+  useEffect(() => {
+    // Existing interval clear karo
+    if (hoverIntervalRef.current) {
+      clearInterval(hoverIntervalRef.current);
+      hoverIntervalRef.current = null;
+    }
+
+    // Auto slider sirf desktop card mode ke liye
+    if (
+      !isDesktop ||
+      !isHovered ||
+      total <= 1 ||
+      !hideArrowsOnDesktop
+    ) {
+      return;
+    }
+
+    hoverIntervalRef.current = setInterval(() => {
+      setIndex((prev) => {
+        const safeIndex = Math.min(prev, total - 1);
+
+        return (safeIndex + 1) % total;
+      });
+    }, 2000);
+
+    return () => {
+      if (hoverIntervalRef.current) {
+        clearInterval(hoverIntervalRef.current);
+        hoverIntervalRef.current = null;
+      }
+    };
+  }, [
+    isDesktop,
+    isHovered,
+    total,
+    hideArrowsOnDesktop,
+  ]);
+
+  // --------------------------------------------------
   // TOUCH SWIPE
+  // Mobile / Tablet
   // --------------------------------------------------
   const handleTouchStart = (e) => {
     touchStartX.current = e.touches[0].clientX;
@@ -79,7 +163,10 @@ export default function ProductImageSlider({
   const handleTouchEnd = (e) => {
     if (touchStartX.current === null) return;
 
-    const diff = e.changedTouches[0].clientX - touchStartX.current;
+    const diff =
+      e.changedTouches[0].clientX -
+      touchStartX.current;
+
     touchStartX.current = null;
 
     if (Math.abs(diff) > 40) {
@@ -90,26 +177,41 @@ export default function ProductImageSlider({
   // --------------------------------------------------
   // ARROW STYLE
   // --------------------------------------------------
-  const arrowStyle = (side) => ({
-    position: "absolute",
-    top: "50%",
-    [side]: 10,
-    transform: "translateY(-50%)",
-    width: 38,
-    height: 38,
-    borderRadius: "50%",
-    border: "none",
-    background: "rgba(255,255,255,0.92)",
-    color: "#333",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: 15,
-    cursor: "pointer",
-    boxShadow: "0 2px 7px rgba(0,0,0,0.25)",
-    zIndex: 20,
-    padding: 0,
-  });
+
+const arrowStyle = (side) => ({
+  position: "absolute",
+  top: "50%",
+  [side]: 10,
+  transform: "translateY(-50%)",
+
+  width: 38,
+  height: 38,
+
+  borderRadius: "50%",
+  border: "none",
+
+  // Transparent background
+  background: "transparent",
+
+  // Arrow color
+  color: "#ffffff",
+
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+
+  fontSize: 20,
+  cursor: "pointer",
+
+  // Soft shadow so arrow is visible on light/dark images
+  filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.65))",
+
+  zIndex: 20,
+  padding: 0,
+
+  transition: "all 0.2s ease",
+});
+
 
   return (
     <div
@@ -122,7 +224,8 @@ export default function ProductImageSlider({
       }}
     >
       {/* =====================================================
-          DESKTOP THUMBNAILS (LEFT SIDE, only >= 992px)
+          DESKTOP THUMBNAILS
+          Only >= 992px
       ===================================================== */}
       {showDesktopThumbs && total > 1 && (
         <div
@@ -146,7 +249,10 @@ export default function ProductImageSlider({
               key={i}
               type="button"
               aria-label={`Show image ${i + 1}`}
-              onClick={() => setIndex(i)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIndex(i);
+              }}
               style={{
                 width: 62,
                 height: 62,
@@ -157,8 +263,12 @@ export default function ProductImageSlider({
                 overflow: "hidden",
                 cursor: "pointer",
                 background: "#fff",
-                border: i === current ? "2px solid #dfa00b" : "2px solid #ddd",
-                opacity: i === current ? 1 : 0.7,
+                border:
+                  i === current
+                    ? "2px solid #dfa00b"
+                    : "2px solid #ddd",
+                opacity:
+                  i === current ? 1 : 0.7,
                 transition: "all 0.2s ease",
                 flex: "0 0 auto",
               }}
@@ -182,23 +292,53 @@ export default function ProductImageSlider({
 
       {/* =====================================================
           MAIN PRODUCT IMAGE AREA
-          (brand logo + stock label isi ke andar hain,
-          thumbnails ke upar/beech kabhi nahi)
       ===================================================== */}
       <div
         style={{
           position: "relative",
-          width: showDesktopThumbs ? "calc(100% - 80px)" : "100%",
-          flex: showDesktopThumbs ? "1 1 auto" : "none",
+          width: showDesktopThumbs
+            ? "calc(100% - 80px)"
+            : "100%",
+          flex: showDesktopThumbs
+            ? "1 1 auto"
+            : "none",
           height: height,
           overflow: "hidden",
           minWidth: 0,
           borderRadius: 8,
         }}
-        onTouchStart={total > 1 ? handleTouchStart : undefined}
-        onTouchEnd={total > 1 ? handleTouchEnd : undefined}
+
+        // Desktop hover
+        onMouseEnter={() => {
+          if (
+            isDesktop &&
+            total > 1 &&
+            hideArrowsOnDesktop
+          ) {
+            setIsHovered(true);
+          }
+        }}
+        onMouseLeave={() => {
+          if (isDesktop) {
+            setIsHovered(false);
+          }
+        }}
+
+        // Mobile / Tablet swipe
+        onTouchStart={
+          total > 1
+            ? handleTouchStart
+            : undefined
+        }
+        onTouchEnd={
+          total > 1
+            ? handleTouchEnd
+            : undefined
+        }
       >
-        {/* BRAND LOGO (top-left) */}
+        {/* =====================================================
+            BRAND LOGO
+        ===================================================== */}
         {brandLogo && (
           <div
             style={{
@@ -213,8 +353,10 @@ export default function ProductImageSlider({
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              border: "2px solid rgba(255,255,255,0.95)",
-              boxShadow: "0 3px 10px rgba(0,0,0,0.30)",
+              border:
+                "2px solid rgba(255,255,255,0.95)",
+              boxShadow:
+                "0 3px 10px rgba(0,0,0,0.30)",
               zIndex: 15,
             }}
           >
@@ -233,7 +375,9 @@ export default function ProductImageSlider({
           </div>
         )}
 
-        {/* STOCK LABEL (bottom-left, main image only) */}
+        {/* =====================================================
+            STOCK LABEL
+        ===================================================== */}
         {stockLabel && (
           <div
             style={{
@@ -242,12 +386,14 @@ export default function ProductImageSlider({
               left: 12,
               padding: "6px 14px",
               borderRadius: 999,
-              background: "rgba(0,0,0,0.75)",
+              background:
+                "rgba(0,0,0,0.75)",
               color: "#fff",
               fontSize: 13,
               fontWeight: 500,
               whiteSpace: "nowrap",
-              boxShadow: "0 3px 10px rgba(0,0,0,0.25)",
+              boxShadow:
+                "0 3px 10px rgba(0,0,0,0.25)",
               zIndex: 15,
             }}
           >
@@ -255,14 +401,18 @@ export default function ProductImageSlider({
           </div>
         )}
 
-        {/* IMAGE SLIDER */}
+        {/* =====================================================
+            IMAGE SLIDER
+        ===================================================== */}
         <div
           style={{
             display: "flex",
             width: "100%",
             height: "100%",
-            transform: `translateX(-${current * 100}%)`,
-            transition: "transform 0.35s ease",
+            transform:
+              `translateX(-${current * 100}%)`,
+            transition:
+              "transform 0.5s ease-in-out",
           }}
         >
           {list.map((src, i) => (
@@ -270,7 +420,9 @@ export default function ProductImageSlider({
               key={i}
               src={src}
               alt={`${alt} ${i + 1}`}
-              loading={i === 0 ? "eager" : "lazy"}
+              loading={
+                i === 0 ? "eager" : "lazy"
+              }
               draggable={false}
               style={{
                 flex: "0 0 100%",
@@ -284,7 +436,9 @@ export default function ProductImageSlider({
           ))}
         </div>
 
-        {/* LEFT ARROW */}
+        {/* =====================================================
+            LEFT ARROW
+        ===================================================== */}
         {showArrows && (
           <button
             type="button"
@@ -296,7 +450,9 @@ export default function ProductImageSlider({
           </button>
         )}
 
-        {/* RIGHT ARROW */}
+        {/* =====================================================
+            RIGHT ARROW
+        ===================================================== */}
         {showArrows && (
           <button
             type="button"
@@ -308,7 +464,10 @@ export default function ProductImageSlider({
           </button>
         )}
 
-        {/* DOTS (only card mode) */}
+        {/* =====================================================
+            DOTS
+            Card mode only
+        ===================================================== */}
         {total > 1 && !showThumbs && (
           <div
             style={{
@@ -327,13 +486,18 @@ export default function ProductImageSlider({
               <span
                 key={i}
                 style={{
-                  width: i === current ? 14 : 6,
+                  width:
+                    i === current ? 14 : 6,
                   height: 6,
                   borderRadius: 6,
                   background:
-                    i === current ? "#dfa00b" : "rgba(255,255,255,0.8)",
-                  boxShadow: "0 0 2px rgba(0,0,0,0.4)",
-                  transition: "all 0.3s ease",
+                    i === current
+                      ? "#dfa00b"
+                      : "rgba(255,255,255,0.8)",
+                  boxShadow:
+                    "0 0 2px rgba(0,0,0,0.4)",
+                  transition:
+                    "all 0.3s ease",
                 }}
               />
             ))}

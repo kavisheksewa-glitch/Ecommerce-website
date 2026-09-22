@@ -156,6 +156,161 @@ const resendOtp = async (req, res) => {
   }
 };
 
+// ==================== FORGOT PASSWORD ====================
+
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required",
+      });
+    }
+
+    const customer = await Customer.findOne({ email });
+
+    if (!customer) {
+      return res.status(404).json({
+        success: false,
+        message: "No customer account found with this email.",
+      });
+    }
+
+    // Generate new OTP
+    const otp = generateOtp();
+
+    // Save OTP with 3-minute expiry
+    customer.otp = otp;
+    customer.otpExpiry = new Date(Date.now() + OTP_VALID_MS);
+
+    await customer.save();
+
+    // Send OTP using existing Brevo email function
+    await sendOtpEmail(
+      customer.email,
+      otp,
+      customer.fullName
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Password reset OTP sent to your email.",
+      email: customer.email,
+    });
+
+  } catch (error) {
+    console.error("Error in forgot password:", error);
+
+    return res.status(500).json({
+      success: false,
+      message:
+        error.message ||
+        "Server error while sending password reset OTP.",
+    });
+  }
+};
+
+
+// ==================== RESET PASSWORD ====================
+
+const resetPassword = async (req, res) => {
+  try {
+    const {
+      email,
+      otp,
+      newPassword,
+    } = req.body;
+
+    if (!email || !otp || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Email, OTP and new password are required.",
+      });
+    }
+
+    // Find customer
+    const customer = await Customer.findOne({ email });
+
+    if (!customer) {
+      return res.status(404).json({
+        success: false,
+        message: "Customer not found.",
+      });
+    }
+
+    // Check OTP exists
+    if (!customer.otp || !customer.otpExpiry) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "No OTP found. Please request a new OTP.",
+      });
+    }
+
+    // Check OTP expiry
+    if (
+      Date.now() >
+      new Date(customer.otpExpiry).getTime()
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "OTP expired. Please request a new OTP.",
+      });
+    }
+
+    // Check OTP
+    if (customer.otp !== otp.toString()) {
+      return res.status(400).json({
+        success: false,
+        message: "Enter correct OTP.",
+      });
+    }
+
+    // Password length validation
+    if (newPassword.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Password must be at least 6 characters long.",
+      });
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(
+      newPassword,
+      10
+    );
+
+    customer.password = hashedPassword;
+
+    // Clear OTP after successful reset
+    customer.otp = undefined;
+    customer.otpExpiry = undefined;
+
+    await customer.save();
+
+    return res.status(200).json({
+      success: true,
+      message:
+        "Password reset successfully. You can now login.",
+    });
+
+  } catch (error) {
+    console.error("Error resetting password:", error);
+
+    return res.status(500).json({
+      success: false,
+      message:
+        error.message ||
+        "Server error while resetting password.",
+    });
+  }
+};
+
 const loginCustomer = async (req, res) => {
   try {
     const { email: userEmail, password: userPassword } = req.body;
@@ -554,6 +709,8 @@ module.exports = {
   registerCustomer,
   loginCustomer,
   logoutCustomer,
+  forgotPassword,
+  resetPassword,
   getAllProductsForCustomer,
   addToWishlist,
   removeFromWishlist,

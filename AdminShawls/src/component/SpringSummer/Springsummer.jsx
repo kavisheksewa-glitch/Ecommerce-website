@@ -762,15 +762,16 @@ function Springsummer() {
                         </div>
                       )}
 
-                      <ProductImageSlider
-                        images={
-                          item.images && item.images.length > 0
-                            ? item.images
-                            : [item.image].filter(Boolean)
-                        }
-                        alt={item.title}
-                        hideArrowsOnMobile
-                      />
+                     <ProductImageSlider
+                       images={
+                         item.images && item.images.length
+                           ? item.images
+                           : [item.image]
+                       }
+                       alt={item.title}
+                       hideArrowsOnMobile={true}
+                       hideArrowsOnDesktop={true}
+                     />
 
                       <button
                         className="Customer_wishlist-btn"
