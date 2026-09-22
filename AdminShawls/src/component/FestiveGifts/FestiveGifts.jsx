@@ -16,6 +16,14 @@ import {
 } from "react-share";
 import festiveBgImage from "../../assets/image.webp";
 import { FestiveShawls } from "../../data/shawls";
+import ProductImageSlider from "../../components/ProductImageSlider";
+
+const toImageUrl = (raw) => {
+  if (!raw) return "";
+  if (String(raw).startsWith("http")) return raw;
+  const path = String(raw).replace(/\\/g, "/").replace(/^\//, "");
+  return `${BASE_URL}/${path}`;
+};
 
 function FestiveGifts() {
   const navigate = useNavigate();
@@ -51,7 +59,8 @@ function FestiveGifts() {
       return;
     }
 
-    fetch("${BASE_URL}/api/customer/cart", {
+    // ✅ FIX: backtick template literal use ho raha hai ab (pehle normal string thi, isliye ye call hamesha fail hoti thi)
+    fetch(`${BASE_URL}/api/customer/cart`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -86,6 +95,14 @@ function FestiveGifts() {
               const finalPrice = discountPercent > 0
                 ? Math.round(basePrice - (basePrice * discountPercent) / 100)
                 : basePrice;
+
+              // ✅ Multiple images support (Birthday page jaisa) + purane single-image products bhi chalenge
+              const rawImages =
+                Array.isArray(p.productImages) && p.productImages.length > 0
+                  ? p.productImages
+                  : [p.productImage || p.image].filter(Boolean);
+              const images = rawImages.map(toImageUrl);
+
               return {
                 id: p._id,
                 title: p.productName,
@@ -94,8 +111,9 @@ function FestiveGifts() {
                 price: `₹${finalPrice}`,
                 originalPrice: discountPercent > 0 ? `₹${basePrice}` : "",
                 discount: discountPercent > 0 ? `${discountPercent}% OFF` : null,
-                image: p.productImage?.startsWith("http") ? p.productImage : `${BASE_URL}/${p.productImage}`,
-                brandLogo: p.sellerId?.brandLogo ? (p.sellerId.brandLogo.startsWith("http") ? p.sellerId.brandLogo : `${BASE_URL}/${p.sellerId.brandLogo}`) : "",
+                images,
+                image: images[0] || "",
+                brandLogo: toImageUrl(p.sellerId?.brandLogo),
                 stock: `Stock: ${p.stockQuantity}`,
                 fabric: p.fabric || "N/A",
                 color: p.color || "N/A",
@@ -107,13 +125,18 @@ function FestiveGifts() {
               };
             });
 
-          const formattedStaticShawls = FestiveShawls.map(item => ({
+          const formattedStaticShawls = FestiveShawls.map((item) => ({
             ...item,
-            numericPrice: Number(String(item.price).replace(/[^0-9]/g, "")) || 0
+            numericPrice: Number(String(item.price).replace(/[^0-9]/g, "")) || 0,
+            // ✅ Static shawls ke liye bhi images array (agar data file me images[] pehle se ho to wahi use hoga)
+            images:
+              Array.isArray(item.images) && item.images.length > 0
+                ? item.images
+                : [item.image].filter(Boolean),
           }));
 
           const combined = [...formattedStaticShawls, ...dbProducts];
-          const uniqueShawls = Array.from(new Map(combined.map(item => [item.id, item])).values());
+          const uniqueShawls = Array.from(new Map(combined.map((item) => [item.id, item])).values());
 
           setFestiveShawls(uniqueShawls);
         }
@@ -633,10 +656,15 @@ function FestiveGifts() {
                             </div>
                           )}
 
-                          <img
-                            src={item.image}
-                            className="card-img-top rounded Customer_product-image"
+                          {/* ✅ Image Slider (Birthday page jaisa) — ab multiple images swipe/arrow se dikhenge */}
+                          <ProductImageSlider
+                            images={
+                              item.images && item.images.length > 0
+                                ? item.images
+                                : [item.image]
+                            }
                             alt={item.title}
+                            hideArrowsOnMobile
                           />
 
                           <button

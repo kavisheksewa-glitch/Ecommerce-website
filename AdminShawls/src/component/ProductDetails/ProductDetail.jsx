@@ -9,7 +9,7 @@ import {
   useParams,
 } from "react-router-dom";
 
-import API from "../../utils/api";
+import API, { BASE_URL } from "../../utils/api";
 
 import { shawls } from "../../data/shawls";
 
@@ -19,6 +19,8 @@ import {
 } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
+
+import { FaHeart } from "react-icons/fa";
 
 import ProductImageSlider from "../../components/ProductImageSlider";
 
@@ -77,6 +79,57 @@ export default function ProductDetail({
   const [notFound, setNotFound] =
     useState(false);
 
+  // ===================================================
+  // WISHLIST STATE (synced with backend, same as Men.jsx)
+  // ===================================================
+
+  const [wishlistProductIds, setWishlistProductIds] =
+    useState([]);
+
+  const fetchWishlist = () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setWishlistProductIds([]);
+      return;
+    }
+
+    fetch(`${BASE_URL}/api/customer/wishlist`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.wishlist)) {
+          setWishlistProductIds(
+            data.wishlist.map((item) =>
+              String(item.productId)
+            )
+          );
+        }
+      })
+      .catch((err) =>
+        console.error(
+          "Error fetching wishlist items:",
+          err
+        )
+      );
+  };
+
+  useEffect(() => {
+    fetchWishlist();
+
+    window.addEventListener(
+      "wishlistUpdated",
+      fetchWishlist
+    );
+
+    return () =>
+      window.removeEventListener(
+        "wishlistUpdated",
+        fetchWishlist
+      );
+  }, []);
+
 
   // ===================================================
   // FETCH PRODUCT FROM BACKEND
@@ -112,19 +165,11 @@ export default function ProductDetail({
               String(id)
           );
 
-        // -----------------------------------------------
-        // PRODUCT NOT FOUND
-        // -----------------------------------------------
-
         if (!found) {
           setNotFound(true);
           setLoading(false);
           return;
         }
-
-        // -----------------------------------------------
-        // PRICE
-        // -----------------------------------------------
 
         const basePrice =
           Number(found.price || 0);
@@ -142,11 +187,6 @@ export default function ProductDetail({
               )
             : basePrice;
 
-
-        // -----------------------------------------------
-        // MULTIPLE PRODUCT IMAGES
-        // -----------------------------------------------
-
         const rawImages =
           Array.isArray(
             found.productImages
@@ -158,10 +198,8 @@ export default function ProductDetail({
                   found.image,
               ].filter(Boolean);
 
-
         const formattedImages =
           rawImages.map(toImageUrl);
-
 
         if (
           formattedImages.length ===
@@ -171,11 +209,6 @@ export default function ProductDetail({
             "https://via.placeholder.com/400"
           );
         }
-
-
-        // -----------------------------------------------
-        // BRAND LOGO
-        // -----------------------------------------------
 
         let brandLogo = "";
 
@@ -189,11 +222,6 @@ export default function ProductDetail({
               ? found.sellerId.brandLogo
               : `${API.defaults.baseURL}/${found.sellerId.brandLogo}`;
         }
-
-
-        // -----------------------------------------------
-        // FORMATTED PRODUCT
-        // -----------------------------------------------
 
         const formattedProduct = {
           id: found._id,
@@ -249,7 +277,6 @@ export default function ProductDetail({
             "",
         };
 
-
         setProduct(
           formattedProduct
         );
@@ -269,7 +296,6 @@ export default function ProductDetail({
         }
       });
 
-
     return () => {
       isMounted = false;
     };
@@ -285,7 +311,6 @@ export default function ProductDetail({
   if (loading) {
     return (
       <div className="container text-center py-5">
-
         <div
           className="spinner-border text-dark"
           role="status"
@@ -294,11 +319,9 @@ export default function ProductDetail({
             Loading...
           </span>
         </div>
-
         <p className="text-muted mt-3">
           Loading product details...
         </p>
-
       </div>
     );
   }
@@ -311,24 +334,20 @@ export default function ProductDetail({
   if (!product || notFound) {
     return (
       <div className="container text-center py-5">
-
         <div
           className="p-4 p-md-5 rounded-4 shadow-sm bg-white mx-auto border"
           style={{
             maxWidth: "500px",
           }}
         >
-
           <h3 className="fw-bold mb-3">
             Product Details Not Found
           </h3>
-
           <p className="text-muted mb-4">
             The item you are looking
             for might have been moved
             or removed.
           </p>
-
           <button
             className="btn btn-dark px-4 py-2 fw-semibold"
             onClick={() =>
@@ -337,9 +356,7 @@ export default function ProductDetail({
           >
             Back to Catalog
           </button>
-
         </div>
-
       </div>
     );
   }
@@ -420,6 +437,123 @@ export default function ProductDetail({
 
 
   // ===================================================
+  // WISHLIST TOGGLE (real API, same endpoints as Men.jsx)
+  // ===================================================
+
+  const isWishlisted = wishlistProductIds.includes(
+    String(product.id)
+  );
+
+  const onWishlistClick = () => {
+    checkAuthAndExecute(async () => {
+      const token = localStorage.getItem("token");
+
+      try {
+        if (isWishlisted) {
+          const res = await fetch(
+            `${BASE_URL}/api/customer/wishlist`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          const data = await res.json();
+
+          const wishlistItem =
+            data.wishlist?.find(
+              (w) =>
+                String(w.productId) ===
+                String(product.id)
+            );
+
+          if (wishlistItem) {
+            const delRes = await fetch(
+              `${BASE_URL}/api/customer/wishlist/remove/${wishlistItem._id}`,
+              {
+                method: "DELETE",
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+
+            if (delRes.ok) {
+              toast.info(
+                `${product.title} removed from wishlist`,
+                { autoClose: 1000 }
+              );
+
+              setWishlistProductIds((prev) =>
+                prev.filter(
+                  (pid) =>
+                    pid !== String(product.id)
+                )
+              );
+            } else {
+              toast.error(
+                "Failed to update wishlist"
+              );
+            }
+          }
+        } else {
+          const response = await fetch(
+            `${BASE_URL}/api/customer/wishlist/add`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type":
+                  "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                productId: product.id,
+                title: product.title,
+                description:
+                  product.description,
+                price: product.price,
+                originalPrice:
+                  product.originalPrice || "",
+                discount:
+                  product.discount || "",
+                image: product.image,
+              }),
+            }
+          );
+
+          if (response.ok) {
+            toast.success(
+              `${product.title} added to wishlist ❤️`,
+              { autoClose: 1000 }
+            );
+
+            setWishlistProductIds((prev) => [
+              ...prev,
+              String(product.id),
+            ]);
+          } else {
+            toast.error(
+              "Failed to update wishlist"
+            );
+          }
+        }
+
+        window.dispatchEvent(
+          new Event("wishlistUpdated")
+        );
+      } catch (err) {
+        console.error(
+          "Error connecting to backend:",
+          err
+        );
+        toast.error("Server connection failed");
+      }
+    });
+  };
+
+
+  // ===================================================
   // UI
   // ===================================================
 
@@ -427,19 +561,17 @@ export default function ProductDetail({
     <div
       className="bg-light min-vh-100 pb-4 pb-md-5"
       style={{
+        // reduced top space (was clamp(90px, 12vw, 120px))
         paddingTop:
-          "clamp(90px, 12vw, 120px)",
+          "clamp(60px, 8vw, 90px)",
       }}
     >
 
       <ToastContainer />
 
-
       <div className="container">
 
-        {/* =================================================
-            BACK BUTTON
-        ================================================= */}
+        {/* BACK BUTTON */}
 
         <button
           className="btn btn-outline-dark btn-sm mb-4 fw-semibold px-3 py-2 shadow-sm"
@@ -450,41 +582,22 @@ export default function ProductDetail({
           ← Back
         </button>
 
-
-        {/* =================================================
-            PRODUCT CARD
-        ================================================= */}
+        {/* PRODUCT CARD */}
 
         <div className="bg-white rounded-4 shadow-sm border p-3 p-sm-4 p-md-5">
 
           <div className="row g-4 align-items-center">
 
-
-            {/* =================================================
-                LEFT COLUMN
-                PRODUCT IMAGES
-            ================================================= */}
+            {/* LEFT COLUMN — IMAGES */}
 
             <div className="col-12 col-md-6">
 
               <div
-                className="position-relative overflow-hidden rounded-3 bg-light text-center border"
+                className="position-relative overflow-hidden rounded-3 bg-light text-center"
                 style={{
                   isolation: "isolate",
                 }}
               >
-
-                {/* =========================================
-                    PRODUCT IMAGE SLIDER
-
-                    IMPORTANT:
-                    Brand logo is passed INSIDE slider.
-
-                    Therefore logo will be on the
-                    TOP-LEFT of MAIN IMAGE,
-                    NOT above thumbnails.
-                ========================================= */}
-
                 <ProductImageSlider
                   images={galleryImages}
                   alt={product.title}
@@ -493,65 +606,69 @@ export default function ProductDetail({
                   brandLogo={
                     product.brandLogo
                   }
+                  stockLabel={
+                    product.stock
+                  }
                 />
-
-
-                {/* =========================================
-                    STOCK
-                ========================================= */}
-
-                <span
-                  className="position-absolute bottom-0 start-0 m-3 badge bg-dark opacity-75 fw-normal px-3 py-2 rounded-pill"
-                  style={{
-                    zIndex: 30,
-                  }}
-                >
-                  {product.stock}
-                </span>
 
               </div>
 
             </div>
 
-
-            {/* =================================================
-                RIGHT COLUMN
-                PRODUCT DETAILS
-            ================================================= */}
+            {/* RIGHT COLUMN — DETAILS */}
 
             <div className="col-12 col-md-6">
 
               <div className="ps-md-3 ps-lg-4">
 
-
-                {/* =========================================
-                    PRODUCT HEADER
-                ========================================= */}
+                {/* HEADER */}
 
                 <div className="mb-3">
 
-                  {/* FABRIC */}
+                  <div className="d-flex justify-content-between align-items-start gap-2">
 
-                  <span className="badge bg-secondary-subtle text-secondary text-uppercase fw-bold tracking-wider mb-2">
-                    {product.fabric}
-                  </span>
+                    <span className="badge bg-secondary-subtle text-secondary text-uppercase fw-bold tracking-wider mb-2">
+                      {product.fabric}
+                    </span>
 
+                    {/* WISHLIST ICON (NEW) */}
 
-                  {/* PRODUCT TITLE */}
+                    <button
+                      type="button"
+                      aria-label="Toggle wishlist"
+                      onClick={
+                        onWishlistClick
+                      }
+                      className="btn btn-light border rounded-circle shadow-sm d-flex align-items-center justify-content-center"
+                      style={{
+                        width: "42px",
+                        height: "42px",
+                        flexShrink: 0,
+                      }}
+                    >
+                      <FaHeart
+                        style={{
+                          fontSize: "1.1rem",
+                          color: isWishlisted
+                            ? "red"
+                            : "#ccc",
+                          transition:
+                            "color 0.2s ease",
+                        }}
+                      />
+                    </button>
+
+                  </div>
 
                   <h1 className="fw-bold text-dark fs-2 mb-2">
                     {product.title}
                   </h1>
-
-
-                  {/* PRICE */}
 
                   <div className="d-flex align-items-center gap-2">
 
                     <h2 className="fw-bold text-dark fs-3 mb-0">
                       {product.price}
                     </h2>
-
 
                     {product.originalPrice && (
                       <span className="text-decoration-line-through text-muted fs-5">
@@ -560,7 +677,6 @@ export default function ProductDetail({
                         }
                       </span>
                     )}
-
 
                     {product.discount && (
                       <span className="badge bg-danger">
@@ -574,10 +690,7 @@ export default function ProductDetail({
 
                 </div>
 
-
-                {/* =========================================
-                    DESCRIPTION
-                ========================================= */}
+                {/* DESCRIPTION */}
 
                 <p className="text-muted lh-base mb-4">
                   {
@@ -585,125 +698,77 @@ export default function ProductDetail({
                   }
                 </p>
 
-
                 <hr className="my-4 text-secondary opacity-25" />
 
-
-                {/* =========================================
-                    SPECIFICATIONS TITLE
-                ========================================= */}
+                {/* SPECIFICATIONS */}
 
                 <h5 className="fw-bold text-dark mb-3 fs-6 text-uppercase tracking-wider">
                   Product Specifications
                 </h5>
 
-
-                {/* =========================================
-                    SPECIFICATIONS
-                ========================================= */}
-
                 <div className="row g-2 mb-4">
 
-
-                  {/* MATERIAL */}
-
                   <div className="col-12 col-sm-6">
-
                     <div className="p-3 bg-light rounded-3 border">
-
                       <small className="text-muted text-uppercase fw-semibold d-block fs-7">
                         Material
                       </small>
-
                       <span className="fw-bold text-dark">
                         {
                           product.fabric
                         }
                       </span>
-
                     </div>
-
                   </div>
 
-
-                  {/* COLOR */}
-
                   <div className="col-12 col-sm-6">
-
                     <div className="p-3 bg-light rounded-3 border">
-
                       <small className="text-muted text-uppercase fw-semibold d-block fs-7">
                         Color
                       </small>
-
                       <span className="fw-bold text-dark">
                         {
                           product.color
                         }
                       </span>
-
                     </div>
-
                   </div>
 
-
-                  {/* DIMENSIONS */}
-
                   <div className="col-12 col-sm-6">
-
                     <div className="p-3 bg-light rounded-3 border">
-
                       <small className="text-muted text-uppercase fw-semibold d-block fs-7">
                         Dimensions
                       </small>
-
                       <span className="fw-bold text-dark">
                         {
                           product.size
                         }
                       </span>
-
                     </div>
-
                   </div>
 
-
-                  {/* CARE */}
-
                   <div className="col-12 col-sm-6">
-
                     <div className="p-3 bg-light rounded-3 border">
-
                       <small className="text-muted text-uppercase fw-semibold d-block fs-7">
                         Care Instructions
                       </small>
-
                       <span className="fw-bold text-dark">
                         {
                           product.careInstructions
                         }
                       </span>
-
                     </div>
-
                   </div>
 
                 </div>
 
-
-                {/* =========================================
-                    ACTION BUTTONS
-                ========================================= */}
+                {/* ACTION BUTTONS */}
 
                 <div className="row g-2 mb-3">
-
-
-                  {/* ADD TO CART */}
 
                   <div className="col-12 col-sm-6">
 
                     {isInCart ? (
-
                       <button
                         type="button"
                         className="btn btn-success w-100 py-3 fw-bold shadow-sm"
@@ -715,9 +780,7 @@ export default function ProductDetail({
                       >
                         Go to Cart →
                       </button>
-
                     ) : (
-
                       <button
                         type="button"
                         className="btn btn-success w-100 py-3 fw-bold shadow-sm"
@@ -727,16 +790,11 @@ export default function ProductDetail({
                       >
                         Add to Cart
                       </button>
-
                     )}
 
                   </div>
 
-
-                  {/* BUY NOW */}
-
                   <div className="col-12 col-sm-6">
-
                     <button
                       type="button"
                       className="btn btn-warning text-dark w-100 py-3 fw-bold shadow-sm"
@@ -746,15 +804,9 @@ export default function ProductDetail({
                     >
                       ⚡ Buy Now
                     </button>
-
                   </div>
 
                 </div>
-
-
-                {/* =========================================
-                    UPDATED
-                ========================================= */}
 
                 {product.updated && (
                   <div className="text-muted small">

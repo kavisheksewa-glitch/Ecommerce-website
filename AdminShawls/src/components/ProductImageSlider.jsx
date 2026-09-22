@@ -1,6 +1,3 @@
-
-
-
 import React, { useEffect, useRef, useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
@@ -10,6 +7,7 @@ export default function ProductImageSlider({
   height = "100%",
   showThumbs = false,
   brandLogo = "",
+  stockLabel = "", // NEW: rendered bottom-left of the MAIN IMAGE only
   hideArrowsOnMobile = false, // true => arrows sirf desktop (>= 992px) par dikhenge
 }) {
   // --------------------------------------------------
@@ -184,7 +182,8 @@ export default function ProductImageSlider({
 
       {/* =====================================================
           MAIN PRODUCT IMAGE AREA
-          (brand logo isi ke andar hai, thumbnails ke upar nahi)
+          (brand logo + stock label isi ke andar hain,
+          thumbnails ke upar/beech kabhi nahi)
       ===================================================== */}
       <div
         style={{
@@ -231,6 +230,28 @@ export default function ProductImageSlider({
                 display: "block",
               }}
             />
+          </div>
+        )}
+
+        {/* STOCK LABEL (bottom-left, main image only) */}
+        {stockLabel && (
+          <div
+            style={{
+              position: "absolute",
+              bottom: 12,
+              left: 12,
+              padding: "6px 14px",
+              borderRadius: 999,
+              background: "rgba(0,0,0,0.75)",
+              color: "#fff",
+              fontSize: 13,
+              fontWeight: 500,
+              whiteSpace: "nowrap",
+              boxShadow: "0 3px 10px rgba(0,0,0,0.25)",
+              zIndex: 15,
+            }}
+          >
+            {stockLabel}
           </div>
         )}
 

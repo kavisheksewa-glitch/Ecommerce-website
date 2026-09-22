@@ -31,6 +31,14 @@ import "./WeddingGift.css";
 
 import { WeddingShawls } from "../../data/shawls";
 import weddingBgImage from "../../assets/image.webp";
+import ProductImageSlider from "../../components/ProductImageSlider";
+
+const toImageUrl = (raw) => {
+  if (!raw) return "";
+  if (String(raw).startsWith("http")) return raw;
+  const path = String(raw).replace(/\\/g, "/").replace(/^\//, "");
+  return `${BASE_URL}/${path}`;
+};
 
 function WeddingGifts() {
   const navigate = useNavigate();
@@ -122,7 +130,7 @@ function WeddingGifts() {
 
   // ================= FETCH PRODUCTS =================
   useEffect(() => {
-    
+
       API.get(
         "/api/seller/products/public"
       )
@@ -144,6 +152,13 @@ function WeddingGifts() {
                     )
                   : basePrice;
 
+              // ✅ Multiple images support (Birthday/Festive pages jaisa) + purane single-image products bhi chalenge
+              const rawImages =
+                Array.isArray(p.productImages) && p.productImages.length > 0
+                  ? p.productImages
+                  : [p.productImage || p.image].filter(Boolean);
+              const images = rawImages.map(toImageUrl);
+
               return {
                 id: p._id,
                 title: p.productName,
@@ -159,15 +174,10 @@ function WeddingGifts() {
                     ? `${discountPercent}% OFF`
                     : null,
 
-                image: p.productImage?.startsWith("http")
-                  ? p.productImage
-                  : `${BASE_URL}/${p.productImage}`,
+                images,
+                image: images[0] || "",
 
-                brandLogo: p.sellerId?.brandLogo
-                  ? p.sellerId.brandLogo.startsWith("http")
-                    ? p.sellerId.brandLogo
-                    : `${BASE_URL}/${p.sellerId.brandLogo}`
-                  : "",
+                brandLogo: toImageUrl(p.sellerId?.brandLogo),
 
                 stock: `Stock: ${p.stockQuantity}`,
                 fabric: p.fabric || "N/A",
@@ -189,6 +199,11 @@ function WeddingGifts() {
               priceNum: Number(
                 item.price.replace(/[^0-9]/g, "")
               ),
+              // ✅ Static shawls ke liye bhi images array
+              images:
+                Array.isArray(item.images) && item.images.length > 0
+                  ? item.images
+                  : [item.image].filter(Boolean),
             })
           );
 
@@ -1008,11 +1023,15 @@ function WeddingGifts() {
                               </div>
                             )}
 
-                            {/* PRODUCT IMAGE */}
-                            <img
-                              src={item.image}
-                              className="card-img-top rounded Customer_product-image"
+                            {/* ✅ PRODUCT IMAGE SLIDER (Birthday/Festive pages jaisa) */}
+                            <ProductImageSlider
+                              images={
+                                item.images && item.images.length > 0
+                                  ? item.images
+                                  : [item.image]
+                              }
                               alt={item.title}
+                              hideArrowsOnMobile
                             />
 
                             {/* WISHLIST */}

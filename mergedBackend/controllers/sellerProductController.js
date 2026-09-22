@@ -93,39 +93,99 @@ const addProduct = async (req, res) => {
 };
 
 // 3. Update product function
+// const updateProduct = async (req, res) => {
+//   try {
+//     const productId = req.params.id;
+
+//     const updateData = { ...req.body };
+
+//     // ✅ NEW: naye images aaye hon tabhi images update karo (purani replace ho jayengi)
+//     const newImages = getUploadedImages(req.files);
+//     if (newImages.length > 0) {
+//       updateData.productImages = newImages;
+//       updateData.productImage = newImages[0];
+//     }
+
+//     delete updateData.brand;
+//     delete updateData.brandLogo;
+
+//     const updatedProduct = await SellerProduct.findOneAndUpdate(
+//       { _id: productId, sellerId: req.seller.id },
+//       updateData,
+//       { returnDocument: 'after', runValidators: true }
+//     );
+
+//     if (!updatedProduct) {
+//       return res.status(404).json({ message: "Product not found or unauthorized" });
+//     }
+
+//     res.status(200).json({ message: "Product Updated Successfully", product: updatedProduct });
+//   } catch (error) {
+//     console.error("Update Product Error:", error);
+//     res.status(500).json({ message: error.message });
+//   }
+// };
+
 const updateProduct = async (req, res) => {
+  
   try {
+     
     const productId = req.params.id;
+
+    // 1. Pehle database se purana product nikal lo
+    const existingProduct = await SellerProduct.findOne({ _id: productId, sellerId: req.seller.id });
+    if (!existingProduct) {
+      return res.status(404).json({ message: "Product not found or unauthorized" });
+    }
 
     const updateData = { ...req.body };
 
-    // ✅ NEW: naye images aaye hon tabhi images update karo (purani replace ho jayengi)
-    const newImages = getUploadedImages(req.files);
-    if (newImages.length > 0) {
-      updateData.productImages = newImages;
-      updateData.productImage = newImages[0];
+    // 2. Frontend se jo existing/purani images bachi hain unhe parse karo
+    let retainedImages = [];
+    if (req.body.existingImages) {
+      try {
+        retainedImages = JSON.parse(req.body.existingImages);
+      } catch (e) {
+        retainedImages = [];
+      }
     }
 
+    // 3. Nayi upload ki hui images nikalo (Aapke function ke mutabiq)
+    const newImages = getUploadedImages(req.files);
+
+    // 4. Purani retained images aur nayi images ko aapas mein merge kar do!
+    const finalImages = [...retainedImages, ...newImages];
+
+    // 5. Total 5 images limit check
+    if (finalImages.length > 5) {
+      return res.status(400).json({ message: "Maximum 5 images allowed per product." });
+    }
+
+    // 6. Agar images hain toh update data mein set karo
+    if (finalImages.length > 0) {
+      updateData.productImages = finalImages;
+      updateData.productImage = finalImages[0]; // Pehli image ko main image set kar do
+    }
+
+    // Extra fields clean karo jo database mein nahi hain
     delete updateData.brand;
     delete updateData.brandLogo;
+    delete updateData.existingImages; 
 
+    // 7. Database update karo
     const updatedProduct = await SellerProduct.findOneAndUpdate(
       { _id: productId, sellerId: req.seller.id },
       updateData,
       { returnDocument: 'after', runValidators: true }
     );
 
-    if (!updatedProduct) {
-      return res.status(404).json({ message: "Product not found or unauthorized" });
-    }
-
     res.status(200).json({ message: "Product Updated Successfully", product: updatedProduct });
   } catch (error) {
     console.error("Update Product Error:", error);
     res.status(500).json({ message: error.message });
   }
+  
 };
-
 // 4. Delete product function
 const deleteProduct = async (req, res) => {
   try {
