@@ -1,6 +1,3 @@
-
-
-
 import React, { useState, useEffect } from "react";
 import API, { BASE_URL } from "../../utils/api";
 import image13 from "../../assets/men.webp";
@@ -57,7 +54,8 @@ function Men() {
   const [searchQuery, setSearchQuery] = useState("");
 
   // --- Filter & Pagination States ---
-  const [selectedFabric, setSelectedFabric] = useState("All");
+  // ✅ CHANGED: ab single-select "All"/fabric radio ki jagah multi-select checkbox array
+  const [selectedFabrics, setSelectedFabrics] = useState([]);
   const [maxPrice, setMaxPrice] = useState(MAX_PRICE);
   const [sortBy, setSortBy] = useState("newest");
   const [showFilters, setShowFilters] = useState(false);
@@ -174,6 +172,15 @@ function Men() {
     ...new Set(allProducts.map((p) => p.fabric).filter((f) => f && f !== "N/A")),
   ];
 
+  // ✅ NEW: checkbox toggle handler (Home.jsx ke handleCategoryChange jaisa)
+  const handleFabricChange = (fabric) => {
+    setSelectedFabrics((prev) =>
+      prev.includes(fabric)
+        ? prev.filter((f) => f !== fabric)
+        : [...prev, fabric]
+    );
+  };
+
   const getProcessedProducts = () => {
     let list = [...allProducts];
 
@@ -186,8 +193,9 @@ function Men() {
       );
     }
 
-    if (selectedFabric !== "All") {
-      list = list.filter((item) => item.fabric === selectedFabric);
+    // ✅ CHANGED: ab koi fabric select nahi = sab dikhao, jitne bhi select ho unme se koi bhi match ho to dikhao
+    if (selectedFabrics.length > 0) {
+      list = list.filter((item) => selectedFabrics.includes(item.fabric));
     }
 
     list = list.filter((item) => item.rawPrice <= maxPrice);
@@ -216,7 +224,7 @@ function Men() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, selectedFabric, maxPrice, sortBy]);
+  }, [searchQuery, selectedFabrics, maxPrice, sortBy]);
 
   const goToPage = (page) => {
     setCurrentPage(page);
@@ -356,7 +364,7 @@ function Men() {
   };
 
   const resetFilters = () => {
-    setSelectedFabric("All");
+    setSelectedFabrics([]); // ✅ CHANGED
     setMaxPrice(MAX_PRICE);
     setSortBy("newest");
     setSearchQuery("");
@@ -661,33 +669,20 @@ function Men() {
               </div>
             </div>
 
+            {/* ✅ CHANGED: Material/Fabric ab checkbox multi-select hai (Home.jsx ke Categories jaisa) */}
             <div className="col-md-6">
               <label className="form-label fw-bold small text-secondary d-block">
                 Material / Fabric
               </label>
               <div className="d-flex flex-wrap gap-3 align-items-center mt-2">
-                <div className="form-check">
-                  <input
-                    className="form-check-input"
-                    type="radio"
-                    name="fabricRadio"
-                    id="fabricAll"
-                    checked={selectedFabric === "All"}
-                    onChange={() => setSelectedFabric("All")}
-                  />
-                  <label className="form-check-label small" htmlFor="fabricAll">
-                    All
-                  </label>
-                </div>
                 {fabrics.map((fab, idx) => (
                   <div className="form-check" key={idx}>
                     <input
                       className="form-check-input"
-                      type="radio"
-                      name="fabricRadio"
+                      type="checkbox"
                       id={`fabric-${idx}`}
-                      checked={selectedFabric === fab}
-                      onChange={() => setSelectedFabric(fab)}
+                      checked={selectedFabrics.includes(fab)}
+                      onChange={() => handleFabricChange(fab)}
                     />
                     <label className="form-check-label small" htmlFor={`fabric-${idx}`}>
                       {fab}

@@ -209,7 +209,7 @@ function Header() {
           <div className={`collapse navbar-collapse customer_mobile_collapse ${isMobileMenuOpen ? "show" : ""}`} id="navbar">
             <ul className="navbar-nav mx-auto align-items-lg-center">
               <li className="nav-item">
-                <Link className="nav-link customer_nav-link" to="/" onClick={closeMobileMenu}>
+                <Link className="nav-link customer_nav-link" to="/customer" onClick={closeMobileMenu}>
                   Home
                 </Link>
               </li>

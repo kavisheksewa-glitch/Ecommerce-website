@@ -281,7 +281,7 @@ const arrowStyle = (side) => ({
                 style={{
                   width: "100%",
                   height: "100%",
-                  objectFit: "cover",
+                  objectFit: "contain",
                   display: "block",
                 }}
               />
@@ -416,24 +416,52 @@ const arrowStyle = (side) => ({
           }}
         >
           {list.map((src, i) => (
-            <img
-              key={i}
-              src={src}
-              alt={`${alt} ${i + 1}`}
-              loading={
-                i === 0 ? "eager" : "lazy"
-              }
-              draggable={false}
-              style={{
-                flex: "0 0 100%",
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                display: "block",
-                userSelect: "none",
-              }}
-            />
-          ))}
+  <div 
+    key={i} 
+    style={{ 
+      flex: "0 0 100%", 
+      width: "100%", 
+      height: "100%", 
+      position: "relative",
+      overflow: "hidden",
+      display: "flex", 
+      alignItems: "center", 
+      justifyContent: "center", 
+      backgroundColor: "#000" // Background color
+    }}
+  >
+    {/* 1. Background mein blurred image jo khali jagah ko bhar degi */}
+    <div
+      style={{
+        position: "absolute",
+        inset: 0,
+        backgroundImage: `url(${src})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        filter: "blur(20px) brightness(0.7)", // Blur effect
+        transform: "scale(1.2)", // Edge pooling ke liye thoda zoom
+        zIndex: 1,
+      }}
+    />
+
+    {/* 2. Main Original Image jo bilkul saaf aur poori dikhegi */}
+    <img
+      src={src}
+      alt={`${alt} ${i + 1}`}
+      loading={i === 0 ? "eager" : "lazy"}
+      draggable={false}
+      style={{
+        position: "relative",
+        maxWidth: "100%",
+        maxHeight: "100%",
+        objectFit: "contain",
+        display: "block",
+        userSelect: "none",
+        zIndex: 2, // Blur ke upar rahegi
+      }}
+    />
+  </div>
+))}
         </div>
 
         {/* =====================================================

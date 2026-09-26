@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Home.css";
@@ -57,6 +56,9 @@ function Home() {
   // DYNAMIC & STATIC PRODUCTS STATES
   const [dbProducts, setDbProducts] = useState([]);
 
+  // ✅ NEW: Page loader — jab tak products properly fetch na ho jayein
+  const [isPageLoading, setIsPageLoading] = useState(true);
+
   // FILTER & SEARCH STATES
   const [searchQuery, setSearchQuery] = useState("");
   const [priceFilter, setPriceFilter] = useState(5000);
@@ -68,6 +70,8 @@ function Home() {
     Woolen: false,
     Silk: false,
     Cotton: false,
+    Velvet: false,
+    Acrylic: false,
   });
 
   // Filter Panel Toggle State
@@ -233,7 +237,8 @@ function Home() {
           setDbProducts(formattedDbProducts);
         }
       })
-      .catch((err) => console.error("Error fetching live products:", err));
+      .catch((err) => console.error("Error fetching live products:", err))
+      .finally(() => setIsPageLoading(false)); // ✅ NEW: fetch success ho ya fail, loader hata do
 
     return () => {
       window.removeEventListener("cartUpdated", fetchCartAndWishlist);
@@ -256,6 +261,8 @@ function Home() {
       Woolen: false,
       Silk: false,
       Cotton: false,
+      Velvet: false,
+      Acrylic: false
     });
   };
 
@@ -476,6 +483,27 @@ function Home() {
   const handleShare = (product) => {
     setShareProduct(product);
   };
+
+  // ✅ NEW: Full-page loader — jab tak products fetch nahi hote, sirf ye dikhega
+  if (isPageLoading) {
+    return (
+      <div
+        className="d-flex flex-column align-items-center justify-content-center"
+        style={{ minHeight: "100vh", backgroundColor: "#fdf8ee" }}
+      >
+        <div
+          className="spinner-border"
+          role="status"
+          style={{ width: "3.5rem", height: "3.5rem", color: "#9d6a0c" }}
+        >
+          <span className="visually-hidden">Loading...</span>
+        </div>
+        <p className="mt-3 fw-semibold" style={{ color: "#9d6a0c" }}>
+          Loading products...
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -836,7 +864,7 @@ function Home() {
                 Categories
               </label>
               <div className="d-flex flex-wrap gap-3 align-items-center mt-2">
-                {["Pashmina", "Woolen", "Silk", "Cotton"].map((cat) => (
+                {["Pashmina", "Woolen", "Silk", "Cotton","Velvet","Acrylic"].map((cat) => (
                   <div className="form-check" key={cat}>
                     <input
                       className="form-check-input"

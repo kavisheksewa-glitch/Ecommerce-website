@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import "./AddProduct.css";
 import logo from "../../assets/logooo.png";
@@ -16,6 +15,9 @@ function AddProduct() {
 
   // Multiple images: [{ file, preview }]
   const [images, setImages] = useState([]);
+
+  // Loader state
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -86,11 +88,14 @@ function AddProduct() {
       productData.append("productImages", img.file);
     });
 
+    setIsLoading(true);
+
     try {
       const token = localStorage.getItem("sellerToken");
 
       if (!token) {
         toast.error("Please login first to add a product!");
+        setIsLoading(false);
         return;
       }
 
@@ -108,6 +113,8 @@ function AddProduct() {
       toast.success(response.data.message || "Product Added Successfully!");
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to add product");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -152,10 +159,25 @@ function AddProduct() {
                 </div>
 
                 <div className="row">
-                  <div className="col-md-6 mb-3">
-                    <label className="form-label fw-semibold">Fabric</label>
-                    <input type="text" name="fabric" className="form-control add-product-input" placeholder="Pashmina, Wool..." onChange={handleChange} />
-                  </div>
+  <div className="col-md-6 mb-3">
+    <label className="form-label fw-semibold">Fabric</label>
+    <select 
+      name="fabric" 
+      className="form-control add-product-input" 
+      onChange={handleChange}
+      defaultValue=""
+    >
+      <option value="" disabled>Select fabric...</option>
+      <option value="Pashmina">Pashmina / Cashmere</option>
+      <option value="Wool">Wool (Merino / Lambswool)</option>
+      <option value="Pashmina Silk Blend">Pashmina Silk Blend</option>
+      <option value="Pashmina wool Blend">Pashmina wool Blend</option>
+      <option value="Silk">Silk / Banarasi</option>
+      <option value="Cotton">Cotton</option>
+      <option value="Velvet">Velvet</option>
+      <option value="Acrylic">Acrylic / Synthetic</option>
+    </select>
+  </div>
                   <div className="col-md-6 mb-3">
                     <label className="form-label fw-semibold">Color</label>
                     <input type="text" name="color" className="form-control add-product-input" placeholder="Black" onChange={handleChange} />
@@ -178,12 +200,12 @@ function AddProduct() {
                   <div className="col-md-4 mb-3">
                     <label className="form-label fw-semibold">Size</label>
                     <select name="size" className="form-select add-product-input" onChange={handleChange}>
-                      <option value="">Select Size</option>
-                      <option value="Small">Small</option>
-                      <option value="Medium">Medium</option>
-                      <option value="Large">Large</option>
-                      <option value="Free Size">Free Size</option>
-                    </select>
+  <option value="">Select Size</option>
+  <option value="Small (50 × 180 cm)">Small (50 × 180 cm)</option>
+  <option value="Medium (70 × 200 cm)">Medium (70 × 200 cm)</option>
+  <option value="Large (100 × 230 cm)">Large (100 × 230 cm)</option>
+  <option value="Free Size (100 × 200 cm)">Free Size (100 × 200 cm)</option>
+</select>
                   </div>
                   <div className="col-md-4 mb-3">
                     <label className="form-label fw-semibold">Price (₹)</label>
@@ -281,8 +303,23 @@ function AddProduct() {
                   <input type="number" name="stockQuantity" className="form-control add-product-input" placeholder="50" required onChange={handleChange} />
                 </div>
 
-                <button type="submit" className="btn btn-success w-100 py-2 ">
-                  Add Product
+                <button 
+                  type="submit" 
+                  className="btn btn-success w-100 py-2"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <span 
+                        className="spinner-border spinner-border-sm me-2" 
+                        role="status" 
+                        aria-hidden="true"
+                      ></span>
+                      Adding Product...
+                    </>
+                  ) : (
+                    "Add Product"
+                  )}
                 </button>
               </form>
 

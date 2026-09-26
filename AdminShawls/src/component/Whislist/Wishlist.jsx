@@ -140,7 +140,7 @@ function Wishlist() {
                 <div className="card-body text-center d-flex flex-column justify-content-between">
                   <div>
                     <h5 className="fw-bold text-dark">{item.title}</h5>
-                    <p className="text-muted small">{item.description}</p>
+                   {/* <p className="text-muted small">{item.description}</p> */}
                     <h4 className="text-success fw-bold">{item.price}</h4>
                   </div>
 

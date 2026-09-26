@@ -265,8 +265,8 @@ export default function ProductDetail({
           color:
             found.color || "N/A",
 
-          size:
-            found.size || "N/A",
+         size:
+  found.size || found.productSize || found.dimensions || found.lengthWidth || "N/A",
 
           careInstructions:
             found.washCare || "N/A",
