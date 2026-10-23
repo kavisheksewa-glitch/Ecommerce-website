@@ -14,12 +14,6 @@
   border-radius: 15px;
 }
 
-.card .img {
-  height: 350px;
-  object-fit: cover;
-}
-
-
 .btn-dark {
   background: #d4af37;
   border: none;
@@ -30,9 +24,13 @@
   color: #d4af37;
 }
 
-
-
-
-
-
-
+/* Poori image dikhegi: na crop, na side gap */
+.card img.wishlist-img {
+  width: 100% !important;
+  height: auto !important;
+  max-height: none !important;
+  aspect-ratio: auto !important;
+  object-fit: contain !important;
+  display: block;
+  border-radius: 16px 16px 0 0;
+}

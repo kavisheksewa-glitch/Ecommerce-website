@@ -542,12 +542,14 @@ function Featuredcoll() {
         </div>
       )}
 
-      <h1
-        className="Customer_luxury-title text-center my-4 fw-bold fst-italic"
-        style={{ color: "#54411d" }}
-      >
-        FEATURED COLLECTION
-      </h1>
+      <div className="Customer_luxury-title-wrapper">
+        <h1
+          className="Customer_luxury-title text-center my-4 fw-bold fst-italic"
+          style={{ color: "#54411d" }}
+        >
+          Featured Shawls Collection
+        </h1>
+      </div>
       <img src={image112} alt="Banner" className="Customer_hero-image w-100 mb-4" />
 
       {/* SEARCH BAR */}

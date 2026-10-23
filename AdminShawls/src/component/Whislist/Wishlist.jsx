@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
@@ -131,15 +130,21 @@ function Wishlist() {
               <div className="card shadow h-100 border-0" style={{ borderRadius: "16px", backgroundColor: "#e4c893" }}>
                 <img
                   src={item.image}
-                  className="card-img-top rounded-top"
-                  id="img"
+                  className="wishlist-img"
                   alt={item.title}
-                  style={{ height: "250px", objectFit: "cover" }}
+                  onClick={() => navigate(`/product/${item.productId}`)}
+  style={{ cursor: "pointer" }}
                 />
 
                 <div className="card-body text-center d-flex flex-column justify-content-between">
                   <div>
-                    <h5 className="fw-bold text-dark">{item.title}</h5>
+                    <h5
+  className="fw-bold text-dark"
+  onClick={() => navigate(`/product/${item.productId}`)}
+  style={{ cursor: "pointer" }}
+>
+  {item.title}
+</h5>
                    {/* <p className="text-muted small">{item.description}</p> */}
                     <h4 className="text-success fw-bold">{item.price}</h4>
                   </div>

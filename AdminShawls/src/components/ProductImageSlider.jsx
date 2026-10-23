@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
@@ -14,127 +13,72 @@ export default function ProductImageSlider({
   hideArrowsOnMobile = false,
 
   // Desktop arrows hide karne ke liye
-  // Home cards mein true hoga
-  // ProductDetails mein false rahega
+  // Home cards mein true hoga, ProductDetails mein false
   hideArrowsOnDesktop = false,
+
+  // ✅ NEW: true => pehli image turant load (above-the-fold cards ke liye)
+  priority = false,
 }) {
-  // --------------------------------------------------
   // MAXIMUM 5 PRODUCT IMAGES
-  // --------------------------------------------------
   const list = (images || []).filter(Boolean).slice(0, 5);
+  const total = list.length;
 
   const [index, setIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 
+  // ✅ NEW: jab tak user hover/touch/click na kare, sirf current image load hogi.
+  // Detail page (thumbs wala) pe saari images load hongi.
+  const [interacted, setInteracted] = useState(false);
+
   const touchStartX = useRef(null);
   const hoverIntervalRef = useRef(null);
 
-  // --------------------------------------------------
-  // DESKTOP DETECTION
-  // Bootstrap lg = 992px
-  // --------------------------------------------------
+  // DESKTOP DETECTION (Bootstrap lg = 992px)
   const [isDesktop, setIsDesktop] = useState(() => {
     if (typeof window === "undefined") return true;
-
     return window.innerWidth >= 992;
   });
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsDesktop(window.innerWidth >= 992);
-    };
-
+    const handleResize = () => setIsDesktop(window.innerWidth >= 992);
     handleResize();
-
     window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // --------------------------------------------------
-  // THUMBNAILS ONLY DESKTOP
-  // --------------------------------------------------
   const showDesktopThumbs = showThumbs && isDesktop;
+  const current = total > 0 ? Math.min(index, total - 1) : 0;
 
-  // --------------------------------------------------
-  // NO IMAGE
-  // --------------------------------------------------
-  if (list.length === 0) {
-    return null;
-  }
-
-  const total = list.length;
-
-  const current = Math.min(index, total - 1);
-
-  // --------------------------------------------------
-  // ARROWS VISIBILITY
-  //
-  // Desktop:
-  //   hideArrowsOnDesktop = true  -> hidden
-  //   hideArrowsOnDesktop = false -> visible
-  //
-  // Mobile/tablet:
-  //   hideArrowsOnMobile = true  -> hidden
-  //   hideArrowsOnMobile = false -> visible
-  // --------------------------------------------------
   const showArrows =
     total > 1 &&
-    (isDesktop
-      ? !hideArrowsOnDesktop
-      : !hideArrowsOnMobile);
+    (isDesktop ? !hideArrowsOnDesktop : !hideArrowsOnMobile);
 
-  // --------------------------------------------------
   // NEXT / PREVIOUS
-  // --------------------------------------------------
   const go = (e, direction) => {
-    if (e) {
-      e.stopPropagation();
-    }
-
+    if (e) e.stopPropagation();
     if (total <= 1) return;
-
+    setInteracted(true);
     setIndex((prev) => {
       const safeIndex = Math.min(prev, total - 1);
-
       return (safeIndex + direction + total) % total;
     });
   };
 
-  // --------------------------------------------------
   // DESKTOP HOVER AUTO SLIDER
-  //
-  // Sirf tab chalega jab:
-  // 1. Desktop ho
-  // 2. Product image hover ho
-  // 3. Multiple images hon
-  // 4. Desktop arrows hidden hon
-  //
-  // Har 2 seconds image change hogi.
-  // --------------------------------------------------
+  // ✅ FIX: ye useEffect ab early return se PEHLE hai (hooks rule)
   useEffect(() => {
-    // Existing interval clear karo
     if (hoverIntervalRef.current) {
       clearInterval(hoverIntervalRef.current);
       hoverIntervalRef.current = null;
     }
 
-    // Auto slider sirf desktop card mode ke liye
-    if (
-      !isDesktop ||
-      !isHovered ||
-      total <= 1 ||
-      !hideArrowsOnDesktop
-    ) {
+    if (!isDesktop || !isHovered || total <= 1 || !hideArrowsOnDesktop) {
       return;
     }
 
     hoverIntervalRef.current = setInterval(() => {
       setIndex((prev) => {
         const safeIndex = Math.min(prev, total - 1);
-
         return (safeIndex + 1) % total;
       });
     }, 2000);
@@ -145,73 +89,56 @@ export default function ProductImageSlider({
         hoverIntervalRef.current = null;
       }
     };
-  }, [
-    isDesktop,
-    isHovered,
-    total,
-    hideArrowsOnDesktop,
-  ]);
+  }, [isDesktop, isHovered, total, hideArrowsOnDesktop]);
 
-  // --------------------------------------------------
+  // NO IMAGE (hooks ke baad)
+  if (total === 0) return null;
+
   // TOUCH SWIPE
-  // Mobile / Tablet
-  // --------------------------------------------------
   const handleTouchStart = (e) => {
+    setInteracted(true);
     touchStartX.current = e.touches[0].clientX;
   };
 
   const handleTouchEnd = (e) => {
     if (touchStartX.current === null) return;
-
-    const diff =
-      e.changedTouches[0].clientX -
-      touchStartX.current;
-
+    const diff = e.changedTouches[0].clientX - touchStartX.current;
     touchStartX.current = null;
-
-    if (Math.abs(diff) > 40) {
-      go(null, diff < 0 ? 1 : -1);
-    }
+    if (Math.abs(diff) > 40) go(null, diff < 0 ? 1 : -1);
   };
 
-  // --------------------------------------------------
-  // ARROW STYLE
-  // --------------------------------------------------
+  const arrowStyle = (side) => ({
+    position: "absolute",
+    top: "50%",
+    [side]: 10,
+    transform: "translateY(-50%)",
+    width: 38,
+    height: 38,
+    borderRadius: "50%",
+    border: "none",
+    background: "transparent",
+    color: "#ffffff",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: 20,
+    cursor: "pointer",
+    filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.65))",
+    zIndex: 20,
+    padding: 0,
+    transition: "all 0.2s ease",
+  });
 
-const arrowStyle = (side) => ({
-  position: "absolute",
-  top: "50%",
-  [side]: 10,
-  transform: "translateY(-50%)",
+  // ✅ Kaunsi slides me image render karni hai
+  const loadAll = showThumbs || interacted;
+  const shouldRenderImg = (i) => i === current || loadAll;
 
-  width: 38,
-  height: 38,
-
-  borderRadius: "50%",
-  border: "none",
-
-  // Transparent background
-  background: "transparent",
-
-  // Arrow color
-  color: "#ffffff",
-
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-
-  fontSize: 20,
-  cursor: "pointer",
-
-  // Soft shadow so arrow is visible on light/dark images
-  filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.65))",
-
-  zIndex: 20,
-  padding: 0,
-
-  transition: "all 0.2s ease",
-});
-
+  // ✅ Blur layer sirf current (aur interaction ke baad aas-paas ki) slide pe
+  const shouldRenderBlur = (i) =>
+    i === current ||
+    (loadAll && (Math.abs(i - current) <= 1 ||
+      (current === 0 && i === total - 1) ||
+      (current === total - 1 && i === 0)));
 
   return (
     <div
@@ -223,10 +150,7 @@ const arrowStyle = (side) => ({
         alignItems: "stretch",
       }}
     >
-      {/* =====================================================
-          DESKTOP THUMBNAILS
-          Only >= 992px
-      ===================================================== */}
+      {/* DESKTOP THUMBNAILS (>= 992px) */}
       {showDesktopThumbs && total > 1 && (
         <div
           onClick={(e) => e.stopPropagation()}
@@ -263,12 +187,8 @@ const arrowStyle = (side) => ({
                 overflow: "hidden",
                 cursor: "pointer",
                 background: "#fff",
-                border:
-                  i === current
-                    ? "2px solid #dfa00b"
-                    : "2px solid #ddd",
-                opacity:
-                  i === current ? 1 : 0.7,
+                border: i === current ? "2px solid #dfa00b" : "2px solid #ddd",
+                opacity: i === current ? 1 : 0.7,
                 transition: "all 0.2s ease",
                 flex: "0 0 auto",
               }}
@@ -277,6 +197,7 @@ const arrowStyle = (side) => ({
                 src={src}
                 alt={`${alt} thumbnail ${i + 1}`}
                 loading="lazy"
+                decoding="async"
                 draggable={false}
                 style={{
                   width: "100%",
@@ -290,55 +211,30 @@ const arrowStyle = (side) => ({
         </div>
       )}
 
-      {/* =====================================================
-          MAIN PRODUCT IMAGE AREA
-      ===================================================== */}
+      {/* MAIN PRODUCT IMAGE AREA */}
       <div
         style={{
           position: "relative",
-          width: showDesktopThumbs
-            ? "calc(100% - 80px)"
-            : "100%",
-          flex: showDesktopThumbs
-            ? "1 1 auto"
-            : "none",
+          width: showDesktopThumbs ? "calc(100% - 80px)" : "100%",
+          flex: showDesktopThumbs ? "1 1 auto" : "none",
           height: height,
           overflow: "hidden",
           minWidth: 0,
           borderRadius: 8,
         }}
-
-        // Desktop hover
         onMouseEnter={() => {
-          if (
-            isDesktop &&
-            total > 1 &&
-            hideArrowsOnDesktop
-          ) {
+          if (isDesktop && total > 1 && hideArrowsOnDesktop) {
+            setInteracted(true); // ✅ hover pe baaki images load shuru
             setIsHovered(true);
           }
         }}
         onMouseLeave={() => {
-          if (isDesktop) {
-            setIsHovered(false);
-          }
+          if (isDesktop) setIsHovered(false);
         }}
-
-        // Mobile / Tablet swipe
-        onTouchStart={
-          total > 1
-            ? handleTouchStart
-            : undefined
-        }
-        onTouchEnd={
-          total > 1
-            ? handleTouchEnd
-            : undefined
-        }
+        onTouchStart={total > 1 ? handleTouchStart : undefined}
+        onTouchEnd={total > 1 ? handleTouchEnd : undefined}
       >
-        {/* =====================================================
-            BRAND LOGO
-        ===================================================== */}
+        {/* BRAND LOGO */}
         {brandLogo && (
           <div
             style={{
@@ -353,16 +249,15 @@ const arrowStyle = (side) => ({
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              border:
-                "2px solid rgba(255,255,255,0.95)",
-              boxShadow:
-                "0 3px 10px rgba(0,0,0,0.30)",
+              border: "2px solid rgba(255,255,255,0.95)",
+              boxShadow: "0 3px 10px rgba(0,0,0,0.30)",
               zIndex: 15,
             }}
           >
             <img
               src={brandLogo}
               alt="Kavi Shawls"
+              decoding="async"
               draggable={false}
               style={{
                 width: "100%",
@@ -375,9 +270,7 @@ const arrowStyle = (side) => ({
           </div>
         )}
 
-        {/* =====================================================
-            STOCK LABEL
-        ===================================================== */}
+        {/* STOCK LABEL */}
         {stockLabel && (
           <div
             style={{
@@ -386,14 +279,12 @@ const arrowStyle = (side) => ({
               left: 12,
               padding: "6px 14px",
               borderRadius: 999,
-              background:
-                "rgba(0,0,0,0.75)",
+              background: "rgba(0,0,0,0.75)",
               color: "#fff",
               fontSize: 13,
               fontWeight: 500,
               whiteSpace: "nowrap",
-              boxShadow:
-                "0 3px 10px rgba(0,0,0,0.25)",
+              boxShadow: "0 3px 10px rgba(0,0,0,0.25)",
               zIndex: 15,
             }}
           >
@@ -401,72 +292,74 @@ const arrowStyle = (side) => ({
           </div>
         )}
 
-        {/* =====================================================
-            IMAGE SLIDER
-        ===================================================== */}
+        {/* IMAGE SLIDER */}
         <div
           style={{
             display: "flex",
             width: "100%",
             height: "100%",
-            transform:
-              `translateX(-${current * 100}%)`,
-            transition:
-              "transform 0.5s ease-in-out",
+            transform: `translateX(-${current * 100}%)`,
+            transition: "transform 0.5s ease-in-out",
           }}
         >
           {list.map((src, i) => (
-  <div 
-    key={i} 
-    style={{ 
-      flex: "0 0 100%", 
-      width: "100%", 
-      height: "100%", 
-      position: "relative",
-      overflow: "hidden",
-      display: "flex", 
-      alignItems: "center", 
-      justifyContent: "center", 
-      backgroundColor: "#000" // Background color
-    }}
-  >
-    {/* 1. Background mein blurred image jo khali jagah ko bhar degi */}
-    <div
-      style={{
-        position: "absolute",
-        inset: 0,
-        backgroundImage: `url(${src})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        filter: "blur(20px) brightness(0.7)", // Blur effect
-        transform: "scale(1.2)", // Edge pooling ke liye thoda zoom
-        zIndex: 1,
-      }}
-    />
+            <div
+              key={i}
+              style={{
+                flex: "0 0 100%",
+                width: "100%",
+                height: "100%",
+                position: "relative",
+                overflow: "hidden",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "#000",
+              }}
+            >
+              {shouldRenderImg(i) && (
+                <>
+                  {/* 1. Blurred background (sirf zaroorat ke time) */}
+                  {shouldRenderBlur(i) && (
+                    <div
+                      style={{
+                        position: "absolute",
+                        inset: 0,
+                        backgroundImage: `url(${src})`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        filter: "blur(20px) brightness(0.7)",
+                        transform: "scale(1.2)",
+                        zIndex: 1,
+                      }}
+                    />
+                  )}
 
-    {/* 2. Main Original Image jo bilkul saaf aur poori dikhegi */}
-    <img
-      src={src}
-      alt={`${alt} ${i + 1}`}
-      loading={i === 0 ? "eager" : "lazy"}
-      draggable={false}
-      style={{
-        position: "relative",
-        maxWidth: "100%",
-        maxHeight: "100%",
-        objectFit: "contain",
-        display: "block",
-        userSelect: "none",
-        zIndex: 2, // Blur ke upar rahegi
-      }}
-    />
-  </div>
-))}
+                  {/* 2. Main image */}
+                  <img
+                    src={src}
+                    alt={`${alt} ${i + 1}`}
+                    loading={priority && i === 0 ? "eager" : "lazy"}
+                    fetchPriority={priority && i === 0 ? "high" : "auto"}
+                    decoding="async"
+                    draggable={false}
+                    style={{
+                      position: "relative",
+                      maxWidth: "100%",
+                      maxHeight: "100%",
+                      objectFit: "contain",
+                      display: "block",
+                      userSelect: "none",
+                      zIndex: 2,
+                    }}
+                  />
+                </>
+              )}
+            </div>
+          ))}
         </div>
 
-        {/* =====================================================
-            LEFT ARROW
-        ===================================================== */}
+        {/* LEFT ARROW */}
         {showArrows && (
           <button
             type="button"
@@ -478,9 +371,7 @@ const arrowStyle = (side) => ({
           </button>
         )}
 
-        {/* =====================================================
-            RIGHT ARROW
-        ===================================================== */}
+        {/* RIGHT ARROW */}
         {showArrows && (
           <button
             type="button"
@@ -492,10 +383,7 @@ const arrowStyle = (side) => ({
           </button>
         )}
 
-        {/* =====================================================
-            DOTS
-            Card mode only
-        ===================================================== */}
+        {/* DOTS (card mode only) */}
         {total > 1 && !showThumbs && (
           <div
             style={{
@@ -514,18 +402,13 @@ const arrowStyle = (side) => ({
               <span
                 key={i}
                 style={{
-                  width:
-                    i === current ? 14 : 6,
+                  width: i === current ? 14 : 6,
                   height: 6,
                   borderRadius: 6,
                   background:
-                    i === current
-                      ? "#dfa00b"
-                      : "rgba(255,255,255,0.8)",
-                  boxShadow:
-                    "0 0 2px rgba(0,0,0,0.4)",
-                  transition:
-                    "all 0.3s ease",
+                    i === current ? "#dfa00b" : "rgba(255,255,255,0.8)",
+                  boxShadow: "0 0 2px rgba(0,0,0,0.4)",
+                  transition: "all 0.3s ease",
                 }}
               />
             ))}

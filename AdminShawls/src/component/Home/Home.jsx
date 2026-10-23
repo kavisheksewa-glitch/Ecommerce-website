@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Home.css";
 
@@ -23,87 +23,133 @@ import {
   EmailIcon,
 } from "react-share";
 
-import { homeShawls, shawls } from "../../data/shawls";
-import ProductImageSlider from "../../components/ProductImageSlider"; // ✅ NEW (path apne folder ke hisaab se adjust karo)
+import { shawls } from "../../data/shawls";
+import ProductImageSlider from "../../components/ProductImageSlider";
+
+// ------------------------------------------------------------------
+// HELPERS (component ke bahar, taaki har render pe dobara na bane)
+// ------------------------------------------------------------------
+const CACHE_KEY = "homeProductsCache_v1";
+
+const readCache = () => {
+  try {
+    const cached = sessionStorage.getItem(CACHE_KEY);
+    return cached ? JSON.parse(cached) : [];
+  } catch {
+    return [];
+  }
+};
+
+const writeCache = (list) => {
+  try {
+    sessionStorage.setItem(CACHE_KEY, JSON.stringify(list));
+  } catch {
+    /* storage full / blocked — ignore */
+  }
+};
+
+const toUrl = (raw) =>
+  raw.startsWith("http")
+    ? raw
+    : `${API.defaults.baseURL}/${raw.replace(/\\/g, "/")}`;
+
+const formatProduct = (p) => {
+  const rawImages =
+    Array.isArray(p.productImages) && p.productImages.length > 0
+      ? p.productImages
+      : [p.productImage || p.image].filter(Boolean);
+
+  const formattedImages = rawImages.length
+    ? rawImages.map(toUrl)
+    : ["https://via.placeholder.com/150"];
+
+  const basePrice = Number(p.price || 0);
+  const discountPercent = Number(p.discount || 0);
+  const finalPrice =
+    discountPercent > 0
+      ? Math.round(basePrice - (basePrice * discountPercent) / 100)
+      : basePrice;
+
+  return {
+    id: p._id,
+    title: p.productName || p.title,
+    description: p.description,
+    priceNum: finalPrice,
+    price: `₹${finalPrice}`,
+    originalPrice: discountPercent > 0 ? `₹${basePrice}` : "",
+    discount: discountPercent > 0 ? `${discountPercent}% OFF` : null,
+    image: formattedImages[0],
+    images: formattedImages,
+    brandLogo: p.sellerId?.brandLogo
+      ? p.sellerId.brandLogo.startsWith("http")
+        ? p.sellerId.brandLogo
+        : `${BASE_URL}/${p.sellerId.brandLogo}`
+      : "",
+    stock: `Stock: ${p.stockQuantity ?? p.stock ?? 0}`,
+    category: p.category || "Pashmina",
+    fabric: p.fabric || p.category || "Pashmina",
+    color: p.color || "N/A",
+    size: p.size || "N/A",
+    careInstructions: p.washCare || "N/A",
+    sellerId: p.sellerId?._id || p.sellerId || "",
+  };
+};
+
+const INITIAL_CATEGORIES = {
+  Pashmina: false,
+  Woolen: false,
+  Silk: false,
+  Cotton: false,
+  Velvet: false,
+  Acrylic: false,
+};
+
+const bannerImages = [image1, image1111, image1112, image1113];
+const extendedBanners = [...bannerImages, bannerImages[0]];
 
 function Home() {
   const navigate = useNavigate();
 
-  // Share Product
   const [shareProduct, setShareProduct] = useState(null);
-
-  // Cart
   const [cartProductIds, setCartProductIds] = useState([]);
-
-  // Wishlist
   const [wishlistProductIds, setWishlistProductIds] = useState([]);
-
-  // Cookie Consent
   const [showCookieBanner, setShowCookieBanner] = useState(false);
 
   // Carousel
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(true);
 
-  // ------------------------------------------------------------------
-  // VIEW STAGE STATE
-  // 0 = initial view -> only first 8 products
-  // 1 = "View All Products" clicked once -> first 12 products
-  // 2 = "View All Products" clicked twice -> full list, no pagination
-  // ------------------------------------------------------------------
+  // 0 = first 8, 1 = first 12, 2 = full list
   const [viewStage, setViewStage] = useState(0);
 
-  // DYNAMIC & STATIC PRODUCTS STATES
-  const [dbProducts, setDbProducts] = useState([]);
+  // ✅ Cache se turant products dikhao (agar pehle load ho chuke hain)
+  const [dbProducts, setDbProducts] = useState(() => readCache());
+  // Loader sirf tab jab cache bhi khali ho
+  const [isPageLoading, setIsPageLoading] = useState(() => readCache().length === 0);
 
-  // ✅ NEW: Page loader — jab tak products properly fetch na ho jayein
-  const [isPageLoading, setIsPageLoading] = useState(true);
-
-  // FILTER & SEARCH STATES
+  // Filters
   const [searchQuery, setSearchQuery] = useState("");
   const [priceFilter, setPriceFilter] = useState(5000);
   const [sortBy, setSortBy] = useState("Newest First");
-
-  // Category Filter State
-  const [selectedCategories, setSelectedCategories] = useState({
-    Pashmina: false,
-    Woolen: false,
-    Silk: false,
-    Cotton: false,
-    Velvet: false,
-    Acrylic: false,
-  });
-
-  // Filter Panel Toggle State
+  const [selectedCategories, setSelectedCategories] = useState(INITIAL_CATEGORIES);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  // BANNER IMAGES
-  const bannerImages = [image1, image1111, image1112, image1113];
-  const extendedBanners = [...bannerImages, bannerImages[0]];
-
-  // --- Authentication Check Helper ---
+  // --- Auth helper ---
   const checkAuthAndExecute = (actionCallback) => {
     const token = localStorage.getItem("token");
-
     if (!token) {
       toast.warning("🔒 Please login first to perform this action!", {
         autoClose: 2000,
       });
-      setTimeout(() => {
-        navigate("/login");
-      }, 1000);
+      setTimeout(() => navigate("/login"), 1000);
       return;
     }
-
     actionCallback(token);
   };
 
   // COOKIE CHECK
   useEffect(() => {
-    const cookieConsent = localStorage.getItem("cookieConsent");
-    if (!cookieConsent) {
-      setShowCookieBanner(true);
-    }
+    if (!localStorage.getItem("cookieConsent")) setShowCookieBanner(true);
   }, []);
 
   const handleAcceptCookies = () => {
@@ -122,7 +168,6 @@ function Home() {
       setIsTransitioning(true);
       setCurrentSlide((prev) => prev + 1);
     }, 4000);
-
     return () => clearInterval(timer);
   }, []);
 
@@ -133,7 +178,38 @@ function Home() {
     }
   };
 
-  // FETCH CART + WISHLIST + DB PRODUCTS
+  // ------------------------------------------------------------------
+  // EFFECT 1: PRODUCTS (alag chalta hai, cart/wishlist ka wait nahi karta)
+  // ------------------------------------------------------------------
+  useEffect(() => {
+    let cancelled = false;
+
+    API.get("/api/seller/products/public")
+      .then((res) => {
+        if (cancelled) return;
+        const productList = Array.isArray(res.data)
+          ? res.data
+          : res.data.products || [];
+
+        if (Array.isArray(productList)) {
+          const formatted = productList.map(formatProduct);
+          setDbProducts(formatted);
+          writeCache(formatted);
+        }
+      })
+      .catch((err) => console.error("Error fetching live products:", err))
+      .finally(() => {
+        if (!cancelled) setIsPageLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // ------------------------------------------------------------------
+  // EFFECT 2: CART + WISHLIST (parallel, products ko block nahi karta)
+  // ------------------------------------------------------------------
   useEffect(() => {
     const fetchCartAndWishlist = async () => {
       const token = localStorage.getItem("token");
@@ -144,36 +220,32 @@ function Home() {
         return;
       }
 
-      try {
-        const res = await fetch(`${BASE_URL}/api/customer/cart`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-          },
-        });
-        const data = await res.json();
-        if (data.success && Array.isArray(data.cart)) {
-          setCartProductIds(data.cart.map((item) => String(item.productId)));
-        }
-      } catch (err) {
-        console.error("Error fetching cart items:", err);
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
+
+      const [cartRes, wishRes] = await Promise.allSettled([
+        fetch(`${BASE_URL}/api/customer/cart`, { headers }).then((r) => r.json()),
+        fetch(`${BASE_URL}/api/customer/wishlist`, { headers }).then((r) => r.json()),
+      ]);
+
+      if (
+        cartRes.status === "fulfilled" &&
+        cartRes.value?.success &&
+        Array.isArray(cartRes.value.cart)
+      ) {
+        setCartProductIds(cartRes.value.cart.map((i) => String(i.productId)));
       }
 
-      try {
-        const res = await fetch(`${BASE_URL}/api/customer/wishlist`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-          },
-        });
-        const data = await res.json();
-        if (data.success && Array.isArray(data.wishlist)) {
-          setWishlistProductIds(data.wishlist.map((item) => String(item.productId)));
-        }
-      } catch (err) {
-        console.error("Error fetching wishlist items:", err);
+      if (
+        wishRes.status === "fulfilled" &&
+        wishRes.value?.success &&
+        Array.isArray(wishRes.value.wishlist)
+      ) {
+        setWishlistProductIds(
+          wishRes.value.wishlist.map((i) => String(i.productId))
+        );
       }
     };
 
@@ -182,159 +254,102 @@ function Home() {
     window.addEventListener("cartUpdated", fetchCartAndWishlist);
     window.addEventListener("wishlistUpdated", fetchCartAndWishlist);
 
-    API.get("/api/seller/products/public")
-      .then((res) => {
-        const productList = Array.isArray(res.data)
-          ? res.data
-          : res.data.products || [];
-
-        if (Array.isArray(productList)) {
-          const formattedDbProducts = productList.map((p) => {
-            // ✅ NEW: image path ko full URL me convert karne ka helper
-            const toUrl = (raw) =>
-              raw.startsWith("http")
-                ? raw
-                : `${API.defaults.baseURL}/${raw.replace(/\\/g, "/")}`;
-
-            // ✅ NEW: multiple images (purane products me sirf productImage hota hai)
-            const rawImages =
-              Array.isArray(p.productImages) && p.productImages.length > 0
-                ? p.productImages
-                : [p.productImage || p.image].filter(Boolean);
-
-            const formattedImages = rawImages.length
-              ? rawImages.map(toUrl)
-              : ["https://via.placeholder.com/150"];
-
-            const basePrice = Number(p.price || 0);
-            const discountPercent = Number(p.discount || 0);
-            const finalPrice = discountPercent > 0
-              ? Math.round(basePrice - (basePrice * discountPercent) / 100)
-              : basePrice;
-
-            return {
-              id: p._id,
-              title: p.productName || p.title,
-              description: p.description,
-              priceNum: finalPrice,
-              price: `₹${finalPrice}`,
-              originalPrice: discountPercent > 0 ? `₹${basePrice}` : "",
-              discount: discountPercent > 0 ? `${discountPercent}% OFF` : null,
-              image: formattedImages[0], // main image (cart/wishlist ke liye)
-              images: formattedImages,   // ✅ NEW: saari images (slider ke liye)
-              brandLogo: p.sellerId?.brandLogo
-                ? (p.sellerId.brandLogo.startsWith("http") ? p.sellerId.brandLogo : `${BASE_URL}/${p.sellerId.brandLogo}`)
-                : "",
-              stock: `Stock: ${p.stockQuantity ?? p.stock ?? 0}`,
-              category: p.category || "Pashmina",
-              fabric: p.fabric || p.category || "Pashmina",
-              color: p.color || "N/A",
-              size: p.size || "N/A",
-              careInstructions: p.washCare || "N/A",
-              sellerId: p.sellerId?._id || p.sellerId || "",
-            };
-          });
-          setDbProducts(formattedDbProducts);
-        }
-      })
-      .catch((err) => console.error("Error fetching live products:", err))
-      .finally(() => setIsPageLoading(false)); // ✅ NEW: fetch success ho ya fail, loader hata do
-
     return () => {
       window.removeEventListener("cartUpdated", fetchCartAndWishlist);
       window.removeEventListener("wishlistUpdated", fetchCartAndWishlist);
     };
   }, []);
 
+  // ------------------------------------------------------------------
+  // FILTERS
+  // ------------------------------------------------------------------
   const handleCategoryChange = (category) => {
-    setSelectedCategories((prev) => ({
-      ...prev,
-      [category]: !prev[category],
-    }));
+    setSelectedCategories((prev) => ({ ...prev, [category]: !prev[category] }));
   };
 
   const handleClearAllFilters = () => {
     setPriceFilter(5000);
     setSearchQuery("");
-    setSelectedCategories({
-      Pashmina: false,
-      Woolen: false,
-      Silk: false,
-      Cotton: false,
-      Velvet: false,
-      Acrylic: false
-    });
+    setSelectedCategories(INITIAL_CATEGORIES);
   };
 
   const getProcessedProducts = (list) => {
-    let filtered = list.map(item => ({
-      ...item,
-      priceNum: item.priceNum !== undefined ? item.priceNum : Number(String(item.price || "0").replace(/[^0-9]/g, ""))
-    })).filter((item) => {
-      const matchesSearch = searchQuery.trim() === "" ||
-        item.title?.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
-        item.category?.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
-        item.fabric?.toLowerCase().includes(searchQuery.toLowerCase().trim());
+    const q = searchQuery.toLowerCase().trim();
+    const activeCategories = Object.keys(selectedCategories).filter(
+      (cat) => selectedCategories[cat]
+    );
 
-      const matchesPrice = item.priceNum <= Number(priceFilter);
+    const filtered = list
+      .map((item) => ({
+        ...item,
+        priceNum:
+          item.priceNum !== undefined
+            ? item.priceNum
+            : Number(String(item.price || "0").replace(/[^0-9]/g, "")),
+      }))
+      .filter((item) => {
+        const matchesSearch =
+          q === "" ||
+          item.title?.toLowerCase().includes(q) ||
+          item.category?.toLowerCase().includes(q) ||
+          item.fabric?.toLowerCase().includes(q);
 
-      const activeCategories = Object.keys(selectedCategories).filter((cat) => selectedCategories[cat]);
-      const matchesCategory = activeCategories.length === 0 ||
-        activeCategories.some((cat) =>
-          item.category?.toLowerCase().includes(cat.toLowerCase()) ||
-          item.fabric?.toLowerCase().includes(cat.toLowerCase())
-        );
+        const matchesPrice = item.priceNum <= Number(priceFilter);
 
-      return matchesSearch && matchesPrice && matchesCategory;
-    });
+        const matchesCategory =
+          activeCategories.length === 0 ||
+          activeCategories.some(
+            (cat) =>
+              item.category?.toLowerCase().includes(cat.toLowerCase()) ||
+              item.fabric?.toLowerCase().includes(cat.toLowerCase())
+          );
+
+        return matchesSearch && matchesPrice && matchesCategory;
+      });
 
     filtered.sort((a, b) => {
-      if (sortBy === "Price: Low to High") {
-        return a.priceNum - b.priceNum;
-      } else if (sortBy === "Price: High to Low") {
-        return b.priceNum - a.priceNum;
-      } else {
-        return 0;
-      }
+      if (sortBy === "Price: Low to High") return a.priceNum - b.priceNum;
+      if (sortBy === "Price: High to Low") return b.priceNum - a.priceNum;
+      return 0;
     });
 
     return filtered;
   };
 
-  const allCombinedShawls = [...dbProducts];
-  const allFullShawlsList = [...shawls, ...dbProducts];
+  // ✅ useMemo: har render pe dobara filter/sort nahi hoga
+  const displayedHomeShawls = useMemo(
+    () => getProcessedProducts(dbProducts),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [dbProducts, searchQuery, priceFilter, sortBy, selectedCategories]
+  );
 
-  const displayedHomeShawls = getProcessedProducts(allCombinedShawls);
-  const displayedAllShawls = getProcessedProducts(allFullShawlsList);
+  const displayedAllShawls = useMemo(
+    () => (viewStage === 2 ? getProcessedProducts([...shawls, ...dbProducts]) : []),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [dbProducts, viewStage, searchQuery, priceFilter, sortBy, selectedCategories]
+  );
 
-  // At stage 0 / 1 we only work with the "featured" (db) list.
-  // At stage 2 we switch to the full combined list.
-  const activeProductsList = viewStage === 2 ? displayedAllShawls : displayedHomeShawls;
+  const activeProductsList =
+    viewStage === 2 ? displayedAllShawls : displayedHomeShawls;
 
-  // No pagination anymore — just slice based on stage
   let currentProducts;
-  if (viewStage === 0) {
-    currentProducts = activeProductsList.slice(0, 8);
-  } else if (viewStage === 1) {
-    currentProducts = activeProductsList.slice(0, 12);
-  } else {
-    currentProducts = activeProductsList; // stage 2 -> saare filtered products ek saath
-  }
+  if (viewStage === 0) currentProducts = activeProductsList.slice(0, 8);
+  else if (viewStage === 1) currentProducts = activeProductsList.slice(0, 12);
+  else currentProducts = activeProductsList;
 
-  // "View All Products" button click handler — drives the 3 stages
   const handleViewAllClick = () => {
-    if (viewStage === 0) {
-      setViewStage(1);
-    } else if (viewStage === 1) {
-      setViewStage(2);
-    } else {
-      // reset back to the beginning
+    if (viewStage === 0) setViewStage(1);
+    else if (viewStage === 1) setViewStage(2);
+    else {
       setViewStage(0);
       setSearchQuery("");
       setIsFilterOpen(false);
     }
   };
 
+  // ------------------------------------------------------------------
+  // ACTIONS
+  // ------------------------------------------------------------------
   const copyLink = async () => {
     try {
       const url = `${window.location.origin}/product/${shareProduct.id}`;
@@ -346,6 +361,18 @@ function Home() {
     }
   };
 
+  const cartPayload = (product) => ({
+    productId: product.id,
+    title: product.title,
+    description: product.description,
+    price: product.price,
+    originalPrice: product.originalPrice,
+    discount: product.discount,
+    image: product.image,
+    quantity: 1,
+    sellerId: product.sellerId,
+  });
+
   const handleAddToCart = (product) => {
     checkAuthAndExecute(async (token) => {
       try {
@@ -353,19 +380,9 @@ function Home() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            productId: product.id,
-            title: product.title,
-            description: product.description,
-            price: product.price,
-            originalPrice: product.originalPrice,
-            discount: product.discount,
-            image: product.image,
-            quantity: 1,
-            sellerId: product.sellerId,
-          }),
+          body: JSON.stringify(cartPayload(product)),
         });
 
         if (response.ok) {
@@ -392,7 +409,7 @@ function Home() {
       try {
         if (isWishlisted) {
           const res = await fetch(`${BASE_URL}/api/customer/wishlist`, {
-            headers: { "Authorization": `Bearer ${token}` },
+            headers: { Authorization: `Bearer ${token}` },
           });
           const data = await res.json();
           const wishlistItem = data.wishlist?.find(
@@ -404,12 +421,16 @@ function Home() {
               `${BASE_URL}/api/customer/wishlist/remove/${wishlistItem._id}`,
               {
                 method: "DELETE",
-                headers: { "Authorization": `Bearer ${token}` },
+                headers: { Authorization: `Bearer ${token}` },
               }
             );
             if (delRes.ok) {
-              toast.info(`${product.title} removed from wishlist`, { autoClose: 1000 });
-              setWishlistProductIds((prev) => prev.filter((id) => id !== String(product.id)));
+              toast.info(`${product.title} removed from wishlist`, {
+                autoClose: 1000,
+              });
+              setWishlistProductIds((prev) =>
+                prev.filter((id) => id !== String(product.id))
+              );
             } else {
               toast.error("Failed to update wishlist");
             }
@@ -419,7 +440,7 @@ function Home() {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`,
+              Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
               productId: product.id,
@@ -434,7 +455,9 @@ function Home() {
           });
 
           if (response.ok) {
-            toast.success(`${product.title} added to wishlist ❤️`, { autoClose: 1000 });
+            toast.success(`${product.title} added to wishlist ❤️`, {
+              autoClose: 1000,
+            });
             setWishlistProductIds((prev) => [...prev, String(product.id)]);
           } else {
             toast.error("Failed to update wishlist");
@@ -457,19 +480,9 @@ function Home() {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`,
+              Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify({
-              productId: product.id,
-              title: product.title,
-              description: product.description,
-              price: product.price,
-              originalPrice: product.originalPrice,
-              discount: product.discount,
-              image: product.image,
-              quantity: 1,
-              sellerId: product.sellerId,
-            }),
+            body: JSON.stringify(cartPayload(product)),
           });
           window.dispatchEvent(new Event("cartUpdated"));
         } catch (err) {
@@ -480,186 +493,75 @@ function Home() {
     });
   };
 
-  const handleShare = (product) => {
-    setShareProduct(product);
-  };
-
-  // ✅ NEW: Full-page loader — jab tak products fetch nahi hote, sirf ye dikhega
-  if (isPageLoading) {
-    return (
-      <div
-        className="d-flex flex-column align-items-center justify-content-center"
-        style={{ minHeight: "100vh", backgroundColor: "#fdf8ee" }}
-      >
-        <div
-          className="spinner-border"
-          role="status"
-          style={{ width: "3.5rem", height: "3.5rem", color: "#9d6a0c" }}
-        >
-          <span className="visually-hidden">Loading...</span>
-        </div>
-        <p className="mt-3 fw-semibold" style={{ color: "#9d6a0c" }}>
-          Loading products...
-        </p>
-      </div>
-    );
-  }
-
+  // ------------------------------------------------------------------
+  // RENDER  (❌ full-page loader hata diya — page turant dikhega)
+  // ------------------------------------------------------------------
   return (
     <div>
       <ToastContainer />
 
-      {/* Responsive, professional card & button styling */}
       <style>{`
-        .Customer_card {
-          padding: 10px !important;
-        }
+        .Customer_card { padding: 10px !important; }
         .Customer_product-image-box {
           aspect-ratio: 1 / 1;
           width: 100%;
-          isolation: isolate; /* logo/wishlist/arrows header ke upar na aaye */
+          isolation: isolate;
         }
-        .Customer_product-image {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
+        .Customer_product-image { width: 100%; height: 100%; object-fit: cover; }
         .Customer_brand-logo-box {
-          position: absolute;
-          top: 10px;
-          left: 10px;
-          width: 50px;
-          height: 50px;
-          z-index: 3;
+          position: absolute; top: 10px; left: 10px;
+          width: 50px; height: 50px; z-index: 3;
         }
-        .Customer_discount-badge {
-          font-size: 0.72rem;
-          padding: 4px 8px;
-        }
+        .Customer_discount-badge { font-size: 0.72rem; padding: 4px 8px; }
         .Customer_wishlist-btn {
-          position: absolute;
-          top: 10px;
-          right: 10px;
-          width: 35px;
-          height: 35px;
+          position: absolute; top: 10px; right: 10px;
+          width: 35px; height: 35px;
         }
-        .Customer_card-title {
-          font-size: 0.86rem;
-          margin-bottom: 4px !important;
-        }
-        .Customer_card-desc {
-          font-size: 0.74rem;
-          min-height: 2.2em;
-        }
+        .Customer_card-title { font-size: 0.86rem; margin-bottom: 4px !important; }
+        .Customer_card-desc { font-size: 0.74rem; min-height: 2.2em; }
         .Customer_share-btn-flat {
-          flex-shrink: 0;
-          border: none;
-          background: transparent;
-          padding: 2px;
-          color: #6b4e14;
-          font-size: 15px;
-          line-height: 1;
-          cursor: pointer;
-          transition: color 0.2s ease, transform 0.2s ease;
+          flex-shrink: 0; border: none; background: transparent;
+          padding: 2px; color: #6b4e14; font-size: 15px; line-height: 1;
+          cursor: pointer; transition: color 0.2s ease, transform 0.2s ease;
         }
-        .Customer_share-btn-flat:hover {
-          color: #b8860b;
-          transform: scale(1.15);
-        }
-        .Customer_price-row {
-          margin-bottom: 10px !important;
-          flex-wrap: wrap;
-          row-gap: 4px;
-        }
-        .Customer_price-main {
-          font-size: 0.9rem;
-        }
-        .Customer_price-original {
-          font-size: 0.72rem;
-        }
+        .Customer_share-btn-flat:hover { color: #b8860b; transform: scale(1.15); }
+        .Customer_price-row { margin-bottom: 10px !important; flex-wrap: wrap; row-gap: 4px; }
+        .Customer_price-main { font-size: 0.9rem; }
+        .Customer_price-original { font-size: 0.72rem; }
         .Customer_card-btn {
           font-size: clamp(0.68rem, 2.4vw, 0.85rem);
-          padding: 6px 8px;
-          letter-spacing: 0.2px;
-          white-space: nowrap;
-          line-height: 1.3;
+          padding: 6px 8px; letter-spacing: 0.2px;
+          white-space: nowrap; line-height: 1.3;
         }
         .Customer_buy-now-btn {
-          font-size: clamp(0.72rem, 2.4vw, 0.9rem);
-          padding: 7px 8px;
+          font-size: clamp(0.72rem, 2.4vw, 0.9rem); padding: 7px 8px;
         }
 
-        /* TABLET: slightly bigger icons/logo than desktop for clearer tap targets */
+        /* Hero banner: layout shift se bachne ke liye fixed height area */
+        .Customer_hero-carousel-container { background: #f3e7cc; }
+
         @media (max-width: 767.98px) and (min-width: 576px) {
-          .Customer_brand-logo-box {
-            width: 42px;
-            height: 42px;
-          }
-          .Customer_wishlist-btn {
-            width: 34px;
-            height: 34px;
-            font-size: 15px;
-          }
-          .Customer_share-btn-flat {
-            font-size: 17px;
-          }
+          .Customer_brand-logo-box { width: 42px; height: 42px; }
+          .Customer_wishlist-btn { width: 34px; height: 34px; font-size: 15px; }
+          .Customer_share-btn-flat { font-size: 17px; }
         }
 
-        /* MOBILE: increase icon/logo sizes so they're clearly visible */
         @media (max-width: 575.98px) {
-          .Customer_card {
-            padding: 7px !important;
-            border-radius: 12px !important;
-          }
-          .Customer_brand-logo-box {
-            width: 34px;
-            height: 34px;
-            top: 6px;
-            left: 6px;
-          }
-          .Customer_discount-badge {
-            font-size: 0.62rem;
-            padding: 3px 6px !important;
-          }
+          .Customer_card { padding: 7px !important; border-radius: 12px !important; }
+          .Customer_brand-logo-box { width: 34px; height: 34px; top: 6px; left: 6px; }
+          .Customer_discount-badge { font-size: 0.62rem; padding: 3px 6px !important; }
           .Customer_wishlist-btn {
-            width: 30px;
-            height: 30px;
-            top: 6px;
-            right: 6px;
-            font-size: 14px;
+            width: 30px; height: 30px; top: 6px; right: 6px; font-size: 14px;
           }
-          .Customer_share-btn-flat {
-            font-size: 16px;
-          }
-          .Customer_card-body {
-            padding: 8px 4px !important;
-          }
-          .Customer_card-title {
-            font-size: 0.78rem;
-            line-height: 1.25;
-          }
-          .Customer_card-desc {
-            font-size: 0.68rem;
-            min-height: 1.8em;
-          }
-          .Customer_price-main {
-            font-size: 0.82rem;
-          }
-          .Customer_price-original {
-            font-size: 0.65rem;
-          }
-          .Customer_card-btn {
-            font-size: 0.68rem;
-            padding: 5px 4px;
-            letter-spacing: 0.1px;
-          }
-          .Customer_buy-now-btn {
-            font-size: 0.72rem;
-            padding: 6px 4px;
-          }
-          .Customer_card-actions {
-            gap: 6px !important;
-          }
+          .Customer_share-btn-flat { font-size: 16px; }
+          .Customer_card-body { padding: 8px 4px !important; }
+          .Customer_card-title { font-size: 0.78rem; line-height: 1.25; }
+          .Customer_card-desc { font-size: 0.68rem; min-height: 1.8em; }
+          .Customer_price-main { font-size: 0.82rem; }
+          .Customer_price-original { font-size: 0.65rem; }
+          .Customer_card-btn { font-size: 0.68rem; padding: 5px 4px; letter-spacing: 0.1px; }
+          .Customer_buy-now-btn { font-size: 0.72rem; padding: 6px 4px; }
+          .Customer_card-actions { gap: 6px !important; }
         }
       `}</style>
 
@@ -676,10 +578,16 @@ function Home() {
             </span>
           </div>
           <div className="d-flex gap-2">
-            <button className="btn btn-outline-light btn-sm px-3" onClick={handleDeclineCookies}>
+            <button
+              className="btn btn-outline-light btn-sm px-3"
+              onClick={handleDeclineCookies}
+            >
               Decline
             </button>
-            <button className="btn btn-warning btn-sm px-3 fw-bold text-dark" onClick={handleAcceptCookies}>
+            <button
+              className="btn btn-warning btn-sm px-3 fw-bold text-dark"
+              onClick={handleAcceptCookies}
+            >
               Accept
             </button>
           </div>
@@ -709,14 +617,17 @@ function Home() {
             <button className="Customer_copy-btn" onClick={copyLink}>
               <FaLink className="me-2" /> Copy Link
             </button>
-            <button className="Customer_close-btn" onClick={() => setShareProduct(null)}>
+            <button
+              className="Customer_close-btn"
+              onClick={() => setShareProduct(null)}
+            >
               Close
             </button>
           </div>
         </div>
       )}
 
-      {/* HERO BANNER CAROUSEL — hidden once "View All Products" clicked twice (viewStage 2) */}
+      {/* HERO BANNER CAROUSEL */}
       {viewStage !== 2 && (
         <>
           <div className="Customer_hero-carousel-container position-relative overflow-hidden">
@@ -735,6 +646,10 @@ function Home() {
                   alt={`Kavi Shawls Banner ${(index % bannerImages.length) + 1}`}
                   className="Customer_hero0-image w-100 flex-shrink-0"
                   style={{ minWidth: "100%", objectFit: "cover", objectPosition: "top" }}
+                  // ✅ Sirf pehla banner turant load, baaki lazy
+                  loading={index === 0 ? "eager" : "lazy"}
+                  fetchPriority={index === 0 ? "high" : "auto"}
+                  decoding="async"
                 />
               ))}
             </div>
@@ -745,11 +660,14 @@ function Home() {
                 return (
                   <button
                     key={index}
+                    aria-label={`Go to slide ${index + 1}`}
                     onClick={() => {
                       setIsTransitioning(true);
                       setCurrentSlide(index);
                     }}
-                    className={`border-0 rounded-circle ${activeIndex === index ? "bg-warning" : "bg-white opacity-50"}`}
+                    className={`border-0 rounded-circle ${
+                      activeIndex === index ? "bg-warning" : "bg-white opacity-50"
+                    }`}
                     style={{
                       width: activeIndex === index ? "24px" : "12px",
                       height: "12px",
@@ -771,10 +689,13 @@ function Home() {
         </>
       )}
 
-      {/* SEARCH BAR — always visible */}
+      {/* SEARCH BAR */}
       <div className="container my-4 text-center">
         <div className="position-relative mx-auto" style={{ maxWidth: "600px" }}>
-          <span className="position-absolute top-50 start-0 translate-middle-y ps-3 text-muted" style={{ pointerEvents: "none" }}>
+          <span
+            className="position-absolute top-50 start-0 translate-middle-y ps-3 text-muted"
+            style={{ pointerEvents: "none" }}
+          >
             <i className="bi bi-search"></i>
           </span>
           <input
@@ -795,25 +716,26 @@ function Home() {
 
       {/* MAIN PRODUCTS SECTION */}
       <div className="container my-5">
-
-        {/* TOP FILTERS & SORT BAR — always visible */}
+        {/* TOP FILTERS & SORT BAR */}
         <div className="bg-white p-3 rounded shadow-sm border mb-4 d-flex flex-wrap justify-content-between align-items-center gap-3">
           <span className="text-muted small fw-semibold">
-            Showing {currentProducts.length} of {activeProductsList.length} products
+            {isPageLoading
+              ? "Loading products..."
+              : `Showing ${currentProducts.length} of ${activeProductsList.length} products`}
           </span>
 
           <div className="d-flex align-items-center gap-3">
-            {/* Filter Toggle Button */}
             <button
               className="btn btn-outline-dark btn-sm px-3 py-2 d-flex align-items-center gap-2"
               onClick={() => setIsFilterOpen(!isFilterOpen)}
               style={{ borderRadius: "8px" }}
             >
               <i className="bi bi-funnel"></i> Filters{" "}
-              {Object.values(selectedCategories).some(Boolean) || priceFilter < 5000 ? "●" : ""}
+              {Object.values(selectedCategories).some(Boolean) || priceFilter < 5000
+                ? "●"
+                : ""}
             </button>
 
-            {/* Sort Dropdown */}
             <div className="d-flex align-items-center gap-2">
               <span className="text-muted small">Sort By:</span>
               <select
@@ -829,7 +751,7 @@ function Home() {
           </div>
         </div>
 
-        {/* FILTER PANEL — always available */}
+        {/* FILTER PANEL */}
         {isFilterOpen && (
           <div className="row g-3 mb-4 p-4 bg-white border rounded-4 shadow-sm position-relative">
             <button
@@ -864,7 +786,7 @@ function Home() {
                 Categories
               </label>
               <div className="d-flex flex-wrap gap-3 align-items-center mt-2">
-                {["Pashmina", "Woolen", "Silk", "Cotton","Velvet","Acrylic"].map((cat) => (
+                {Object.keys(INITIAL_CATEGORIES).map((cat) => (
                   <div className="form-check" key={cat}>
                     <input
                       className="form-check-input"
@@ -894,8 +816,33 @@ function Home() {
 
         {/* PRODUCTS GRID */}
         <div className="row g-2 g-md-4">
-          {currentProducts.length > 0 ? (
-            currentProducts.map((item) => {
+          {isPageLoading ? (
+            // ✅ Skeleton cards — page turant dikhta hai, sirf grid load hoti hai
+            Array.from({ length: 8 }).map((_, i) => (
+              <div className="col-6 col-sm-6 col-md-4 col-lg-3" key={`sk-${i}`}>
+                <div
+                  className="placeholder-glow p-2 h-100"
+                  style={{ backgroundColor: "#e4c893", borderRadius: "16px" }}
+                >
+                  <div
+                    className="placeholder w-100"
+                    style={{ aspectRatio: "1 / 1", borderRadius: "12px", display: "block" }}
+                  />
+                  <span className="placeholder col-8 mt-3 d-block" />
+                  <span className="placeholder col-5 mt-2 d-block" />
+                  <span
+                    className="placeholder col-12 mt-3 d-block"
+                    style={{ height: "30px", borderRadius: "8px" }}
+                  />
+                  <span
+                    className="placeholder col-12 mt-2 d-block"
+                    style={{ height: "30px", borderRadius: "8px" }}
+                  />
+                </div>
+              </div>
+            ))
+          ) : currentProducts.length > 0 ? (
+            currentProducts.map((item, idx) => {
               const productIdStr = String(item.id);
               const isInCart = cartProductIds.includes(productIdStr);
               const isWishlisted = wishlistProductIds.includes(productIdStr);
@@ -921,19 +868,24 @@ function Home() {
                           title="Brand Logo"
                         >
                           <img
-                            src={
-                              item.brandLogo.startsWith("http")
-                                ? item.brandLogo
-                                : `${BASE_URL}/${item.brandLogo}`
-                            }
+                            src={item.brandLogo}
                             alt="Brand Logo"
+                            loading="lazy"
+                            decoding="async"
                             style={{ width: "100%", height: "100%", objectFit: "cover" }}
                           />
                         </div>
                       )}
 
-                      {/* ✅ NEW: multiple images slider (static shawls me sirf item.image hoti hai) */}
- <ProductImageSlider images={ item.images && item.images.length ? item.images : [item.image] } alt={item.title} hideArrowsOnMobile={true} hideArrowsOnDesktop={true} />
+                      {/* Saari images pass hoti hain, par slider sirf current image
+                          load karta hai; baaki hover/swipe ke baad load hoti hain. */}
+                      <ProductImageSlider
+                        images={item.images && item.images.length ? item.images : [item.image]}
+                        alt={item.title}
+                        hideArrowsOnMobile={true}
+                        hideArrowsOnDesktop={true}
+                        priority={idx < 4}
+                      />
 
                       <button
                         className="Customer_wishlist-btn"
@@ -963,9 +915,7 @@ function Home() {
                     <div className="Customer_card-body px-2 py-3 d-flex flex-column justify-content-between">
                       <div>
                         <div className="d-flex justify-content-between align-items-start gap-2 mb-1">
-                          <h6
-                            className="Customer_card-title fw-bold mb-0 text-dark"
-                          >
+                          <h6 className="Customer_card-title fw-bold mb-0 text-dark">
                             {item.title}
                           </h6>
 
@@ -981,9 +931,7 @@ function Home() {
                           </button>
                         </div>
 
-                        <p
-                          className="Customer_card-desc text-muted small mb-2 Customer_text-truncate-2"
-                        >
+                        <p className="Customer_card-desc text-muted small mb-2 Customer_text-truncate-2">
                           {item.description}
                         </p>
 
@@ -993,9 +941,7 @@ function Home() {
                               {item.price}
                             </span>
                             {item.originalPrice && (
-                              <span
-                                className="Customer_price-original text-decoration-line-through text-muted"
-                              >
+                              <span className="Customer_price-original text-decoration-line-through text-muted">
                                 {item.originalPrice}
                               </span>
                             )}
@@ -1019,7 +965,11 @@ function Home() {
                               navigate("/cart");
                             }}
                             className="Customer_card-btn btn w-100 fw-semibold text-white"
-                            style={{ backgroundColor: "#2b8a3e", border: "none", borderRadius: "8px" }}
+                            style={{
+                              backgroundColor: "#2b8a3e",
+                              border: "none",
+                              borderRadius: "8px",
+                            }}
                           >
                             Go to Cart
                           </button>
@@ -1030,7 +980,11 @@ function Home() {
                               handleAddToCart(item);
                             }}
                             className="Customer_card-btn btn btn-dark w-100 fw-semibold text-white"
-                            style={{ backgroundColor: "#166228", border: "none", borderRadius: "8px" }}
+                            style={{
+                              backgroundColor: "#166228",
+                              border: "none",
+                              borderRadius: "8px",
+                            }}
                           >
                             Add to Cart
                           </button>
@@ -1057,13 +1011,15 @@ function Home() {
             })
           ) : (
             <div className="col-12 text-center py-5">
-              <p className="text-muted fs-5">No products found matching your search or filters.</p>
+              <p className="text-muted fs-5">
+                No products found matching your search or filters.
+              </p>
             </div>
           )}
         </div>
 
-        {/* VIEW ALL PRODUCTS TOGGLE BUTTON — drives stage 0 -> 1 -> 2, hidden on final stage */}
-        {viewStage !== 2 && (
+        {/* VIEW MORE BUTTON */}
+        {viewStage !== 2 && !isPageLoading && (
           <div className="text-center mt-4">
             <button
               className="btn btn-outline-secondary btn-sm px-4 py-2 fw-semibold"
@@ -1075,7 +1031,7 @@ function Home() {
           </div>
         )}
 
-        {/* EXPLORE CATEGORY BUTTONS — hidden once "View All Products" clicked twice (viewStage 2) */}
+        {/* EXPLORE CATEGORY BUTTONS */}
         {viewStage !== 2 && (
           <div className="Customer_explore-buttons mt-4">
             <button
