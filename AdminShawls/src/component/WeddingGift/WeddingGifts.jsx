@@ -177,6 +177,15 @@ function WeddingGifts() {
                 images,
                 image: images[0] || "",
 
+                // ✅ NEW (1/3): brand name search ke liye
+                brandName:
+                  p.sellerId?.brandName ||
+                  p.sellerId?.businessName ||
+                  p.sellerId?.shopName ||
+                  p.sellerId?.name ||
+                  p.brandName ||
+                  "",
+
                 brandLogo: toImageUrl(p.sellerId?.brandLogo),
 
                 stock: `Stock: ${p.stockQuantity}`,
@@ -264,9 +273,13 @@ function WeddingGifts() {
   // ================= FILTER =================
   const getProcessedProducts = (list) => {
     let filtered = list.filter((item) => {
+      // ✅ NEW (2/3): brand name se bhi search
       const matchesSearch =
         searchQuery.trim() === "" ||
         item.title
+          ?.toLowerCase()
+          .includes(searchQuery.toLowerCase().trim()) ||
+        item.brandName
           ?.toLowerCase()
           .includes(searchQuery.toLowerCase().trim());
 
@@ -725,9 +738,10 @@ function WeddingGifts() {
             <i className="bi bi-search"></i>
           </span>
 
+          {/* ✅ NEW (3/3): placeholder */}
           <input
             type="text"
-            placeholder="Search wedding gifts..."
+            placeholder="Search by product or brand name..."
             value={searchQuery}
             onChange={(e) =>
               setSearchQuery(e.target.value)

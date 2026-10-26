@@ -113,6 +113,16 @@ function FestiveGifts() {
                 discount: discountPercent > 0 ? `${discountPercent}% OFF` : null,
                 images,
                 image: images[0] || "",
+
+                // ✅ NEW (1/3): brand name search ke liye
+                brandName:
+                  p.sellerId?.brandName ||
+                  p.sellerId?.businessName ||
+                  p.sellerId?.shopName ||
+                  p.sellerId?.name ||
+                  p.brandName ||
+                  "",
+
                 brandLogo: toImageUrl(p.sellerId?.brandLogo),
                 stock: `Stock: ${p.stockQuantity}`,
                 fabric: p.fabric || "N/A",
@@ -158,7 +168,11 @@ function FestiveGifts() {
       if (!searchQuery.trim()) return matchesPrice;
 
       const query = searchQuery.toLowerCase().trim();
-      const matchesSearch = item.title?.toLowerCase().includes(query) || item.description?.toLowerCase().includes(query);
+      // ✅ NEW (2/3): brand name se bhi search
+      const matchesSearch =
+        item.title?.toLowerCase().includes(query) ||
+        item.description?.toLowerCase().includes(query) ||
+        item.brandName?.toLowerCase().includes(query);
 
       return matchesPrice && matchesSearch;
     });
@@ -536,9 +550,10 @@ function FestiveGifts() {
           <span className="position-absolute top-50 start-0 translate-middle-y ps-3 text-muted" style={{ pointerEvents: "none" }}>
             <i className="bi bi-search"></i>
           </span>
+          {/* ✅ NEW (3/3): placeholder */}
           <input
             type="text"
-            placeholder="Search festive shawls..."
+            placeholder="Search by product or brand name..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="form-control w-100 shadow-sm"

@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import API, { BASE_URL } from "../../utils/api";
 import { useNavigate } from "react-router-dom";
@@ -226,6 +224,16 @@ function BirthdayGifts() {
               discount: discountPercent > 0 ? `${discountPercent}% OFF` : null,
               images,
               image: images[0] || PLACEHOLDER_IMG,
+
+              // ✅ NEW (1/3): brand name search ke liye
+              brandName:
+                p.sellerId?.brandName ||
+                p.sellerId?.businessName ||
+                p.sellerId?.shopName ||
+                p.sellerId?.name ||
+                p.brandName ||
+                "",
+
               brandLogo: toImageUrl(p.sellerId?.brandLogo),
               stock: `Stock: ${p.stockQuantity}`,
               stockQuantity: Number(p.stockQuantity),
@@ -281,11 +289,13 @@ function BirthdayGifts() {
 
     const list = allProducts.filter((item) => {
       const matchesPrice = (item.rawPrice || 0) <= effectiveMaxPrice;
+      // ✅ NEW (2/3): brand name se bhi search
       const matchesSearch =
         !query ||
         item.title?.toLowerCase().includes(query) ||
         item.fabric?.toLowerCase().includes(query) ||
-        item.color?.toLowerCase().includes(query);
+        item.color?.toLowerCase().includes(query) ||
+        item.brandName?.toLowerCase().includes(query);
       const fabricText = String(item.fabric || "").toLowerCase();
       const matchesFabric =
         selectedFabrics.length === 0 || selectedFabrics.some((kw) => fabricText.includes(kw));
@@ -559,9 +569,10 @@ function BirthdayGifts() {
           >
             <FaSearch />
           </span>
+          {/* ✅ NEW (3/3): placeholder */}
           <input
             type="text"
-            placeholder="Search birthday gift shawls..."
+            placeholder="Search by product or brand name..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="form-control w-100 shadow-sm"
@@ -717,16 +728,16 @@ function BirthdayGifts() {
                             </div>
                           )}
 
-                     <ProductImageSlider
-                       images={
-                         item.images && item.images.length
-                           ? item.images
-                           : [item.image]
-                       }
-                       alt={item.title}
-                       hideArrowsOnMobile={true}
-                       hideArrowsOnDesktop={true}
-                     />
+                          <ProductImageSlider
+                            images={
+                              item.images && item.images.length
+                                ? item.images
+                                : [item.image]
+                            }
+                            alt={item.title}
+                            hideArrowsOnMobile={true}
+                            hideArrowsOnDesktop={true}
+                          />
 
                           <button
                             type="button"

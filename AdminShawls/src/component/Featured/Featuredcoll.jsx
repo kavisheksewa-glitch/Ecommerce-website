@@ -1,6 +1,3 @@
-
-
-
 import React, { useState, useEffect } from "react";
 import API, { BASE_URL } from "../../utils/api";
 import image112 from "../../assets/featured.webp";
@@ -137,6 +134,16 @@ function Featuredcoll() {
                 discount: discountPercent > 0 ? `${discountPercent}% OFF` : null,
                 images,
                 image: images[0] || PLACEHOLDER_IMG,
+
+                // ✅ NEW (1/3): brand name search ke liye
+                brandName:
+                  p.sellerId?.brandName ||
+                  p.sellerId?.businessName ||
+                  p.sellerId?.shopName ||
+                  p.sellerId?.name ||
+                  p.brandName ||
+                  "",
+
                 brandLogo: toImageUrl(p.sellerId?.brandLogo),
                 stock: `Stock: ${p.stockQuantity}`,
                 stockQuantity: Number(p.stockQuantity),
@@ -175,7 +182,12 @@ function Featuredcoll() {
 
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
-      list = list.filter((item) => item.title?.toLowerCase().includes(query));
+      // ✅ NEW (2/3): brand name se bhi search
+      list = list.filter(
+        (item) =>
+          item.title?.toLowerCase().includes(query) ||
+          item.brandName?.toLowerCase().includes(query)
+      );
     }
 
     if (selectedFabric !== "All") {
@@ -562,9 +574,10 @@ function Featuredcoll() {
             <i className="bi bi-search"></i>
           </span>
 
+          {/* ✅ NEW (3/3): placeholder */}
           <input
             type="text"
-            placeholder="Search featured shawls..."
+            placeholder="Search by product or brand name..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="form-control w-100 shadow-sm"

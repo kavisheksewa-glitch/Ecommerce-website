@@ -1,6 +1,3 @@
-
-
-
 import React, { useState, useEffect } from "react";
 import image111 from "../../assets/spring.webp";
 import { useNavigate } from "react-router-dom";
@@ -21,6 +18,14 @@ import "./Springsummer.css";
 import { springShawls } from "../../data/shawls";
 import API, { BASE_URL } from "../../utils/api";
 import ProductImageSlider from "../../components/ProductImageSlider";
+
+// Image path ko full URL me badalta hai (backslash + leading slash normalize)
+const toImageUrl = (raw) => {
+  if (!raw) return "";
+  if (String(raw).startsWith("http")) return raw;
+  const path = String(raw).replace(/\\/g, "/").replace(/^\//, "");
+  return `${BASE_URL}/${path}`;
+};
 
 function Springsummer() {
   const navigate = useNavigate();
@@ -85,19 +90,27 @@ function Springsummer() {
   };
 
   useEffect(() => {
-      API.get("/api/seller/products/public")
+    API.get("/api/seller/products/public")
       .then((res) => {
         if (Array.isArray(res.data)) {
           const dbProducts = res.data
             .filter((p) => p.category === "Spring Summer Shawls")
             .map((p, index) => {
-              // ✅ seller ne jo price enter kiya wahi "original" price hai; discount hone par
+              // seller ne jo price enter kiya wahi "original" price hai; discount hone par
               // actual bikne wala price (finalPrice) usse kam hoga
               const basePrice = Number(p.price || 0);
               const discountPercent = Number(p.discount || 0);
-              const finalPrice = discountPercent > 0
-                ? Math.round(basePrice - (basePrice * discountPercent) / 100)
-                : basePrice;
+              const finalPrice =
+                discountPercent > 0
+                  ? Math.round(basePrice - (basePrice * discountPercent) / 100)
+                  : basePrice;
+
+              // Multiple images + purane single-image products dono support
+              const rawImages =
+                Array.isArray(p.productImages) && p.productImages.length > 0
+                  ? p.productImages
+                  : [p.productImage || p.image].filter(Boolean);
+              const images = rawImages.map(toImageUrl);
 
               return {
                 id: p._id,
@@ -105,32 +118,30 @@ function Springsummer() {
                 description: p.description,
                 price: `₹${finalPrice}`,
                 rawPrice: finalPrice || 0,
-              originalPrice: discountPercent > 0 ? `₹${basePrice}` : "",
-              discount: discountPercent > 0 ? `${discountPercent}% OFF` : null,
-              images: (
-                Array.isArray(p.productImages) && p.productImages.length > 0
-                  ? p.productImages
-                  : [p.productImage || p.image].filter(Boolean)
-              ).map((raw) =>
-                raw?.startsWith("http") ? raw : `${BASE_URL}/${raw}`
-              ),
-              image: (
-                Array.isArray(p.productImages) && p.productImages.length > 0
-                  ? p.productImages
-                  : [p.productImage || p.image].filter(Boolean)
-              ).map((raw) =>
-                raw?.startsWith("http") ? raw : `${BASE_URL}/${raw}`
-              )[0] || "",
-               brandLogo: p.sellerId?.brandLogo ? (p.sellerId.brandLogo.startsWith("http") ? p.sellerId.brandLogo : `${BASE_URL}/${p.sellerId.brandLogo}`): "",
-              stock: `Stock: ${p.stockQuantity}`,
-              fabric: p.fabric || "N/A",
-              color: p.color || "N/A",
-              size: p.size || "N/A",
-              careInstructions: p.washCare || "N/A",
-              createdAt: p.createdAt ? new Date(p.createdAt).getTime() : index,
-               sellerId: p.sellerId?._id || p.sellerId || "",
-            };
-          });
+                originalPrice: discountPercent > 0 ? `₹${basePrice}` : "",
+                discount: discountPercent > 0 ? `${discountPercent}% OFF` : null,
+                images,
+                image: images[0] || "",
+
+                // ✅ NEW (1/4): brand name search ke liye
+                brandName:
+                  p.sellerId?.brandName ||
+                  p.sellerId?.businessName ||
+                  p.sellerId?.shopName ||
+                  p.sellerId?.name ||
+                  p.brandName ||
+                  "",
+
+                brandLogo: toImageUrl(p.sellerId?.brandLogo),
+                stock: `Stock: ${p.stockQuantity}`,
+                fabric: p.fabric || "N/A",
+                color: p.color || "N/A",
+                size: p.size || "N/A",
+                careInstructions: p.washCare || "N/A",
+                createdAt: p.createdAt ? new Date(p.createdAt).getTime() : index,
+                sellerId: p.sellerId?._id || p.sellerId || "",
+              };
+            });
 
           const formattedStatic = springShawls.map((item, index) => ({
             ...item,
@@ -160,15 +171,25 @@ function Springsummer() {
     };
   }, []);
 
-  const fabrics = [...new Set(allProducts.map((p) => p.fabric).filter((f) => f && f !== "N/A"))];
-  const colors = ["All", ...new Set(allProducts.map((p) => p.color).filter((c) => c && c !== "N/A"))];
+  const fabrics = [
+    ...new Set(allProducts.map((p) => p.fabric).filter((f) => f && f !== "N/A")),
+  ];
+  const colors = [
+    "All",
+    ...new Set(allProducts.map((p) => p.color).filter((c) => c && c !== "N/A")),
+  ];
 
   const getProcessedProducts = () => {
     let list = [...allProducts];
 
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
-      list = list.filter((item) => item.title?.toLowerCase().includes(query));
+      // ✅ NEW (2/4): brand name se bhi search
+      list = list.filter(
+        (item) =>
+          item.title?.toLowerCase().includes(query) ||
+          item.brandName?.toLowerCase().includes(query)
+      );
     }
 
     if (selectedFabric !== "All") {
@@ -215,48 +236,48 @@ function Springsummer() {
   };
 
   // ✅ ADD TO CART — /api/customer/cart/add
-  const handleAddToCart =async (product) => {
-   const token = localStorage.getItem("token");
-      if (!token) {
-        toast.error("Please login first!");
-        navigate("/login");
-        return;
-      }
-  
-      try {
-        const response = await fetch(`${BASE_URL}/api/customer/cart/add`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            productId: product.id,
-            title: product.title,
-            description: product.description,
-            price: product.price,
-            originalPrice: product.originalPrice || "",
-            discount: product.discount || "",
-            image: product.image,
-            quantity: 1,
-            sellerId: product.sellerId,
-          }),
+  const handleAddToCart = async (product) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("Please login first!");
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const response = await fetch(`${BASE_URL}/api/customer/cart/add`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          productId: product.id,
+          title: product.title,
+          description: product.description,
+          price: product.price,
+          originalPrice: product.originalPrice || "",
+          discount: product.discount || "",
+          image: product.image,
+          quantity: 1,
+          sellerId: product.sellerId,
+        }),
+      });
+
+      if (response.ok) {
+        toast.success(`${product.title} added to cart! 🛒`, {
+          position: "top-right",
+          autoClose: 1000,
         });
-  
-        if (response.ok) {
-          toast.success(`${product.title} added to cart! 🛒`, {
-            position: "top-right",
-            autoClose: 1000,
-          });
-          setCartProductIds((prev) => [...prev, String(product.id)]);
-          window.dispatchEvent(new Event("cartUpdated"));
-        } else {
-          toast.error("Failed to add to cart");
-        }
-      } catch (err) {
-        console.error("Error connecting to backend:", err);
-        toast.error("Server connection failed");
+        setCartProductIds((prev) => [...prev, String(product.id)]);
+        window.dispatchEvent(new Event("cartUpdated"));
+      } else {
+        toast.error("Failed to add to cart");
       }
+    } catch (err) {
+      console.error("Error connecting to backend:", err);
+      toast.error("Server connection failed");
+    }
   };
 
   // ✅ WISHLIST — /api/customer/wishlist/add & /remove/:id
@@ -368,7 +389,6 @@ function Springsummer() {
     <div className="Customer_container1">
       <ToastContainer />
 
-      {/* Responsive, professional card & button styling — same structure/feature as Home.jsx */}
       <style>{`
         .Customer_card {
           padding: 10px !important;
@@ -581,7 +601,9 @@ function Springsummer() {
         alt="Kavi Shawls Banner"
         className="Customer_hero-image w-100 mb-4"
       />
-          <div className="container my-3 text-center">
+
+      {/* SEARCH BAR */}
+      <div className="container my-3 text-center">
         <div className="position-relative mx-auto" style={{ maxWidth: "600px" }}>
           <span
             className="position-absolute top-50 start-0 translate-middle-y ps-3 text-muted"
@@ -590,9 +612,10 @@ function Springsummer() {
             <i className="bi bi-search"></i>
           </span>
 
+          {/* ✅ NEW (3/4): placeholder */}
           <input
             type="text"
-            placeholder="Search spring summer shawls..."
+            placeholder="Search by product or brand name..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="form-control w-100 shadow-sm"
@@ -605,6 +628,7 @@ function Springsummer() {
           />
         </div>
       </div>
+
       <div className="container my-3">
         <div className="d-flex flex-wrap justify-content-between align-items-center bg-white p-3 rounded-4 shadow-sm gap-3 border">
           <div className="text-muted small fw-semibold">
@@ -707,10 +731,7 @@ function Springsummer() {
             </div>
 
             <div className="col-12 text-end mt-3">
-              <button
-                className="btn btn-outline-danger btn-sm px-4"
-                onClick={resetFilters}
-              >
+              <button className="btn btn-outline-danger btn-sm px-4" onClick={resetFilters}>
                 Clear Filters
               </button>
             </div>
@@ -718,7 +739,7 @@ function Springsummer() {
         )}
       </div>
 
-      {/* --- PRODUCTS GRID (same card structure/feature as Home.jsx) --- */}
+      {/* --- PRODUCTS GRID --- */}
       <div className="container my-4">
         <div className="row g-2 g-md-4">
           {currentProducts.length > 0 ? (
@@ -748,30 +769,26 @@ function Springsummer() {
                         <div
                           className="Customer_brand-logo-box shadow-sm rounded-circle overflow-hidden bg-white d-flex align-items-center justify-content-center"
                           style={{ border: "1.5px solid #fff" }}
-                          title="Brand Logo"
+                          title={item.brandName || "Brand Logo"} /* ✅ NEW (4/4): optional tooltip */
                         >
                           <img
-                            src={
-                              item.brandLogo.startsWith("http")
-                                ? item.brandLogo
-                                : `${BASE_URL}/${item.brandLogo}`
-                            }
+                            src={toImageUrl(item.brandLogo)}
                             alt="Brand Logo"
                             style={{ width: "100%", height: "100%", objectFit: "cover" }}
                           />
                         </div>
                       )}
 
-                     <ProductImageSlider
-                       images={
-                         item.images && item.images.length
-                           ? item.images
-                           : [item.image]
-                       }
-                       alt={item.title}
-                       hideArrowsOnMobile={true}
-                       hideArrowsOnDesktop={true}
-                     />
+                      <ProductImageSlider
+                        images={
+                          item.images && item.images.length
+                            ? item.images
+                            : [item.image]
+                        }
+                        alt={item.title}
+                        hideArrowsOnMobile={true}
+                        hideArrowsOnDesktop={true}
+                      />
 
                       <button
                         className="Customer_wishlist-btn"
@@ -889,11 +906,10 @@ function Springsummer() {
             })
           ) : (
             <div className="col-12 text-center py-5">
-              <p className="text-muted fs-5">No spring summer shawls found matching your filters.</p>
-              <button
-                className="btn btn-outline-dark btn-sm mt-2"
-                onClick={resetFilters}
-              >
+              <p className="text-muted fs-5">
+                No spring summer shawls found matching your filters.
+              </p>
+              <button className="btn btn-outline-dark btn-sm mt-2" onClick={resetFilters}>
                 Reset Filters
               </button>
             </div>

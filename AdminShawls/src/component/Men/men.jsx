@@ -54,7 +54,6 @@ function Men() {
   const [searchQuery, setSearchQuery] = useState("");
 
   // --- Filter & Pagination States ---
-  // ✅ CHANGED: ab single-select "All"/fabric radio ki jagah multi-select checkbox array
   const [selectedFabrics, setSelectedFabrics] = useState([]);
   const [maxPrice, setMaxPrice] = useState(MAX_PRICE);
   const [sortBy, setSortBy] = useState("newest");
@@ -137,6 +136,16 @@ function Men() {
                 discount: discountPercent > 0 ? `${discountPercent}% OFF` : null,
                 images,
                 image: images[0] || PLACEHOLDER_IMG,
+
+                // ✅ NEW (1/4): brand name search ke liye
+                brandName:
+                  p.sellerId?.brandName ||
+                  p.sellerId?.businessName ||
+                  p.sellerId?.shopName ||
+                  p.sellerId?.name ||
+                  p.brandName ||
+                  "",
+
                 brandLogo: toImageUrl(p.sellerId?.brandLogo),
                 stock: `Stock: ${p.stockQuantity}`,
                 stockQuantity: Number(p.stockQuantity),
@@ -172,7 +181,6 @@ function Men() {
     ...new Set(allProducts.map((p) => p.fabric).filter((f) => f && f !== "N/A")),
   ];
 
-  // ✅ NEW: checkbox toggle handler (Home.jsx ke handleCategoryChange jaisa)
   const handleFabricChange = (fabric) => {
     setSelectedFabrics((prev) =>
       prev.includes(fabric)
@@ -186,14 +194,15 @@ function Men() {
 
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
+      // ✅ NEW (2/4): brand name se bhi search
       list = list.filter(
         (item) =>
           item.title?.toLowerCase().includes(query) ||
-          item.description?.toLowerCase().includes(query)
+          item.description?.toLowerCase().includes(query) ||
+          item.brandName?.toLowerCase().includes(query)
       );
     }
 
-    // ✅ CHANGED: ab koi fabric select nahi = sab dikhao, jitne bhi select ho unme se koi bhi match ho to dikhao
     if (selectedFabrics.length > 0) {
       list = list.filter((item) => selectedFabrics.includes(item.fabric));
     }
@@ -364,7 +373,7 @@ function Men() {
   };
 
   const resetFilters = () => {
-    setSelectedFabrics([]); // ✅ CHANGED
+    setSelectedFabrics([]);
     setMaxPrice(MAX_PRICE);
     setSortBy("newest");
     setSearchQuery("");
@@ -374,7 +383,6 @@ function Men() {
     <div className="Customer_container1">
       <ToastContainer />
 
-      {/* Responsive, professional card & button styling — same structure/feature as Home.jsx */}
       <style>{`
         .Customer_card {
           padding: 10px !important;
@@ -584,9 +592,10 @@ function Men() {
             <i className="bi bi-search"></i>
           </span>
 
+          {/* ✅ NEW (3/4): placeholder */}
           <input
             type="text"
-            placeholder="Search men's shawls..."
+            placeholder="Search by product or brand name..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="form-control w-100 shadow-sm"
@@ -669,7 +678,6 @@ function Men() {
               </div>
             </div>
 
-            {/* ✅ CHANGED: Material/Fabric ab checkbox multi-select hai (Home.jsx ke Categories jaisa) */}
             <div className="col-md-6">
               <label className="form-label fw-bold small text-secondary d-block">
                 Material / Fabric
@@ -701,7 +709,7 @@ function Men() {
         )}
       </div>
 
-      {/* --- PRODUCTS GRID (same card structure/feature as Home.jsx) --- */}
+      {/* --- PRODUCTS GRID --- */}
       <div className="container my-4">
         <div className="row g-2 g-md-4">
           {currentProducts.length > 0 ? (
@@ -730,7 +738,7 @@ function Men() {
                         <div
                           className="Customer_brand-logo-box shadow-sm rounded-circle overflow-hidden bg-white d-flex align-items-center justify-content-center"
                           style={{ border: "1.5px solid #fff" }}
-                          title="Brand Logo"
+                          title={item.brandName || "Brand Logo"} /* ✅ NEW (4/4): optional tooltip */
                         >
                           <img
                             src={toImageUrl(item.brandLogo)}
@@ -740,18 +748,16 @@ function Men() {
                         </div>
                       )}
 
-                    
-<ProductImageSlider
-  images={
-    item.images && item.images.length
-      ? item.images
-      : [item.image]
-  }
-  alt={item.title}
-  hideArrowsOnMobile={true}
-  hideArrowsOnDesktop={true}
-/>
-
+                      <ProductImageSlider
+                        images={
+                          item.images && item.images.length
+                            ? item.images
+                            : [item.image]
+                        }
+                        alt={item.title}
+                        hideArrowsOnMobile={true}
+                        hideArrowsOnDesktop={true}
+                      />
 
                       <button
                         className="Customer_wishlist-btn"

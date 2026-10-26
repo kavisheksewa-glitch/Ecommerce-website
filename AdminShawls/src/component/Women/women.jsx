@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import API, { BASE_URL } from "../../utils/api";
 import { useNavigate } from "react-router-dom";
@@ -19,6 +18,14 @@ import {
 import { womenShawls } from "../../data/shawls";
 import ProductImageSlider from "../../components/ProductImageSlider";
 import "./women.css";
+
+// ✅ FIX: Image path ko full URL me badalta hai (backslash + leading slash normalize)
+const toImageUrl = (raw) => {
+  if (!raw) return "";
+  if (String(raw).startsWith("http")) return raw;
+  const path = String(raw).replace(/\\/g, "/").replace(/^\//, "");
+  return `${BASE_URL}/${path}`;
+};
 
 function Women() {
   const navigate = useNavigate();
@@ -68,21 +75,28 @@ function Women() {
       .catch((err) => console.error("Error fetching wishlist items:", err));
   };
 
-
   useEffect(() => {
-      API.get("/api/seller/products/public")
+    API.get("/api/seller/products/public")
       .then((res) => {
         if (Array.isArray(res.data)) {
           const dbProducts = res.data
             .filter((p) => p.category === "Women's Shawls")
             .map((p, index) => {
-              // ✅ seller ne jo price enter kiya wahi "original" price hai; discount hone par
+              // seller ne jo price enter kiya wahi "original" price hai; discount hone par
               // actual bikne wala price (finalPrice) usse kam hoga
               const basePrice = Number(p.price || 0);
               const discountPercent = Number(p.discount || 0);
-              const finalPrice = discountPercent > 0
-                ? Math.round(basePrice - (basePrice * discountPercent) / 100)
-                : basePrice;
+              const finalPrice =
+                discountPercent > 0
+                  ? Math.round(basePrice - (basePrice * discountPercent) / 100)
+                  : basePrice;
+
+              // Multiple images + purane single-image products dono support
+              const rawImages =
+                Array.isArray(p.productImages) && p.productImages.length > 0
+                  ? p.productImages
+                  : [p.productImage || p.image].filter(Boolean);
+              const images = rawImages.map(toImageUrl);
 
               return {
                 id: p._id,
@@ -90,43 +104,30 @@ function Women() {
                 description: p.description,
                 price: `₹${finalPrice}`,
                 rawPrice: finalPrice || 0,
-              originalPrice: discountPercent > 0 ? `₹${basePrice}` : "",
-              discount: discountPercent > 0 ? `${discountPercent}% OFF` : null,
-              // Support both multiple images and old single-image products
-              images: (
-                Array.isArray(p.productImages) && p.productImages.length > 0
-                  ? p.productImages
-                  : [p.productImage || p.image].filter(Boolean)
-              ).map((rawImage) =>
-                rawImage?.startsWith("http")
-                  ? rawImage
-                  : `${BASE_URL}/${String(rawImage).replace(/\\\\/g, "/").replace(/^\\// "")}`
-              ),
-              image: (() => {
-                const rawImage =
-                  Array.isArray(p.productImages) && p.productImages.length > 0
-                    ? p.productImages[0]
-                    : p.productImage || p.image;
+                originalPrice: discountPercent > 0 ? `₹${basePrice}` : "",
+                discount: discountPercent > 0 ? `${discountPercent}% OFF` : null,
+                images,
+                image: images[0] || "https://via.placeholder.com/150",
 
-                if (!rawImage) return "https://via.placeholder.com/150";
-                return rawImage.startsWith("http")
-                  ? rawImage
-                  : `${BASE_URL}/${String(rawImage).replace(/\\\\/g, "/").replace(/^\\// "")}`;
-              })(),
-              brandLogo: p.sellerId?.brandLogo
-                ? (p.sellerId.brandLogo.startsWith("http")
-                    ? p.sellerId.brandLogo
-                    : `${BASE_URL}/${p.sellerId.brandLogo}`)
-                : "",
-              stock: `Stock: ${p.stockQuantity}`,
-              fabric: p.fabric || "N/A",
-              color: p.color || "N/A",
-              size: p.size || "N/A",
-              careInstructions: p.washCare || "N/A",
-              createdAt: p.createdAt ? new Date(p.createdAt).getTime() : index,
-              sellerId: p.sellerId?._id || p.sellerId || "",
-            };
-          });
+                // ✅ NEW (1/4): brand name search ke liye
+                brandName:
+                  p.sellerId?.brandName ||
+                  p.sellerId?.businessName ||
+                  p.sellerId?.shopName ||
+                  p.sellerId?.name ||
+                  p.brandName ||
+                  "",
+
+                brandLogo: toImageUrl(p.sellerId?.brandLogo),
+                stock: `Stock: ${p.stockQuantity}`,
+                fabric: p.fabric || "N/A",
+                color: p.color || "N/A",
+                size: p.size || "N/A",
+                careInstructions: p.washCare || "N/A",
+                createdAt: p.createdAt ? new Date(p.createdAt).getTime() : index,
+                sellerId: p.sellerId?._id || p.sellerId || "",
+              };
+            });
 
           const formattedStatic = womenShawls.map((item, index) => ({
             ...item,
@@ -158,15 +159,25 @@ function Women() {
     };
   }, []);
 
-  const fabrics = [...new Set(allProducts.map((p) => p.fabric).filter((f) => f && f !== "N/A"))];
-  const colors = ["All", ...new Set(allProducts.map((p) => p.color).filter((c) => c && c !== "N/A"))];
+  const fabrics = [
+    ...new Set(allProducts.map((p) => p.fabric).filter((f) => f && f !== "N/A")),
+  ];
+  const colors = [
+    "All",
+    ...new Set(allProducts.map((p) => p.color).filter((c) => c && c !== "N/A")),
+  ];
 
   const getProcessedProducts = () => {
     let list = [...allProducts];
 
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
-      list = list.filter((item) => item.title?.toLowerCase().includes(query));
+      // ✅ NEW (2/4): brand name se bhi search
+      list = list.filter(
+        (item) =>
+          item.title?.toLowerCase().includes(query) ||
+          item.brandName?.toLowerCase().includes(query)
+      );
     }
 
     if (selectedFabric !== "All") {
@@ -353,7 +364,6 @@ function Women() {
     <div className="Customer_container1">
       <ToastContainer />
 
-      {/* Responsive, professional card & button styling — same structure/feature as Home.jsx */}
       <style>{`
         .Customer_card {
           padding: 10px !important;
@@ -538,7 +548,6 @@ function Women() {
         </div>
       )}
 
-
       <div className="Customer_luxury-title-wrapper">
         <h1
           className="Customer_luxury-title text-center my-4 fw-bold fst-italic"
@@ -553,6 +562,8 @@ function Women() {
         alt="Kavi Shawls Banner"
         className="Customer_hero2-image w-100 mb-4"
       />
+
+      {/* SEARCH BAR */}
       <div className="container my-3 text-center">
         <div className="position-relative mx-auto" style={{ maxWidth: "600px" }}>
           <span
@@ -562,9 +573,10 @@ function Women() {
             <i className="bi bi-search"></i>
           </span>
 
+          {/* ✅ NEW (3/4): placeholder */}
           <input
             type="text"
-            placeholder="Search women's shawls..."
+            placeholder="Search by product or brand name..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="form-control w-100 shadow-sm"
@@ -680,10 +692,7 @@ function Women() {
             </div>
 
             <div className="col-12 text-end mt-3">
-              <button
-                className="btn btn-outline-danger btn-sm px-4"
-                onClick={resetFilters}
-              >
+              <button className="btn btn-outline-danger btn-sm px-4" onClick={resetFilters}>
                 Clear Filters
               </button>
             </div>
@@ -691,7 +700,7 @@ function Women() {
         )}
       </div>
 
-      {/* --- PRODUCTS GRID (same card structure/feature as Home.jsx) --- */}
+      {/* --- PRODUCTS GRID --- */}
       <div className="container my-4">
         <div className="row g-2 g-md-4">
           {currentProducts.length > 0 ? (
@@ -718,29 +727,26 @@ function Women() {
                         <div
                           className="Customer_brand-logo-box shadow-sm rounded-circle overflow-hidden bg-white d-flex align-items-center justify-content-center"
                           style={{ border: "1.5px solid #fff" }}
-                          title="Brand Logo"
+                          title={item.brandName || "Brand Logo"} /* ✅ NEW (4/4): optional tooltip */
                         >
                           <img
-                            src={
-                              item.brandLogo.startsWith("http")
-                                ? item.brandLogo
-                                : `${BASE_URL}/${item.brandLogo}`
-                            }
+                            src={toImageUrl(item.brandLogo)}
                             alt="Brand Logo"
                             style={{ width: "100%", height: "100%", objectFit: "cover" }}
                           />
                         </div>
                       )}
-<ProductImageSlider
-  images={
-    item.images && item.images.length
-      ? item.images
-      : [item.image]
-  }
-  alt={item.title}
-  hideArrowsOnMobile={true}
-  hideArrowsOnDesktop={true}
-/>
+
+                      <ProductImageSlider
+                        images={
+                          item.images && item.images.length
+                            ? item.images
+                            : [item.image]
+                        }
+                        alt={item.title}
+                        hideArrowsOnMobile={true}
+                        hideArrowsOnDesktop={true}
+                      />
 
                       <button
                         className="Customer_wishlist-btn"
@@ -859,10 +865,7 @@ function Women() {
           ) : (
             <div className="col-12 text-center py-5">
               <p className="text-muted fs-5">No women's shawls found matching your filters.</p>
-              <button
-                className="btn btn-outline-dark btn-sm mt-2"
-                onClick={resetFilters}
-              >
+              <button className="btn btn-outline-dark btn-sm mt-2" onClick={resetFilters}>
                 Reset Filters
               </button>
             </div>
