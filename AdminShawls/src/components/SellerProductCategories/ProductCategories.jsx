@@ -10,20 +10,17 @@ import SellerHeader from "../SellerHeader/SellerHeader";
 
 function ProductCategories() {
   const [productCounts, setProductCounts] = useState({});
-  const [allProducts, setAllProducts] = useState([]); // Saare products store karne ke liye
-  const [selectedCategoryProducts, setSelectedCategoryProducts] = useState(null); // Jis category par click ho uske products
-  const [viewProduct, setViewProduct] = useState(null); // "View" button click hone par yahan product save hota hai (modal ke liye)
+  const [allProducts, setAllProducts] = useState([]);  
+  const [selectedCategoryProducts, setSelectedCategoryProducts] = useState(null); 
+  const [viewProduct, setViewProduct] = useState(null); 
 
   const categories = [
-    "Women's Shawls", "Men's Shawls", "Pashmina Shawls", "Cashmere Shawls",
-    "Wool Shawls", "Silk Shawls", "Printed Shawls", "Embroidered Shawls",
-    "Designer Shawls", "Luxury Shawls", "Winter Shawls", "Summer Shawls"
+    "Women's Shawls", "Men's Shawls", "Spring Summer Shawls", "Featured Shawls",
+    "BirthdayGift Shawls", "LuxuryGift Shawls", "weddingGift Shawls", "FestiveGift Shawls"
   ];
 
   useEffect(() => {
-    // ✅ FIX: seller ka token "sellerToken" key mein save hota hai (SellerLogin.jsx dekhein),
-    // "token" key sirf customer login ke liye use hoti hai — isi mismatch ki wajah se
-    // yeh page pehle kaam nahi kar raha tha (Authorization: Bearer undefined ja raha tha).
+ 
     const token = localStorage.getItem("sellerToken");
 
     if (!token) {
@@ -38,7 +35,7 @@ function ProductCategories() {
         const products = Array.isArray(response.data)
           ? response.data
           : response.data.products || [];
-        setAllProducts(products); // Saare products save kar liye
+        setAllProducts(products); 
 
         const counts = {};
         categories.forEach((catName) => { counts[catName] = 0; });
@@ -66,7 +63,7 @@ function ProductCategories() {
       });
   }, []);
 
-  // "View Products" par click hone par wahi ke wahi products filter karna
+
   const handleViewProducts = (categoryName) => {
     const lowerCatName = categoryName.toLowerCase().trim();
 
@@ -83,7 +80,6 @@ function ProductCategories() {
     setSelectedCategoryProducts({ categoryName, products: filtered });
   };
 
-  // Ek product ki image ka proper URL banane wala helper (backslash aur missing field handle karta hai)
   const getProductImage = (prod) => {
     const rawImage = prod.productImage || prod.image || "";
     return rawImage.startsWith("http")

@@ -1,13 +1,12 @@
 const mongoose = require("mongoose");
 
-// NOTE: renamed from "Product" -> "SellerProduct" to avoid clashing with
-// AdminProduct and ShawlProduct models when merged into one database.
+
 const allProductSchema = new mongoose.Schema(
   {
     productName: { type: String, required: true },
     category: { type: String, required: true },
     brand: { type: String },
-    brandLogo: { type: String }, // Brand Logo field added here
+    brandLogo: { type: String }, 
     fabric: { type: String },
     washCare: { type: String },
     color: { type: String },

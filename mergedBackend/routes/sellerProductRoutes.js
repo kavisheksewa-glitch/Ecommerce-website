@@ -21,11 +21,7 @@ const storage = new CloudinaryStorage({
 });
 const upload = multer({ storage });
 
-// ✅ NEW: multiple images -> "productImages" (max 5)
-// "productImage" (single) purane clients ke liye rakha hai, taaki kuch toote nahi.
-// Controller me files ye milengi:
-//   req.files.productImages -> array (max 5)
-//   req.files.productImage  -> array (max 1)
+
 const uploadFields = upload.fields([
   { name: "productImages", maxCount: 5 },
   { name: "productImage", maxCount: 1 },

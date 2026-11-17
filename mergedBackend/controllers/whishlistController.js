@@ -5,7 +5,7 @@ const addToWishlist = async (req, res) => {
   try {
     const { userId, productId, title, price, description, image } = req.body;
     
-    // ❤️ Wishlist mein save karne ka logic
+    
     await Wishlist.create({
       userId,
       productId,
@@ -15,7 +15,7 @@ const addToWishlist = async (req, res) => {
       image
     });
 
-    // 🔔 Notification Create Karein
+    //  Notification Create
     await Notification.create({
       userId,
       title: "Added to Wishlist ❤️",

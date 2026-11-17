@@ -2,8 +2,7 @@
 
 const mongoose = require("mongoose");
 
-// NOTE: renamed from "Product" -> "SellerProduct" to avoid clashing with
-// AdminProduct and ShawlProduct models when merged into one database.
+
 const sellerProductSchema = new mongoose.Schema(
   {
     productName: { type: String, required: true },
@@ -18,8 +17,8 @@ const sellerProductSchema = new mongoose.Schema(
     discount: { type: Number },
     description: { type: String },
     stockQuantity: { type: Number, required: true },
-    productImage: { type: String, required: true },          // main image (pehli image)
-    productImages: { type: [String], default: [] },          // ✅ NEW: saari images (max 5)
+    productImage: { type: String, required: true },          
+    productImages: { type: [String], default: [] },          
     sellerId: { type: mongoose.Schema.Types.ObjectId, ref: "Seller", required: true },
   },
   { timestamps: true }

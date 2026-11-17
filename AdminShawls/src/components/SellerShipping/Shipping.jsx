@@ -134,7 +134,7 @@ function Shipping() {
                     <p className="mb-3 text-muted small"><strong>Amount:</strong> ₹{order.totalAmount?.toLocaleString()}</p>
 
                     <div className="d-flex gap-2">
-                      <button className="btn btn-success btn-sm w-100">Update</button>
+                      {/* <button className="btn btn-success btn-sm w-100">Update</button> */}
                       <button
                         className="btn btn-primary btn-sm w-100"
                         onClick={() => handleTrackClick(order)}

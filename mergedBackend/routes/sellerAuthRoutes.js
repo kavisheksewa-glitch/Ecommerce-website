@@ -11,16 +11,15 @@ const {
 } = require("../controllers/sellerAuthController");
 const { protect } = require("../middleware/authMiddleware");
 const { protectAdmin } = require("../middleware/adminMiddleware");
-// const multer = require("multer");
-// const upload = multer({ dest: "uploads/" });
+
 const { upload } = require("../config/cloudinary");
-// ✅ register ke liye: profile pic + brand logo dono
+
 const registerUpload = upload.fields([
   { name: "profilePicture", maxCount: 1 },
   { name: "brandLogo", maxCount: 1 },
 ]);
 
-// ✅ update ke liye: profile image + brand logo dono
+
 const updateUpload = upload.fields([
   { name: "profileImage", maxCount: 1 },
   { name: "brandLogo", maxCount: 1 },

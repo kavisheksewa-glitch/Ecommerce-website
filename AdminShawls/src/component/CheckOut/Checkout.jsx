@@ -134,7 +134,7 @@ function Checkout() {
     }
 
     const options = {
-      key: "rzp_test_TISSbct8luq7js",
+      key: "rzp_test_Tngn25M4vP0Yfo",
       amount: total * 100,
       currency: "INR",
       name: "Kavi Shawls",

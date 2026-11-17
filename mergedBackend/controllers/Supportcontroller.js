@@ -13,7 +13,7 @@ const createTicket = async (req, res) => {
     }
 
     const ticket = await SupportTicket.create({
-      customer: req.user.id, // change to req.user._id if your middleware sets req.user
+      customer: req.user.id, 
       subject,
       category: category || "General",
       message,

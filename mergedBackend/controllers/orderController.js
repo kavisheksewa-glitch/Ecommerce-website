@@ -14,7 +14,7 @@ const placeOrder = async (req, res) => {
 
     console.log("📦 Incoming order request:", { productId, quantity });
 
-    // ✅ Product exist karta hai ya nahi check karo
+   
     const product = await Product.findById(productId);
     console.log("🔍 Product found:", product);
 
@@ -22,14 +22,14 @@ const placeOrder = async (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    // ✅ Stock available hai ya nahi check karo
+    
     if (product.stockQuantity < quantity) {
       return res.status(400).json({ 
         message: `Insufficient stock. Only ${product.stockQuantity} left.` 
       });
     }
 
-    // ✅ Atomically stock kam karo
+    
     const updatedProduct = await Product.findOneAndUpdate(
       { _id: productId, stockQuantity: { $gte: quantity } },
       { $inc: { stockQuantity: -quantity } },
@@ -42,7 +42,7 @@ const placeOrder = async (req, res) => {
       return res.status(400).json({ message: "Stock just ran out, please try again." });
     }
 
-    // 📦 Order save karne ka logic
+    
     const newOrder = new Order({
       userId,
       productId,
@@ -57,12 +57,12 @@ const placeOrder = async (req, res) => {
       paymentMethod,
       paymentStatus,
       razorpayPaymentId,
-      sellerId: product.sellerId, // ⬅️ ye missing tha, ab Product se le liya
+      sellerId: product.sellerId, 
     });
 
     const savedOrder = await newOrder.save();
 
-    // 🔔 Notification Create Karein
+    
     await Notification.create({
       userId,
       title: "Order Placed Successfully 📦",

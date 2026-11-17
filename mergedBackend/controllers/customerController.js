@@ -16,7 +16,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_key_here";
 
 const { sendOtpEmail } = require("../utils/SendEmail");
 
-const OTP_VALID_MS = 180 * 1000; // 180 seconds
+const OTP_VALID_MS = 180 * 1000; 
 const generateOtp = () => Math.floor(100000 + Math.random() * 900000).toString();
 
 // ==================== AUTH CONTROLLERS ====================
@@ -325,7 +325,7 @@ const loginCustomer = async (req, res) => {
       return res.status(400).json({ message: "Invalid email or password!" });
     }
 
-    // 👇 Email verify check
+    //  Email verify check
     if (!user.isVerified) {
       return res.status(403).json({
         message: "Please verify your email before logging in.",
