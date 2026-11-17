@@ -66,7 +66,7 @@ function TrackOrder() {
 
   const idToCancel = orderDetails?._id || orderId;
 
-  if (!window.confirm("Kya aap sach mein yeh order cancel karna chahte hain?")) return;
+  if (!window.confirm("Do you really want to cancel this order??")) return;
 
   try {
     setCancelling(true);
